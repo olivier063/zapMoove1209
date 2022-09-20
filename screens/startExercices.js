@@ -117,6 +117,7 @@ onButtonClear = () => {
                             backgroundColor: this.state.startDisable ? "#B0BEC5" : "#FF6F00",
                         },
                     ]}
+                    disabled={this.state.startDisable}
                     >
                 <Text style={[styles.buttonText]}>GO</Text>
               </TouchableOpacity>

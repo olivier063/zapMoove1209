@@ -68,7 +68,7 @@ import {
                 renderItem={({ item }) => (
                   <>
                     <View style={styles.container}>
-                      <TouchableOpacity onPress={() => navigate("TIMER")}>
+                      
                         <View style={styles.imageContainer}>
                           <Text style={{ fontWeight: "bold", fontSize: 15 }}>
                             {item.NOM_FR}
@@ -146,7 +146,7 @@ import {
   
                           {/* FIN MODAL */}
                         </View>
-                      </TouchableOpacity>
+                      
   
                       <View style={styles.imageContainer}>
                         <Image

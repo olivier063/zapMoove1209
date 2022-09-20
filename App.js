@@ -1,6 +1,5 @@
 
-import { StyleSheet, Text, View } from 'react-native';
-import Home from './screens/home';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import Logo from './components/logo';
 import EscapeRunChoixCourse from './screens/escapeRunChoixCourse';
 import { StatusBar } from 'expo-status-bar';
@@ -16,6 +15,9 @@ import StartExercices from './screens/startExercices'
 import Timer from './screens/timer';
 import Compte from './screens/compte';
 import LienYoutube from './screens/lienYoutube';
+import Login from './screens/login';
+import Home from './screens/home';
+import TestCondition from './screens/testCondition';
 
 
 
@@ -24,28 +26,47 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <>
-      <StatusBar/>
-      <Logo/>
-      
+      <StatusBar />
+      <Logo />
+
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="MENU PRINCIPAL" component={Home} />
+          <Stack.Screen name="MENU PRINCIPAL" component={Home}
+            options={({ navigation }) => ({
+              headerRight: () => <TouchableOpacity onPress={() => navigation.navigate("CONNEXION")}>
+                <Image source={require("./assets/connection.png")}
+                  resizeMode="contain"
+                  style={styles.image} />
+              </TouchableOpacity>
+            })}
+          />
           <Stack.Screen name="CHOIX ESCAPE RUN" component={EscapeRunChoixCourse} />
           <Stack.Screen name="CHOIX COURSE CONNECTEE" component={CourseConnecteeChoixCourse} />
           <Stack.Screen name="CHOIX COMPETITION" component={CompetitionChoixCourse} />
           <Stack.Screen name="CHOISIR UN MODE" component={ExerciceMenu} />
           <Stack.Screen name="CHOISIR UN ENTRAINEMENT" component={Exercices} />
           <Stack.Screen name="ENTRAINEMENTS" component={GeneralExercicesNiveau1} />
-          <Stack.Screen name="START EXERCICES" component={StartExercices} />   
-          <Stack.Screen name="EXERCICES NIVEAU 1" component={ExercicesNiveau1} /> 
-          <Stack.Screen name="TIMER" component={Timer} /> 
-          <Stack.Screen name="COMPTE" component={Compte} />
-          <Stack.Screen name="YOUTUBE" component={LienYoutube} />           
+          <Stack.Screen name="START EXERCICES" component={StartExercices} />
+          <Stack.Screen name="EXERCICES NIVEAU 1" component={ExercicesNiveau1} />
+          <Stack.Screen name="TIMER" component={Timer} />
+          <Stack.Screen name="INSCRIPTION" component={Compte} />
+          <Stack.Screen name="YOUTUBE" component={LienYoutube} />
+          <Stack.Screen name="CONNEXION" component={Login} />
+          <Stack.Screen name="TEST CONDITION" component={TestCondition} />
+          
         </Stack.Navigator>
       </NavigationContainer>
-     
+
     </>
   );
 }
 
 
+const styles = StyleSheet.create({
+  image: {
+    height: 60,
+    width: 100,
+    borderRadius: 50,
+
+  },
+})
