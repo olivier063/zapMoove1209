@@ -1,22 +1,24 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
+import { useNavigation } from '@react-navigation/native';
 
 export default function ConditionalButton(props) {
-
-console.log(props)
+    const navigation = useNavigation();
+    console.log(props)
+    
     if (props.isLoggedIn)
         return <View style={styles.buttonContainer}>
         <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("INSCRIPTION")}
+            onPress={() => navigation.navigate("INSCRIPTION")}
             style={styles.textButton}
         >
-            <Text style={{ color: "white", fontWeight: "bold" }}>Modifier un compte</Text>
+            <Text style={{ color: "white", fontWeight: "bold" }}>Modifier le compte</Text>
         </TouchableOpacity>
         </View>;
     else
         return <View style={styles.buttonContainer}>
         <TouchableOpacity
-            onPress={() => this.props.navigation.navigate("INSCRIPTION")}
+            onPress={() => navigation.navigate("INSCRIPTION")}
             style={styles.textButton}
         >
             <Text style={{ color: "white", fontWeight: "bold" }}>Créer un compte</Text>

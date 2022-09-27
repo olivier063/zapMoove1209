@@ -13,16 +13,13 @@ export default class TestCondition extends Component {
             isLoggedIn: false
         };
 
+        // permet de refresh le state pour que l'utilisateur se voit connecté
         this.props.navigation.addListener('focus', () => {
             this.getStorage();
           });
-          
-        this.ifLoginClicked = this.ifLoginClicked.bind(this);
-        // this.ifLogoutClicked = this.ifLogoutClicked.bind(this);
     }
 
-    async getStorage() {
-       
+    async getStorage() {     
         try {
             const loginState = await StorageService.load({ key: 'loginState' });
             console.log(loginState)
@@ -38,15 +35,13 @@ export default class TestCondition extends Component {
         }
     }
 
+    // Methode appelée après le rendu du composant
     componentDidMount() {
+        console.log('componentDidMount')
         this.getStorage();
     }
 
-  
-
-    ifLoginClicked() {
-        console.log("clicked")
-    }
+    
 
     // ifLogoutClicked = () => {
     //     this.setState({ isLoggedIn: false });
@@ -60,7 +55,8 @@ export default class TestCondition extends Component {
                     (this.state.isLoggedIn) ? (
                         <LogoutButton  />
                     ) : (
-                        <LoginButton clickFunc={this.ifLoginClicked}  />
+                        
+                        <LoginButton  />
                     )
                 }
             </View>
@@ -68,5 +64,7 @@ export default class TestCondition extends Component {
     }
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+ 
+})
 

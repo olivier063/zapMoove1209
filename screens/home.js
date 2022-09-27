@@ -15,25 +15,23 @@ export default class Home extends Component {
             prenom: "",
             nom: ""
         }
-        
+        // le addListener permet d'ecouter le changement d'etat du composant et affiche les nom prenom de l'utilisateur à sa connection
         this.props.navigation.addListener('focus', () => {
             this.getStorage();
-          });
-    
-          console.log(props)
+          });    
+        //   console.log(props)
     }
 
-
-
+        // permet de load les donnees utilisateur, ici le prenom et le nom de l'utilisateur
     async getStorage() {
         try {
             const loginState = await StorageService.load({ key: 'loginState' });
-            console.log(loginState)
+            // console.log(loginState) 
             this.setState({
-                prenom: loginState["PRENOM"],
+                prenom: loginState["PRENOM"], // le PRENOM et NOM majuscule correspondent au Json
                 nom: loginState["NOM"]
             });
-        } catch (error) {
+        } catch (error) { // Voir avec LUDO
             this.setState({
                 prenom: "",
                 nom: "",
@@ -41,11 +39,13 @@ export default class Home extends Component {
         }
     }
 
+        // A voir avec LUDO
     componentDidMount() {
-        console.log("TEST")
+        // console.log("TEST")
         this.getStorage();
     }
 
+    
     render() {
        
 
@@ -58,7 +58,7 @@ export default class Home extends Component {
                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate("TEST CONDITION")}
+                            onPress={() => this.props.navigation.navigate("FORGOT PASSWORD")}
                         >
                             <Image
                                 source={require("../assets/courses-virtuelles.jpg")}

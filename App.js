@@ -1,9 +1,9 @@
 
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Logo from './components/logo';
 import EscapeRunChoixCourse from './screens/escapeRunChoixCourse';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer, StackActions } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CourseConnecteeChoixCourse from './screens/courseConnecteeChoixCourse';
 import CompetitionChoixCourse from './screens/competitionChoixCourse';
@@ -18,6 +18,7 @@ import LienYoutube from './screens/lienYoutube';
 import Login from './screens/login';
 import Home from './screens/home';
 import TestCondition from './screens/testCondition';
+import ForgotPassword from './components/forgotPassword';
 
 
 
@@ -31,7 +32,7 @@ export default function App() {
 
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="MENU PRINCIPAL" component={Home}
+          <Stack.Screen name="MENU PRINCIPAL" component={Home} // L35 - L39 permettent de placer un icone dans la barre du menu
             options={({ navigation }) => ({
               headerRight: () => <TouchableOpacity onPress={() => navigation.navigate("CONNEXION")}>
                 <Image source={require("./assets/connection.png")}
@@ -53,6 +54,7 @@ export default function App() {
           <Stack.Screen name="YOUTUBE" component={LienYoutube} />
           <Stack.Screen name="CONNEXION" component={Login} />
           <Stack.Screen name="TEST CONDITION" component={TestCondition} />
+          <Stack.Screen name="FORGOT PASSWORD" component={ForgotPassword} />
           
         </Stack.Navigator>
       </NavigationContainer>

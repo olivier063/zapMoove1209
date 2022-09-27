@@ -16,7 +16,7 @@ export default function LogoutButton() {
     return <View style={styles.buttonContainer}>
         <TouchableOpacity
             style={styles.textButton}
-            onPress={() => {logout("MENU PRINCIPAL")}}
+            onPress={() => logout("MENU PRINCIPAL")}
         >
             <Text style={{ color: "white", fontWeight: "bold" }}>Se déconnecter</Text>
         </TouchableOpacity>
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        // marginTop: 30,
+        marginTop: 30,
         // marginBottom: 100
     },
     textButton: {
