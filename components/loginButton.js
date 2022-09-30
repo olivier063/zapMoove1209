@@ -12,11 +12,11 @@ export default function LoginButton() {
     const [errorMessage, setErrorMessage] = useState('');
 
 
-
+    // on rentre dans le local storage pour recuperer les donnees du loginState pour l'utiliser dans la fonction login plus bas
     const sendEmailValidationRequest = async (mail) => {
         try {
             const loginState = await StorageService.load({ key: 'loginState' });
-            console.log(loginState)
+            // console.log(loginState)
             return loginState.MAIL === mail;
         } catch (error) {
             console.log(error)
@@ -35,8 +35,6 @@ export default function LoginButton() {
     // la fonction du dessus est remplacée par e) => setMail(e.nativeEvent.text) depuis l'input
 
 
-
-    // ici la func login, fetch sur l'URL du Json et demande un password et un mail, ATTENTION: utiliser des cotes inversees
     const login = async (path) => {
         // on verifie que le mail est valide selon regex grâce au validator installé via npm
         if (!validator.isEmail(mail)) {
@@ -52,32 +50,30 @@ export default function LoginButton() {
             return;
         }
         try {
+            // ici la func login, fetch sur l'URL du Json et demande un password et un mail, ATTENTION: utiliser des cotes inversees
             const response = await fetch(
                 `https://www.zapsports.com/ext/app/compte.htm?APP_PSWD=${password}&APP_EMAIL=${mail}`
-
             );
             // on attent une reponse en Json du fetch
             const json = await response.json();
             if (!json || json == 'KO') {
-                setErrorMessage('MDP OU EMAIL inexistants')
+                setErrorMessage('MDP ou EMAIL inexistants')
                 return;
             }
-
             // permet d'ajouter la ligne mail dans l'objet Json retourné par l'API
             json.MAIL = mail
-
+            
             // on vient sauvegarder dans le local storage les donnees utilisateur
             await StorageService.save({
                 key: 'loginState', // Note: Do not use underscore("_") in key!
                 data: json,
-
             })
             // const loginState = await StorageService.load({key: 'loginState'});
             navigation.navigate(path)
 
             //Toujours avoir un console log error pour afficher l'erreur
         } catch (error) {
-            setErrorMessage('essais plus tard clodo')
+            setErrorMessage('Oups, un problème est survenu')
             console.error(error);
         }
     }

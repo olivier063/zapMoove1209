@@ -22,7 +22,6 @@ import {
         modalVisible: false,
         numTraining: this.props.route.params.id,
         title: this.props.route.params.title,
-  
       };
     }
   

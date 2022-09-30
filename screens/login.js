@@ -2,13 +2,14 @@
 
 import {
     View,
-    StyleSheet,
+    Text
 } from "react-native";
 import React, { Component } from "react";
 import StorageService from "../services/storageService";
 import ConditionalButton from "../components/conditionalButton";
 import LogoutButton from "../components/logoutButton";
 import LoginButton from "../components/loginButton";
+
 
 export default class Login extends Component {
     constructor(props) {
@@ -27,7 +28,7 @@ export default class Login extends Component {
     async getStorage() {
         try {
             const loginState = await StorageService.load({ key: 'loginState' });
-            console.log(loginState)
+            // console.log(loginState)
             this.setState({
                 isLoggedIn: true
             });
@@ -42,15 +43,13 @@ export default class Login extends Component {
 
     // Methode appelée après le rendu du composant
     componentDidMount() {
-        console.log('componentDidMount')
+        // console.log('componentDidMount')
         this.getStorage();
     }
 
-
-
-    // ifLogoutClicked = () => {
-    //     this.setState({ isLoggedIn: false });
-    // }
+   
+   
+   
     render() {
 
         return (

@@ -2,10 +2,6 @@ import { Text, View, TouchableOpacity, Image, StyleSheet} from 'react-native'
 import React, { Component, useEffect } from 'react'
 import StorageService from '../services/storageService';
 
-
-
-
-
 export default class Home extends Component {
     constructor(props) {
         super(props)

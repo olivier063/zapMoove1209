@@ -9,3 +9,4 @@ const StorageService = new Storage ({
 
 
 export default StorageService;
+

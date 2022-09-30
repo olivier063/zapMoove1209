@@ -19,6 +19,7 @@ import Login from './screens/login';
 import Home from './screens/home';
 import TestCondition from './screens/testCondition';
 import ForgotPassword from './components/forgotPassword';
+import EditAccount from './screens/editAccount';
 
 
 
@@ -55,6 +56,7 @@ export default function App() {
           <Stack.Screen name="CONNEXION" component={Login} />
           <Stack.Screen name="TEST CONDITION" component={TestCondition} />
           <Stack.Screen name="FORGOT PASSWORD" component={ForgotPassword} />
+          <Stack.Screen name="MODIFIER LE COMPTE" component={EditAccount} />
           
         </Stack.Navigator>
       </NavigationContainer>
