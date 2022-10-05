@@ -4,11 +4,10 @@ import {
     StyleSheet,
     TouchableOpacity,
     Image,
-    RefreshControl,
     FlatList,
     ActivityIndicator,
   } from "react-native";
-  import React, { Component, useRef, useEffect } from "react";
+  import React, { Component } from "react";
   
   export class Exercices extends Component {
     constructor(props) {
@@ -65,7 +64,7 @@ import {
                     <Text style={{ marginTop: 10 }}>{item.DESC_FR}</Text>
   
                     <TouchableOpacity
-                      onPress={() => navigate("ENTRAINEMENTS", {id:item.NUM_TRAINING,title:item.TITRE_FR})}
+                      onPress={() => navigate("ENTRAINEMENTS", {id:item.NUM_TRAINING, title:item.TITRE_FR})}
                     >
                       <Image
                         source={{ uri: item.ILLUSTRATION }}
@@ -77,8 +76,9 @@ import {
                   <View style={styles.textContainer}>
                     <Text style={styles.text}>{item.TITRE_FR},</Text>
                     <Text>{item.RECOMPENSE} points à gagner</Text>
-  
-                    <Text>0/{item.POINTS_DEBLOQUER} à débloquer</Text>
+                    <Text>Il vous faut {item.POINTS_DEBLOQUER} point(s) pour débloquer l'activité</Text>
+                    <Text>Nombre de points gagnés: </Text>
+                    
                   </View>
   
                   <View

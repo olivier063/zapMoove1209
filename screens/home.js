@@ -1,5 +1,5 @@
 import { Text, View, TouchableOpacity, Image, StyleSheet} from 'react-native'
-import React, { Component, useEffect } from 'react'
+import React, { Component } from 'react'
 import StorageService from '../services/storageService';
 
 export default class Home extends Component {
@@ -54,7 +54,7 @@ export default class Home extends Component {
                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <TouchableOpacity
-                            onPress={() => this.props.navigation.navigate("FORGOT PASSWORD")}
+                            onPress={() => this.props.navigation.navigate("CHOIX COURSE CONNECTEE")}
                         >
                             <Image
                                 source={require("../assets/courses-virtuelles.jpg")}

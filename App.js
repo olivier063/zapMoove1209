@@ -18,8 +18,8 @@ import LienYoutube from './screens/lienYoutube';
 import Login from './screens/login';
 import Home from './screens/home';
 import TestCondition from './screens/testCondition';
-import ForgotPassword from './components/forgotPassword';
 import EditAccount from './screens/editAccount';
+
 
 
 
@@ -33,7 +33,7 @@ export default function App() {
 
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="MENU PRINCIPAL" component={Home} // L35 - L39 permettent de placer un icone dans la barre du menu
+          <Stack.Screen name="MENU PRINCIPAL" component={Home} // L37 - L39 permettent de placer un icone dans la barre du menu
             options={({ navigation }) => ({
               headerRight: () => <TouchableOpacity onPress={() => navigation.navigate("CONNEXION")}>
                 <Image source={require("./assets/connection.png")}
@@ -55,9 +55,7 @@ export default function App() {
           <Stack.Screen name="YOUTUBE" component={LienYoutube} />
           <Stack.Screen name="CONNEXION" component={Login} />
           <Stack.Screen name="TEST CONDITION" component={TestCondition} />
-          <Stack.Screen name="FORGOT PASSWORD" component={ForgotPassword} />
-          <Stack.Screen name="MODIFIER LE COMPTE" component={EditAccount} />
-          
+          <Stack.Screen name="MODIFIER LE COMPTE" component={EditAccount} />       
         </Stack.Navigator>
       </NavigationContainer>
 

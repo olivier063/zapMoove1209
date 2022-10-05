@@ -4,6 +4,7 @@ import StorageService from '../services/storageService';
 import React, { useEffect, useState } from 'react';
 import ModalPassword from './modalPassword';
 import WebView from 'react-native-webview';
+import ModalPasswordNew from './modalPasswordNew';
 
 
 
@@ -33,7 +34,7 @@ export default function ConditionalButton(props) {
         await getStorage()
         console.log(idUser)
         if (idUser !== "") {
-            navigation.navigate(`MODIFIER LE COMPTE`)
+            navigation.navigate(`MODIFIER LE COMPTE`,{idUser: idUser })
             console.log(idUser)
             // return (
             //     <WebView source={{uri: `https://www.zapsports.com/ext/app_page_web/su-creation-compte.htm?ID_USER=${idUser}`}} />
@@ -69,7 +70,7 @@ export default function ConditionalButton(props) {
                     <Text style={{ color: "white", fontWeight: "bold" }}>Créer un compte</Text>
                 </TouchableOpacity>
             </View>
-            <ModalPassword />
+            <ModalPasswordNew />
         </View>;
 }
 
@@ -79,7 +80,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 30,
-        marginBottom: 100
+        marginBottom: 100,
+
     },
     textButton: {
         backgroundColor: "#0E8CEF",
@@ -87,5 +89,6 @@ const styles = StyleSheet.create({
         width: 140,
         alignItems: "center",
         justifyContent: "center",
+        borderRadius: 7
     }
 })

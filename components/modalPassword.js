@@ -7,12 +7,15 @@ export default class ModalPassword extends Component {
 
         this.state = {
             modalVisible: false,
+            mail: ""
         }     
     }
 
     setModalVisible = (visible) => {
         this.setState({ modalVisible: visible });
     }
+
+
 
 
 
