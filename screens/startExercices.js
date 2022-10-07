@@ -1,5 +1,8 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import React, { Component } from "react";
+import CountDown from "../components/countDown";
+import Chrono from "../components/chrono";
+import TimerAuto from "../components/timerAuto";
 
 
 export default class StartExercices extends Component {
@@ -7,7 +10,7 @@ export default class StartExercices extends Component {
 
   constructor(props) {
     super(props);
-console.log(this.props.route)
+    // console.log(this.props.route)
     this.state = {
       data: [],
       isLoading: true,
@@ -17,13 +20,33 @@ console.log(this.props.route)
       seconds_Counter: "00",
       startDisable: false,
       // on ajoute un current index pour pouvoir y faire reference selon l'index (l'exercice en cours) du tableau (FLATLIST)
-      currentIndex: 0
+      currentIndex: 0,
+      minutes: 0,
+      seconds: 30,
+      timerDown: null,
     };
   }
 
 
 
-  //..................
+  // fonction qui doit remettre le compte à rebours à 30 secondes quand on appuit sur exercice suivant
+  onButtonNext = () => {
+    clearInterval(this.state.timerDown)
+    this.setState({seconds: 30})
+  // console.log('this.setState')
+  this.setState({
+    timerDown: null,
+    minutes: '00',
+    seconds: '30',
+  });
+  }
+
+  
+  //...............................
+
+
+
+  //On fetch pour recuperer les donnees des entrainements
   getExerciceScenario = async () => {
     try {
       const response = await fetch(
@@ -32,7 +55,7 @@ console.log(this.props.route)
       );
       const json = await response.json();
       this.setState({ data: json.SCENARIO });
-      console.log(json)
+      // console.log(json.SCENARIO)
     } catch (error) {
       console.log(error);
     } finally {
@@ -42,16 +65,11 @@ console.log(this.props.route)
 
   componentDidMount() {
     this.getExerciceScenario();
+    // console.log(this.state.currentIndex)
   }
+  // .................................
 
- 
-  // .................
-
-  // TIMER...............
-  componentWillUnmount() {
-    clearInterval(this.state.timer);
-  }
-
+  // TIMER............................
   onButtonStart = () => {
     let timer = setInterval(() => {
       var num = (Number(this.state.seconds_Counter) + 1).toString(),
@@ -72,110 +90,149 @@ console.log(this.props.route)
     this.setState({ startDisable: true });
   };
 
-  onButtonStop = () => {
-    clearInterval(this.state.timer);
-    this.setState({ startDisable: false });
-  };
-
-  onButtonClear = () => {
-    this.setState({
-      timer: null,
-      minutes_Counter: "00",
-      seconds_Counter: "00",
-    });
-  };
   // FIN TIMER....................
 
   nextExo = () => {
-    this.setState({currentIndex: this.state.currentIndex+1});
+    this.setState({ currentIndex: this.state.currentIndex + 1 });
     console.log(this.state.currentIndex)
   }
+
+  previousExo = () => {
+    this.setState({ currentIndex: this.state.currentIndex - 1 });
+    console.log(this.state.currentIndex)
+
+  }
+
 
   render() {
     const { data, isLoading } = this.state;
 
     const { navigate } = this.props.navigation;
 
+
+    // const array = ["SCENARIO"]
+    // const longueur = array.length
+    // console.log(longueur.length)
+
+    // const json = new Array
+    // const longueur = json.SCENARIO
+    // console.log(longueur)
+    
+
     return (
 
       <View style={{ backgroundColor: "white" }}>
-        <View style={[styles.container, { flexDirection: "row" }]}>
-          <View
-            style={{
-              flex: 1,
-              height: 25,
-              justifyContent: "center",
-            }}
-          >
-            <Text>Exercices: 1/10</Text>
-          </View>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <>
+            <View style={[styles.container, { flexDirection: "row" }]}>
+              <View
+                style={{
+                  flex: 1,
+                  height: 25,
+                  justifyContent: "center",
+                }}
+              >
+                <Text>Exercices: x/10</Text>
+              </View>
 
-          <View
-            style={{
-              flex: 1,
-              height: 25,
-              alignItems: "flex-end",
-              justifyContent: "center",
-            }}
-          >
-            <Text style={{ fontSize: 23 }}>{this.state.minutes_Counter} : {this.state.seconds_Counter}</Text>
-          </View>
-        </View>
+              <View
+                style={{
+                  flex: 1,
+                  height: 25,
+                  alignItems: "flex-end",
+                  justifyContent: "center",
+                }}
+              >
+                <Text>
 
-        <View>
-          <FlatList
-            data={data}
-            keyExtractor={(item, index) => index.toString()}
-            // dans le render on ajoute l'index pour pouvoir l'utiliser dans la ternaire et donc afficher uniquement l'exercice courant
-            renderItem={({ item, index }) => (
-               <> 
-              
-              {/* debut de la ternaire on compare l'index des elements de la flatlist par rapport a l' index courant de l'exercice en cours  */}
-            {index===this.state.currentIndex?
-             <View>
-                <View style={{ alignItems: "center", marginTop: 30 }}>
-                  <Image
-                    source={require("../assets/escape-run.jpg")}
-                    style={styles.image}
-                    resizeMode="contain"
-                  />
+                  <TimerAuto />
+
+                </Text>
+              </View>
+            </View>
+
+            <View>
+              <FlatList
+                data={data}
+                keyExtractor={(item, index) => index.toString()}
+                // dans le render on ajoute l'index pour pouvoir l'utiliser dans la ternaire et donc afficher uniquement l'exercice courant
+                renderItem={({ item, index }) => (
+                  <>
+
+                    {/* debut de la ternaire on compare l'index des elements de la flatlist par rapport a l' index courant de l'exercice en cours  */}
+                    {index === this.state.currentIndex ?
+                      <View>
+                        <View style={{ alignItems: "center" }}>
+                          <Image
+                            source={{ uri: item.GIF }}
+                            style={styles.image}
+                            resizeMode="contain"
+                          />
+                        </View>
+                        <View style={{ alignItems: "center" }}>
+                          <Text style={{ marginTop: 10, fontSize: 20, fontWeight: 'bold' }}>{item.NOM_FR}</Text>
+                        </View>
+                        <View style={{ alignItems: "center", margin: 5 }}>
+                          <Text style={{ marginTop: 10, textAlign: 'center' }}>{item.DESC_FR}</Text>
+                        </View>
+                        <View style={{ flex: 1, alignItems: "center", marginTop: 10 }}>
+                          <Text style={{ fontSize: 20 }}>X {item.VALEUR} {item.CONDITION}S</Text>
+                        </View>
+                      </View>
+                      // FIN Ternaire
+                      : ""}
+
+                  </>
+                )}
+              />
+            </View>
+
+
+            <View style={{ flexDirection: "row", marginTop: 20 }}>
+              {/* Condition ternaire: si le current index est 0 on affiche rien sinon on affiche le bouton */}
+              {this.state.currentIndex === 0 ? ""
+                : <View style={{ flex: 1, alignItems: "center" }}>
+                  <TouchableOpacity style={{ backgroundColor: 'red', width: 100, height: 40, borderRadius: 7, justifyContent: 'center' }}
+                    onPress={() => this.previousExo()}
+                  >
+                    <Text style={{ textAlign: 'center', color: 'white' }}>Exercice PRECEDENT</Text>
+                  </TouchableOpacity>
                 </View>
-                <View style={{ alignItems: "center" }}>
-                  <Text style={{ marginTop: 30 }}>{item.NOM_FR}</Text>
-                </View>
-                <View style={{ alignItems: "center" }}>
-                  <Text style={{ marginTop: 30 }}>DESCRIPTION DE L'EXERCICE</Text>
-                </View>
+              }
+
+
+
+
+              {/* Dans cette ternaire on dit que si le current index est egal aux nombres de donnees du tableau on affiche le bouton "valider l'entrainement" */}
+              {this.state.currentIndex === data.length -1 ?
                 <View style={{ flex: 1, alignItems: "center" }}>
-            <Text>TIMER</Text>
-          </View>
-          </View>
-          // FIN Ternaire
-            :""}
+                  <TouchableOpacity style={{ backgroundColor: 'green', width: 110, height: 40, borderRadius: 7, justifyContent: 'center' }}
+                  // onPress={() => }
+                  // onPressOut={() => }
+                  >
+                    <Text style={{ textAlign: 'center', color: 'white' }}>Valider l'entrainement </Text>
+                  </TouchableOpacity>
+                </View>
+                : <View style={{ flex: 1, alignItems: "center" }}>
+                  <TouchableOpacity style={{ backgroundColor: '#2196F3', width: 100, height: 40, borderRadius: 7, justifyContent: 'center' }}
+                    onPress={() => this.nextExo()}
+                    onPressOut={() => this.onButtonNext()}
+                  >
+                    <Text style={{ textAlign: 'center', color: 'white' }}>Exercice SUIVANT</Text>
+                  </TouchableOpacity>
+                </View>
+              }
 
-               </>
-            )}
-          /> 
-        </View>
 
-
-        <View style={{ flexDirection: "row", marginTop: 70 }}>
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <TouchableOpacity style={{ backgroundColor: 'grey', width: '80%', height: 40, borderRadius: 7, justifyContent: 'center' }}
-          onPress={() => this.state.currentIndex--}
-            >
-              <Text style={{ textAlign: 'center', color: 'white' }}>Exercice PRECEDENT</Text>
-            </TouchableOpacity>
-          </View>
-          
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <TouchableOpacity style={{ backgroundColor: 'grey', width: '80%', height: 40, borderRadius: 7, justifyContent: 'center'}}
-            onPress={() => this.nextExo()}
-            >
-              <Text style={{ textAlign: 'center', color: 'white' }}>Exercice SUIVANT</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+            </View>
+            {/* Ternaire pour faire disparaitre le countDown si l'exercice exige des repetitions et non des secondes */}
+            {data.CONDITION == "REPETITION" ? "" 
+            :<CountDown />
+            }
+          </>
+        )}
 
         {/* BOUTON DE VALIDATION DE L'EXERCICE: action à mettre sur le bouton 'exercice suivant' au dessus. */}
 
@@ -185,7 +242,9 @@ console.log(this.props.route)
                     </TouchableOpacity>
                     </View> */}
 
-        <View style={{ flexDirection: "row", marginTop: 70 }}>
+        {/* BOUTON START ET PAUSE MIS DANS LE COMPONENT COUNTDOWN */}
+
+        {/* <View style={{ flexDirection: "row", marginTop: 10 }}>
           <View style={{ flex: 1, alignItems: "center" }}>
             <TouchableOpacity
               onPress={this.onButtonStop}
@@ -208,11 +267,11 @@ console.log(this.props.route)
             >
               <Text style={[styles.buttonText]}>START</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
 
         {/* BOUTON EFFACER DU TIMER */}
 
-          {/* <View style={{ flex: 1, alignItems: "center" }}>
+        {/* <View style={{ flex: 1, alignItems: "center" }}>
                   <TouchableOpacity
                     onPress={this.onButtonClear}
                     activeOpacity={0.6}
@@ -226,11 +285,8 @@ console.log(this.props.route)
                     <Text style={styles.buttonText}>EFFACER</Text>
                   </TouchableOpacity>
                 </View> */}
-        </View>
 
-
-        {/* )} */}
-        {/* />   */}
+        {/* </View> */}
 
       </View>
     );
@@ -244,9 +300,12 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    height: 100,
+    height: 150,
     width: 300,
-    marginTop: 40,
+    marginTop: 50,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: 'black',
   },
 
   button: {
@@ -264,3 +323,4 @@ const styles = StyleSheet.create({
   },
 
 });
+

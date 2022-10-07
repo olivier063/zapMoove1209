@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { Component } from 'react'
 
-export default class Chrono extends Component {
+export default class TimerAuto extends Component {
     constructor(props) {
         super(props);
 
@@ -17,7 +17,7 @@ export default class Chrono extends Component {
         clearInterval(this.state.timer);
     }
 
-    onButtonStart = () => {
+    componentDidMount = () => {
 
         let timer = setInterval(() => {
 
@@ -40,55 +40,12 @@ export default class Chrono extends Component {
     }
 
 
-    onButtonStop = () => {
-        clearInterval(this.state.timer);
-        this.setState({ startDisable: false })
-    }
-
-
-    onButtonClear = () => {
-        this.setState({
-            timer: null,
-            minutes_Counter: '00',
-            seconds_Counter: '00',
-        });
-    }
-
     render() {
 
         return (
             <View style={styles.MainContainer}>
 
                 <Text style={styles.counterText}>{this.state.minutes_Counter} : {this.state.seconds_Counter}</Text>
-
-                <TouchableOpacity
-                    onPress={this.onButtonStart}
-                    activeOpacity={0.6}
-                    style={[styles.button, { backgroundColor: this.state.startDisable ? '#B0BEC5' : '#FF6F00' }]}
-                    disabled={this.state.startDisable} >
-
-                    <Text style={styles.buttonText}>START</Text>
-
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={this.onButtonStop}
-                    activeOpacity={0.6}
-                    style={[styles.button, { backgroundColor: '#FF6F00' }]} >
-
-                    <Text style={styles.buttonText}>STOP</Text>
-
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={this.onButtonClear}
-                    activeOpacity={0.6}
-                    style={[styles.button, { backgroundColor: this.state.startDisable ? '#B0BEC5' : '#FF6F00' }]}
-                    disabled={this.state.startDisable} >
-
-                    <Text style={styles.buttonText}> CLEAR </Text>
-
-                </TouchableOpacity>
 
             </View>
 
@@ -119,7 +76,7 @@ const styles = StyleSheet.create({
     },
     counterText: {
 
-        fontSize: 28,
+        fontSize: 20,
         color: '#000'
     }
 });

@@ -34,7 +34,7 @@ export default class GeneralExercicesNiveau1 extends Component {
       );
       const json = await response.json();
       this.setState({ data: json.SCENARIO });
-      console.log(json)
+      // console.log(json)
     } catch (error) {
       console.log(error);
     }
@@ -103,8 +103,8 @@ export default class GeneralExercicesNiveau1 extends Component {
                       <Text>
                         X {item.VALEUR} {item.CONDITION}
                       </Text>
-                      
-                     
+
+
 
                       {/* DEBUT MODAL */}
 
@@ -112,7 +112,7 @@ export default class GeneralExercicesNiveau1 extends Component {
                         <Modal
                           animationType="slide"
                           transparent={true}
-                          visible={modalVisible===index}
+                          visible={modalVisible === index}
                           onRequestClose={() => {
                             Alert.alert("Modal has been closed.");
                             this.setModalVisible(!modalVisible);
@@ -130,26 +130,24 @@ export default class GeneralExercicesNiveau1 extends Component {
                               </Text>
 
                               <View style={{ flexDirection: "row" }}>
-                                {/* permet de faire une condition en ternaire (item.VIDEO)*/}
-                              {item.VIDEO?
-                              
-
-                                <View
-                                  style={{ flex: 1, alignItems: "center" }}
-                                >
-                                  <TouchableOpacity
-                                    onPress={() => navigate("YOUTUBE",{linkYoutube: item.VIDEO})}
-                                    onPressOut={() => this.setModalVisible(!modalVisible) }
+                                {/* permet de faire une condition en ternaire (item.VIDEO), affiche le l'image du lien youtube que si il y a un lien video dans le json */}
+                                {item.VIDEO ?
+                                  <View
+                                    style={{ flex: 1, alignItems: "center" }}
                                   >
-                                    <Image
-                                      source={require("../assets/logoYoutube.jpeg")}
-                                      style={styles.imageYoutube}
-                                      resizeMode="contain"
-                                    />
-                                  </TouchableOpacity>
-                                </View>
-              // les guillemets se remplace par des balise text ou autre
-              :""}
+                                    <TouchableOpacity
+                                      onPress={() => navigate("YOUTUBE", { linkYoutube: item.VIDEO })}
+                                      onPressOut={() => this.setModalVisible(!modalVisible)}
+                                    >
+                                      <Image
+                                        source={require("../assets/logoYoutube.jpeg")}
+                                        style={styles.imageYoutube}
+                                        resizeMode="contain"
+                                      />
+                                    </TouchableOpacity>
+                                  </View>
+                                  // les guillemets se remplace par des balise text ou autre
+                                  : ""}
                                 <View
                                   style={{ flex: 1, alignItems: "center" }}
                                 >
@@ -172,7 +170,7 @@ export default class GeneralExercicesNiveau1 extends Component {
                             </View>
                           </View>
                         </Modal>
-                          {/* FIN MODAL */}
+                        {/* FIN MODAL */}
 
                         <Pressable
                           style={[styles.button, styles.buttonOpen]}
@@ -183,7 +181,7 @@ export default class GeneralExercicesNiveau1 extends Component {
                         </Pressable>
                       </View>
 
-                    
+
                     </View>
 
 
@@ -208,9 +206,9 @@ export default class GeneralExercicesNiveau1 extends Component {
           </>
         )}
         <View>
-          <TouchableOpacity 
-          onPress={() => navigate("START EXERCICES",{id: this.state.numTraining})}
-          
+          <TouchableOpacity
+            onPress={() => navigate("START EXERCICES", { id: this.state.numTraining })}
+
           >
             <Text
               style={{

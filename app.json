@@ -24,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.olive06300.zapMoove1209"
     },
     "web": {
       "favicon": "./assets/favicon.png"
