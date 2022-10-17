@@ -1,8 +1,8 @@
-import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator, Modal } from "react-native";
 import React, { Component } from "react";
 import CountDown from "../components/countDown";
-import Chrono from "../components/chrono";
 import TimerAuto from "../components/timerAuto";
+import CountDownModal from "../components/countDownModal";
 
 
 export default class StartExercices extends Component {
@@ -24,24 +24,30 @@ export default class StartExercices extends Component {
       minutes: 0,
       seconds: 30,
       timerDown: null,
+      modalVisible: false,
+      // on cree cette variable pour savoir si on doit reset le timer du countDown ou non
+      resetTimer: false
     };
   }
 
+  setModalVisible = (visible) => {
+    this.setState({ modalVisible: visible });
+  }
 
 
   // fonction qui doit remettre le compte à rebours à 30 secondes quand on appuit sur exercice suivant
   onButtonNext = () => {
     clearInterval(this.state.timerDown)
-    this.setState({seconds: 30})
-  // console.log('this.setState')
-  this.setState({
-    timerDown: null,
-    minutes: '00',
-    seconds: '30',
-  });
+    this.setState({ seconds: 30 })
+    // console.log('this.setState')
+    this.setState({
+      timerDown: null,
+      minutes: '00',
+      seconds: '30',
+    });
   }
 
-  
+
   //...............................
 
 
@@ -55,7 +61,10 @@ export default class StartExercices extends Component {
       );
       const json = await response.json();
       this.setState({ data: json.SCENARIO });
-      // console.log(json.SCENARIO)
+
+      console.log(json.SCENARIO[this.state.currentIndex]["CONDITION"])
+      console.log(json.SCENARIO.length)
+
     } catch (error) {
       console.log(error);
     } finally {
@@ -93,7 +102,8 @@ export default class StartExercices extends Component {
   // FIN TIMER....................
 
   nextExo = () => {
-    this.setState({ currentIndex: this.state.currentIndex + 1 });
+    this.setState({ currentIndex: this.state.currentIndex + 1, resetTimer: true });
+    this.setModalVisible(true)
     console.log(this.state.currentIndex)
   }
 
@@ -103,21 +113,19 @@ export default class StartExercices extends Component {
 
   }
 
+  closeModal = () => {
+    this.setModalVisible(false)
+  }
+
+  // ici on dit au parent StartExercice de set la valeur resetTimer a false sinon elle est true tout le tps
+  isTimerReset = () => {
+    this.setState({resetTimer: false})
+  }
 
   render() {
-    const { data, isLoading } = this.state;
+    const { data, isLoading, modalVisible } = this.state;
 
     const { navigate } = this.props.navigation;
-
-
-    // const array = ["SCENARIO"]
-    // const longueur = array.length
-    // console.log(longueur.length)
-
-    // const json = new Array
-    // const longueur = json.SCENARIO
-    // console.log(longueur)
-    
 
     return (
 
@@ -157,7 +165,7 @@ export default class StartExercices extends Component {
               <FlatList
                 data={data}
                 keyExtractor={(item, index) => index.toString()}
-                // dans le render on ajoute l'index pour pouvoir l'utiliser dans la ternaire et donc afficher uniquement l'exercice courant
+                // dans le renderItem on ajoute l'index pour pouvoir l'utiliser dans la ternaire et donc afficher uniquement l'exercice courant
                 renderItem={({ item, index }) => (
                   <>
 
@@ -206,7 +214,7 @@ export default class StartExercices extends Component {
 
 
               {/* Dans cette ternaire on dit que si le current index est egal aux nombres de donnees du tableau on affiche le bouton "valider l'entrainement" */}
-              {this.state.currentIndex === data.length -1 ?
+              {this.state.currentIndex === data.length - 1 ?
                 <View style={{ flex: 1, alignItems: "center" }}>
                   <TouchableOpacity style={{ backgroundColor: 'green', width: 110, height: 40, borderRadius: 7, justifyContent: 'center' }}
                   // onPress={() => }
@@ -218,18 +226,48 @@ export default class StartExercices extends Component {
                 : <View style={{ flex: 1, alignItems: "center" }}>
                   <TouchableOpacity style={{ backgroundColor: '#2196F3', width: 100, height: 40, borderRadius: 7, justifyContent: 'center' }}
                     onPress={() => this.nextExo()}
-                    onPressOut={() => this.onButtonNext()}
+                  
                   >
                     <Text style={{ textAlign: 'center', color: 'white' }}>Exercice SUIVANT</Text>
                   </TouchableOpacity>
+
+
+                  <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                  >
+                    <View style={styles.centeredView}>
+                      <View style={styles.modalView}>
+                        <Text style={{ marginTop: 10 }}>RECUPERATION</Text>
+                        <Image
+                          source={require("../assets/repos.jpeg")}
+                          style={styles.imageModal}
+                        />
+
+                          {/* accede à la fonction closeModal */}
+                        <CountDownModal closeModal={this.closeModal} />
+
+                        <TouchableOpacity
+                          style={[styles.button, styles.buttonClose]}
+                          onPress={() => this.setModalVisible(!modalVisible)}
+                        >
+                          <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>Passer</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </Modal>
+
                 </View>
               }
 
 
             </View>
             {/* Ternaire pour faire disparaitre le countDown si l'exercice exige des repetitions et non des secondes */}
-            {data.CONDITION == "REPETITION" ? "" 
-            :<CountDown />
+            
+            {this.state.data[this.state.currentIndex]["CONDITION"] == 'REPETITION' ? ""
+            // ici on lui passe la valeur resetTimer du parent et on lui passe la fonction isTimerReset
+              : <CountDown resetTimer = {this.state.resetTimer} isTimerReset = {this.isTimerReset} />
             }
           </>
         )}
@@ -321,6 +359,60 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
   },
+
+
+
+
+  imageModal: {
+    height: 250,
+    width: 170,
+    marginTop: 15,
+    borderRadius: 7
+  },
+  centeredView: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: -120
+  },
+  modalView: {
+    marginTop: 380,
+    backgroundColor: "white",
+    borderRadius: 7,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: 300
+  },
+  button: {
+    borderRadius: 7,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+    marginBottom: 10
+  },
+  textStyle: {
+    color: "black",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  },
+
+
 
 });
 

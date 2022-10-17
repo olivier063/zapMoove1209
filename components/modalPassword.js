@@ -16,9 +16,6 @@ export default class ModalPassword extends Component {
     }
 
 
-
-
-
   render() {
     const { modalVisible } = this.state;
     return (

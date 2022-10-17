@@ -15,13 +15,21 @@ export default class CountDown extends Component {
         };
     }
 
-    //   componentWillUnmount() {
-    //     clearInterval(this.state.timerDown);
-    // }
+    // on regarde si la valeur resetTimer du parent est à true, si c'est le cas on remet à zer0, clearInterval pour arreter le decompte
+    // de secondes, on passe a false le bouton start, et on reset le timer
+ componentDidUpdate() {
+    console.log(this.props)
+    if (this.props.resetTimer) {
+        this.setState({seconds: 30})
+        clearInterval(this.timerDown)
+        this.setState({ startDisable: false })
+        this.props.isTimerReset()
+    }
+ }
 
 
     onButtonStart() {
-        let timerDown = setInterval(() => {
+        this.timerDown = setInterval(() => {
             const { seconds, minutes } = this.state
 
             if (seconds > 0) {
@@ -31,7 +39,7 @@ export default class CountDown extends Component {
             }
             if (seconds === 0) {
                 if (minutes === 0) {
-                    clearInterval(timerDown)
+                    clearInterval(this.timerDown)
                 } else {
                     this.setState(({ minutes }) => ({
                         minutes: minutes - 1,
@@ -41,7 +49,6 @@ export default class CountDown extends Component {
             }
         }, 1000)
         this.setState({ startDisable: true })
-        this.setState({ timerDown });
     }
 
     onButtonPause = () => {
@@ -66,7 +73,7 @@ export default class CountDown extends Component {
                 </View>
                 <View>
 
-                    {/* // condition ternaire: Si minutes et seconds sont à zero, on affiche 'finit' sinon, on affiche le timer */}
+                    {/* // condition ternaire: Si minutes et seconds sont à zero, on affiche 'fini' sinon, on affiche le timer */}
                 {minutes === 0 && seconds === 0
                     ? <Text>FINI</Text>
                     : <Text style={{ textAlign: 'center', fontSize: 40, fontWeight: 'bold' }}>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</Text>
