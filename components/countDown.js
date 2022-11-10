@@ -1,71 +1,80 @@
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { Component } from 'react'
+import TimerService from '../services/timerService';
 
 
+// export const BASE_SECONDS = 2
 
 export default class CountDown extends Component {
+    timerService = null;
     constructor(props) {
         super(props);
+        // console.log(this.props)
+        const maxTime = 30;
 
+        this.timerService = new TimerService(maxTime);
+        this.timerService.timerChange.subscribe(state => {
+            // console.log({
+            //     minutes: this.timerService.getMinutes(),
+            //     seconds: this.timerService.getSeconds(),
+            //     startDisable: (this.timerService.getSeconds() === 0 && this.timerService.getMinutes() === 0 ? false : true)
+            // })
+            this.setState({
+                minutes: this.timerService.getMinutes(),
+                seconds: this.timerService.getSeconds(),
+                startDisable: ((this.timerService.getSeconds() === 0 && this.timerService.getMinutes() === 0) || this.timerService.getSeconds() === maxTime ? false : true) 
+            })
+
+        })
         this.state = {
-            minutes: 0,
-            seconds: 30,
+            minutes: this.timerService.getMinutes(),
+            seconds: this.timerService.getSeconds(),
             startDisable: false,
             timerDown: null,
         };
+       
     }
 
-    // on regarde si la valeur resetTimer du parent est à true, si c'est le cas on remet à zer0, clearInterval pour arreter le decompte
+    // on regarde si la valeur resetTimer du parent est à true, si c'est le cas on remet à zer0 clearInterval pour arreter le decompte
     // de secondes, on passe a false le bouton start, et on reset le timer
- componentDidUpdate() {
-    console.log(this.props)
-    if (this.props.resetTimer) {
-        this.setState({seconds: 30})
-        clearInterval(this.timerDown)
-        this.setState({ startDisable: false })
-        this.props.isTimerReset()
+    componentDidUpdate() {
+        // console.log(this.props)
+        if (this.props.resetTimer) {
+            this.timerService.stopTimer();
+            this.setState({ startDisable: false })
+            this.props.isTimerReset()
+        }
     }
- }
 
 
     onButtonStart() {
-        this.timerDown = setInterval(() => {
-            const { seconds, minutes } = this.state
-
-            if (seconds > 0) {
-                this.setState(({ seconds }) => ({
-                    seconds: seconds - 1
-                }))
-            }
-            if (seconds === 0) {
-                if (minutes === 0) {
-                    clearInterval(this.timerDown)
-                } else {
-                    this.setState(({ minutes }) => ({
-                        minutes: minutes - 1,
-                        seconds: 59
-                    }))
-                }
-            }
-        }, 1000)
-        this.setState({ startDisable: true })
+        this.timerService.startTimer();
+        this.setState({ startDisable: true });
     }
 
     onButtonPause = () => {
-        clearInterval(this.state.timerDown);
-        this.setState({ startDisable: false })
+        this.timerService.stopTimer();
+        this.setState({ startDisable: false });
     }
 
 
-
     render() {
-        const { minutes, seconds } = this.state
+        const { minutes, seconds } = this.state;
+
+        //Permet l'ouverture de la modale quand le countDown est à zero
+        console.log(this.timerService.getTimerDown())
+        if (minutes == 0 && seconds == 0 && this.timerService.getTimerDown() != null) {
+            this.timerService.stopTimer(true);
+            console.log("RENDER countDown")
+            this.props.openModal(true)
+        }
+    
+
         return (
-            <View style={{flexDirection: 'row', marginTop: 20}}>
-                
+            <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flex: 1, alignItems: "center" }}>
                     <TouchableOpacity
-                        onPress={()=>this.onButtonPause()}
+                        onPress={() => this.onButtonPause()}
                         activeOpacity={0.6}
                         style={[styles.button, { backgroundColor: "#FF6F00" }]}>
                         <Text style={styles.buttonText}>PAUSE</Text>
@@ -74,14 +83,14 @@ export default class CountDown extends Component {
                 <View>
 
                     {/* // condition ternaire: Si minutes et seconds sont à zero, on affiche 'fini' sinon, on affiche le timer */}
-                {minutes === 0 && seconds === 0
-                    ? <Text>FINI</Text>
-                    : <Text style={{ textAlign: 'center', fontSize: 40, fontWeight: 'bold' }}>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</Text>
-                }
+
+                    {/* <Text>FINI</Text> */}
+                    <Text style={{ textAlign: 'center', fontSize: 40, fontWeight: 'bold' }}>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</Text>
+
                 </View>
                 <View style={{ flex: 1, alignItems: "center" }}>
                     <TouchableOpacity
-                        onPress={()=>this.onButtonStart()}
+                        onPress={() => this.onButtonStart()}
                         activeOpacity={0.6}
                         style={[
                             styles.button,
@@ -94,6 +103,7 @@ export default class CountDown extends Component {
                         <Text style={[styles.buttonText]}>START</Text>
                     </TouchableOpacity>
                 </View>
+
             </View>
         )
     }

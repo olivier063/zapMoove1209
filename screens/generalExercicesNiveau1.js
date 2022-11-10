@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import React, { Component } from "react";
 
+
 export default class GeneralExercicesNiveau1 extends Component {
   constructor(props) {
     super(props);
@@ -34,7 +35,7 @@ export default class GeneralExercicesNiveau1 extends Component {
       );
       const json = await response.json();
       this.setState({ data: json.SCENARIO });
-      // console.log(json)
+      // console.log("json")
     } catch (error) {
       console.log(error);
     }
@@ -63,7 +64,7 @@ export default class GeneralExercicesNiveau1 extends Component {
       );
       const json = await response.json();
       this.setState({ data: json.SCENARIO });
-      // console.log(json)
+      console.log(json)
     } catch (error) {
       console.log(error);
     } finally {
@@ -100,6 +101,8 @@ export default class GeneralExercicesNiveau1 extends Component {
                         {item.NOM_FR}
                         {/* {this.state.title} */}
                       </Text>
+
+
                       <Text>
                         X {item.VALEUR} {item.CONDITION}
                       </Text>
@@ -125,9 +128,13 @@ export default class GeneralExercicesNiveau1 extends Component {
                                 style={styles.image}
                                 resizeMode="contain"
                               />
+
+
                               <Text style={styles.modalText}>
                                 {item.DESC_FR}
                               </Text>
+
+
 
                               <View style={{ flexDirection: "row" }}>
                                 {/* permet de faire une condition en ternaire (item.VIDEO), affiche le l'image du lien youtube que si il y a un lien video dans le json */}
@@ -301,4 +308,5 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: "center",
   },
+
 });

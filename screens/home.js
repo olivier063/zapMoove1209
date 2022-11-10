@@ -27,7 +27,7 @@ export default class Home extends Component {
                 prenom: loginState["PRENOM"], // le PRENOM et NOM majuscule correspondent au Json
                 nom: loginState["NOM"]
             });
-        } catch (error) { // Voir avec LUDO
+        } catch (error) { 
             this.setState({
                 prenom: "",
                 nom: "",

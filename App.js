@@ -19,6 +19,8 @@ import Login from './screens/login';
 import Home from './screens/home';
 import TestCondition from './screens/testCondition';
 import EditAccount from './screens/editAccount';
+import PresentationEscape from './screens/presentationEscape';
+import EscapeRunHistory from './screens/escapeRunHistory';
 
 
 
@@ -42,7 +44,17 @@ export default function App() {
               </TouchableOpacity>
             })}
           />
-          <Stack.Screen name="CHOIX ESCAPE RUN" component={EscapeRunChoixCourse} />
+          <Stack.Screen name="CHOIX ESCAPE RUN" component={EscapeRunChoixCourse} 
+           options={({ navigation }) => ({
+            headerRight: () => <TouchableOpacity onPress={() => navigation.navigate("HISTORIQUE")}>
+              <Image source={require("./assets/imageHistorique.png")}
+                resizeMode="contain"
+                style={styles.imageHistorique} />
+            </TouchableOpacity>
+          })}
+          />
+          <Stack.Screen name="HISTORIQUE" component={EscapeRunHistory} />
+          <Stack.Screen name="PRESENTATION ESCAPE" component={PresentationEscape} />
           <Stack.Screen name="CHOIX COURSE CONNECTEE" component={CourseConnecteeChoixCourse} />
           <Stack.Screen name="CHOIX COMPETITION" component={CompetitionChoixCourse} />
           <Stack.Screen name="CHOISIR UN MODE" component={ExerciceMenu} />
@@ -69,6 +81,10 @@ const styles = StyleSheet.create({
     height: 60,
     width: 100,
     borderRadius: 50,
-
   },
+
+  imageHistorique:{
+    height: 30,
+    width: 100,
+  }
 })

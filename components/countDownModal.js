@@ -1,21 +1,19 @@
 import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { Component } from 'react'
-import CountDown from './countDown';
-
 
 
 
 export default class CountDownModal extends Component {
 
-    timerDown = null;
+    // timerDown = null;
 
     constructor(props) {
         super(props);
-
-        console.log(this.props)
+     
+        // console.log(this.props)
         this.state = {
             minutes: 0,
-            seconds: 10,
+            seconds: 30,
             startDisable: false,
             timerDown: null
         };
@@ -23,19 +21,14 @@ export default class CountDownModal extends Component {
 
 
     componentDidMount = () => {
-        console.log('TOTOTOT')
         this.timerDown = setInterval(() => {
             const { seconds, minutes } = this.state
 
             if (seconds > 0) {
-                // this.setState(({ seconds }) => ({
-                    // seconds: seconds - 1
-                // }))
-                this.setState({seconds: seconds -1})
+                this.setState({ seconds: seconds - 1 })
             }
             if (seconds === 0) {
                 if (minutes === 0) {
-                    console.log('yooooooooooooo')
                     clearInterval(this.timerDown)
                 } else {
                     this.setState(({ minutes }) => ({
@@ -45,25 +38,25 @@ export default class CountDownModal extends Component {
                 }
             }
         }, 1000)
-       
+
     }
 
-  
+
     render() {
-        console.log("RENDER")
+        console.log("RENDER countDownModal")
         const { minutes, seconds } = this.state
         // on ajoute la condition timerDown different de null pour eviter la boucle
-        if (minutes == 0 && seconds == 0 && this.timerDown !== null){
+        if (minutes == 0 && seconds == 0 && this.timerDown !== null) {
             clearInterval(this.timerDown)
             this.timerDown = null
-            // permet d'utiliser la fonction du parent closeModal
+            // permet d'utiliser la fonction du parent closeModal en passant par props
             this.props.closeModal()
         }
         return (
 
-            <View style={{ flexDirection: 'row', marginTop: 20,}}>
+            <View style={{ flexDirection: 'row', marginTop: 0, }}>
                 <View>
-                <Text style={{ textAlign: 'center', fontSize: 40, fontWeight: 'bold' }}>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</Text>
+                    <Text style={{ textAlign: 'center', fontSize: 40, fontWeight: 'bold' }}>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</Text>
                 </View>
             </View>
         )

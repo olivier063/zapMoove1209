@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
         fontSize: 20
     },
     counterText: {
-
+        fontWeight: 'bold',
         fontSize: 20,
         color: '#000'
     }
