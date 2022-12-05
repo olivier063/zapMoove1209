@@ -27,6 +27,7 @@ export default class StartExercices extends Component {
       minutes: 0,
       seconds: 30,
       timerDown: null,
+
       modalVisible: false,
       // on cree cette variable pour savoir si on doit reset le timer du countDown ou non
       resetTimer: false,
@@ -115,7 +116,7 @@ export default class StartExercices extends Component {
   }
 
 
-  //......................................................................
+  // ajout des points pour deverrouiller les exercices......................................................................
   async saveTraining() {
     try {
       const response = await fetch(
@@ -124,18 +125,22 @@ export default class StartExercices extends Component {
       const json = await response.json();
       this.setState({ dataGueule: json });
 
-      // console.log(json)
-      // console.log(this.state.dataGueule[0]["TITRE_FR"])
-      // console.log(this.props.route.params.id)
-      // console.log(this.state.numTraining)
-      // console.log(this.state.dataGueule)
-
       let totalPoints = 0
+
+      try {
+        totalPoints = await StorageService.load({ key: 'totalPoints' });
+        console.log("GET EXERCICE", totalPoints)
+      } catch (error) {
+        console.log("catch de getExercices", error)
+      }
 
       // v pour valeur
       this.state.dataGueule.forEach(v => {
+
         if (this.state.numTraining == v["NUM_TRAINING"]) {
-          totalPoints += v["RECOMPENSE"]
+
+          let number = parseInt(v["RECOMPENSE"])
+          totalPoints += number
         }
       })
       await StorageService.save({
@@ -151,6 +156,7 @@ export default class StartExercices extends Component {
     }
   }
   //......................................................................
+
 
   render() {
     const { data, isLoading, modalVisible } = this.state;
@@ -214,9 +220,9 @@ export default class StartExercices extends Component {
                           </View>
 
 
-                          <View style={{ alignItems: "center", margin: 0, height: 60 }}>
+                          <View style={{ alignItems: "center", margin: 0, height: 40 }}>
                             <ScrollView>
-                              <Text style={{ marginTop: 5, textAlign: 'center' }}>{item.DESC_FR}</Text>
+                              <Text style={{ marginTop: 5, textAlign: 'center', fontSize: 15 }}>{item.DESC_FR}</Text>
                             </ScrollView>
                           </View>
 
@@ -357,19 +363,20 @@ const styles = StyleSheet.create({
     // marginTop: -120
   },
   modalView: {
-    marginTop: 250,
+    marginTop: 235,
     backgroundColor: "white",
     borderRadius: 7,
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2
+    // },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: 300
+    width: '100%',
+
   },
   button: {
     borderRadius: 7,

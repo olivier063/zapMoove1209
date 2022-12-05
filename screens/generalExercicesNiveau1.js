@@ -64,7 +64,7 @@ export default class GeneralExercicesNiveau1 extends Component {
       );
       const json = await response.json();
       this.setState({ data: json.SCENARIO });
-      console.log(json)
+      // console.log(json)
     } catch (error) {
       console.log(error);
     } finally {

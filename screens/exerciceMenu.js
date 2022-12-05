@@ -7,7 +7,7 @@ export default class ExerciceMenu extends Component {
     return (
       <View >
         <View  style={styles.textContainer}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={ () => this.props.navigation.navigate('CARTE TRAINING')}>
                 <Text style={{marginLeft: 10}}>ENTRAINEMENT</Text>
                 <Text style={{marginLeft: 10}}>Course à pied, marche, vélo</Text>
             </TouchableOpacity>

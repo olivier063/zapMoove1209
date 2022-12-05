@@ -23,8 +23,14 @@ export class Exercices extends Component {
       totalPoints: 0,
       refreshing: false,
     };
+    //quand on valide un entrainement et que l'on revient sur choisir un entrainement, on ajoute un addListener sur la navigation qui permet de recharger le getExercice
+    this.props.navigation.addListener('focus', () => {
+      this.getExercices();
+    });
   }
 
+
+  // on affiche les exercices debloqués
   async getExercices() {
     let totalPoints = 0;
     try {
@@ -42,15 +48,11 @@ export class Exercices extends Component {
 
       // console.log(json)
 
-      // on cree la variable DISABLED dans le json pour le forEach
+      // on cree la Valeure DISABLED dans le json pour le forEach
       json.forEach(v => {
-        // console.log(totalPoints)
-        // console.log(v["POINTS_DEBLOQUER"])
         v["DISABLED"] = totalPoints >= v["POINTS_DEBLOQUER"] ? false : true;
       })
       this.setState({ totalPoints: totalPoints, data: json })
-      // console.log("APRES SET STATE",json)
-      // console.log(this.state.data)
 
       this.opacity();
 
@@ -75,12 +77,13 @@ export class Exercices extends Component {
       v["OPACITY"] = this.imageOpacity(v["DISABLED"])
     })
     this.setState({ data: this.state.data })
-    console.log("OPACITY",this.state.data)
+    // console.log("OPACITY", this.state.data)
   }
   //FIN OPACITY.......................................
 
 
   componentDidMount() {
+    console.log("COMPONENTDIDMOUNT")
     this.getExercices();
   }
 
@@ -90,13 +93,20 @@ export class Exercices extends Component {
   //   }
   // }
 
+
   // PULL TO REFRESH...................................................
-  onRefresh() {
+
+  async onRefresh() {
     this.setState({ refreshing: true });
-    fetch("https://www.zapmoove.fr/ext/zapmoove/listeTraining.php").then(() => {
-      this.setState({ refreshing: false });
-    });
-  }
+    try {
+      totalPoints = await StorageService.load({ key: 'totalPoints' });
+      this.setState({ totalPoints })
+    } catch (error) {
+      console.log("catch de onRefresh", error)
+    }
+    this.setState({ refreshing: false });
+  };
+
   //FIN PULL TO REFRESH................................................
 
   render() {
@@ -156,6 +166,7 @@ export class Exercices extends Component {
 
                 </View>
 
+                {/* ce style permet d'ajouter une ligne separatrice */}
                 <View
                   style={{
                     borderBottomColor: "black",

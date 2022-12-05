@@ -23,6 +23,12 @@ import PresentationEscape from './screens/presentationEscape';
 import EscapeRunHistory from './screens/escapeRunHistory';
 
 
+import TrainingMapView2 from './screens/trainingMapView2';
+
+
+
+
+
 
 
 const Stack = createNativeStackNavigator();
@@ -67,7 +73,9 @@ export default function App() {
           <Stack.Screen name="YOUTUBE" component={LienYoutube} />
           <Stack.Screen name="CONNEXION" component={Login} />
           <Stack.Screen name="TEST CONDITION" component={TestCondition} />
-          <Stack.Screen name="MODIFIER LE COMPTE" component={EditAccount} />       
+          <Stack.Screen name="MODIFIER LE COMPTE" component={EditAccount} />
+          <Stack.Screen name="CARTE TRAINING" component={TrainingMapView2} />
+         
         </Stack.Navigator>
       </NavigationContainer>
 

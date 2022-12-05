@@ -83,11 +83,11 @@ export default class PresentationEscape extends Component {
     //format
     horizontalSize(format) {
         if (format == 1) {
-            return 375
+            return 300
         } else if (format == 2) {
-            return 185
+            return 150
         }
-        return 120
+        return 100
     }
     // (v) pour valeur
     sortTiles() {
@@ -128,7 +128,7 @@ export default class PresentationEscape extends Component {
                     <ActivityIndicator />
                 ) : (
                     <>
-                        <Text style={{ textAlign: 'center', fontSize: 25, marginTop: 10 }}>{this.state.titleEvent} </Text>
+                        <Text style={{ textAlign: 'center', fontSize: 25, marginTop: 0 }}>{this.state.titleEvent} </Text>
                         <Image
                             source={{ uri: this.state.banniere }}
                             style={styles.banniere}
@@ -137,21 +137,21 @@ export default class PresentationEscape extends Component {
                         <View>
                             <FlatList
                                 data={data} //the array to render
-                                columnWrapperStyle={{ flexWrap: 'wrap', flex: 1, marginTop: 5 }}
+                                columnWrapperStyle={{ flexWrap: 'wrap', flex: 1, marginTop: 0, justifyContent: 'center' }}
                                 numColumns={3}
                                 horizontal={false}
                                 keyExtractor={(item, index) => index.toString()}  // Extract keys for each item in the array
                                 renderItem={({ item }) => ( //each item from the array will be rendered here
-                                    <TouchableOpacity style={{ width: item["LARGEUR"], backgroundColor: item["COULEUR_PRIMAIRE"], marginLeft: 8 }}>
+                                    <TouchableOpacity style={{ width: item["LARGEUR"]}}>
                                         <Text style={{
-                                            marginTop: 10,
+                                            marginTop: 5,
                                             height: 50,
                                             margin: 5,
                                             borderColor: 'black',
                                             borderWidth: 1,
                                             borderRadius: 7,
                                             textAlign: 'center',
-                                            paddingTop: 15,
+                                            paddingTop: 15, // je mets un padding car impossible de centrer le texte
                                             backgroundColor: item["COLOR_ONE"]
                                         }}>{item.TITRE_FR}</Text>
                                     </TouchableOpacity>
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     banniere: {
         height: 210,
         width: "100%",
-        marginTop: 5,
+        marginTop: 0,
         borderColor: 'black',
         borderWidth: 1,
         borderRadius: 7

@@ -71,7 +71,7 @@ export default class CountDown extends Component {
     
 
         return (
-            <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', marginTop: 10 }}>
                 <View style={{ flex: 1, alignItems: "center" }}>
                     <TouchableOpacity
                         onPress={() => this.onButtonPause()}
