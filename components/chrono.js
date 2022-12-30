@@ -1,5 +1,7 @@
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { Component } from 'react'
+import TrainingMapView2 from '../screens/trainingMapView2';
+
 
 export default class Chrono extends Component {
     constructor(props) {
@@ -61,6 +63,8 @@ export default class Chrono extends Component {
 
                 <Text style={styles.counterText}>{this.state.minutes_Counter} : {this.state.seconds_Counter}</Text>
 
+               
+
                 <TouchableOpacity
                     onPress={this.onButtonStart}
                     activeOpacity={0.6}
@@ -90,6 +94,7 @@ export default class Chrono extends Component {
 
                 </TouchableOpacity>
 
+            <TrainingMapView2 />
             </View>
 
         );

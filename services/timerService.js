@@ -10,8 +10,6 @@ class TimerService {
     constructor(maxTime){
         this.maxTime = maxTime;
         this.setTimer();
-      
-
         // console.log(this)
     }
     
@@ -38,8 +36,7 @@ class TimerService {
         this.timerChange.next({seconds: this.seconds, minutes: this.minutes});
         if (reset){
             this.setTimer();
-        }
-        
+        }       
     }
 
     getTimerDown(){
@@ -57,8 +54,5 @@ class TimerService {
         this.timerChange.next({seconds: this.seconds, minutes: this.minutes});
     }
 }
-
-
-
    
 export default TimerService;

@@ -3,7 +3,7 @@ import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput, TouchableOp
 import validator from 'validator';
 
 export default function ModalPasswordNew() {
- 
+
     const [modalVisible, setModalVisible] = useState(false);
     const [mail, setMail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -27,9 +27,13 @@ export default function ModalPasswordNew() {
             } else {
                 setErrorMessage('Un Email va vous être envoyé, merci de verifier vos Spams')
                 console.log(json)
+
+                // Verifier si le message: un email va vous etre envoye s'affiche bien avant la fermeture de la fenetre
+                setModalVisible(!modalVisible)
+                Alert.alert('Un Email va vous être envoyé, merci de verifier vos Spams')
             }
         } catch (error) {
-            setErrorMessage('Oups, un problème est survenu, réessayez plus tard!')
+            setErrorMessage('Oups, un problème est survenu, revenez plus tard!')
             console.error(errorMessage);
         }
     }
@@ -67,23 +71,23 @@ export default function ModalPasswordNew() {
                             <Text style={{ color: 'red', marginLeft: 10, marginRight: 10, textAlign: 'center' }}>{errorMessage}</Text>
                         </View>
 
-                        <View style={{flexDirection: 'row'}}>
+                        <View style={{ flexDirection: 'row' }}>
                             <View>
-                            <TouchableOpacity
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => forgotPassword()}
-                            >
-                                <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>Valider</Text>
-                            </TouchableOpacity>
-                            </View> 
+                                <TouchableOpacity
+                                    style={[styles.button, styles.buttonClose]}
+                                    onPress={() => forgotPassword()}
+                                >
+                                    <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>Valider</Text>
+                                </TouchableOpacity>
+                            </View>
 
-                            <View style={{marginLeft: 20}}>
-                            <TouchableOpacity
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)}
-                            >
-                                <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>FERMER</Text>
-                            </TouchableOpacity>
+                            <View style={{ marginLeft: 20 }}>
+                                <TouchableOpacity
+                                    style={[styles.button, styles.buttonClose]}
+                                    onPress={() => setModalVisible(!modalVisible)}
+                                >
+                                    <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>FERMER</Text>
+                                </TouchableOpacity>
                             </View>
 
                         </View>
@@ -106,7 +110,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginTop: -50,
-   
+
     },
     modalView: {
         marginTop: 330,

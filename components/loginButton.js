@@ -17,7 +17,7 @@ export default function LoginButton() {
         try {
             const loginState = await StorageService.load({ key: 'loginState' });
             // console.log(loginState)
-            return loginState.MAIL === mail;
+            return loginState.MAIL === mail
         } catch (error) {
             console.log(error)
             return false;

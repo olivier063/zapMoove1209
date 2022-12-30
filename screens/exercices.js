@@ -10,6 +10,9 @@ import {
 } from "react-native";
 import React, { Component } from "react";
 import StorageService from "../services/storageService";
+import UniqueModal from "../components/uniqueModal";
+
+
 
 export class Exercices extends Component {
 
@@ -83,7 +86,7 @@ export class Exercices extends Component {
 
 
   componentDidMount() {
-    console.log("COMPONENTDIDMOUNT")
+    // console.log("COMPONENTDIDMOUNT")
     this.getExercices();
   }
 
@@ -117,6 +120,26 @@ export class Exercices extends Component {
 
     return (
       <View style={{ height: `100%`, backgroundColor: "white" }}>
+        {/* <UniqueModal /> */}
+
+        <View style={{ marginTop: 5, alignItems: 'center'}}>
+          <TouchableOpacity style={{ height: 50, width: 50, backgroundColor: '#92AFD7', borderRadius: 30 }}
+            onPress={() => navigate('EXPLICATION DES POINTS')}
+          >
+            <Text style={{ textAlign: 'center', fontSize: 40, fontWeight: 'bold' }}>?</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* ce style permet d'ajouter une ligne separatrice */}
+        <View
+          style={{
+            borderBottomColor: "black",
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            marginTop: 10,
+          }}
+        ></View>
+
+
         {isLoading ? (
 
           <ActivityIndicator />
@@ -177,8 +200,10 @@ export class Exercices extends Component {
               </>
             )}
           />
+
         )}
       </View>
+
     );
   }
 }
@@ -201,4 +226,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  createButton: {
+    width: 60,
+    height: 50,
+    borderRadius: 30,
+    backgroundColor: '#92AFD7',
+    // position: 'absolute',
+    marginTop: 470,
+    marginLeft: 315
+  }
 });

@@ -2,7 +2,6 @@ import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
 import React, { Component } from 'react'
 import TimerService from '../services/timerService';
 
-
 // export const BASE_SECONDS = 2
 
 export default class CountDown extends Component {
@@ -14,18 +13,14 @@ export default class CountDown extends Component {
 
         this.timerService = new TimerService(maxTime);
         this.timerService.timerChange.subscribe(state => {
-            // console.log({
-            //     minutes: this.timerService.getMinutes(),
-            //     seconds: this.timerService.getSeconds(),
-            //     startDisable: (this.timerService.getSeconds() === 0 && this.timerService.getMinutes() === 0 ? false : true)
-            // })
+         
             this.setState({
                 minutes: this.timerService.getMinutes(),
                 seconds: this.timerService.getSeconds(),
                 startDisable: ((this.timerService.getSeconds() === 0 && this.timerService.getMinutes() === 0) || this.timerService.getSeconds() === maxTime ? false : true) 
             })
-
         })
+
         this.state = {
             minutes: this.timerService.getMinutes(),
             seconds: this.timerService.getSeconds(),
@@ -46,8 +41,7 @@ export default class CountDown extends Component {
         }
     }
 
-
-    onButtonStart() {
+    onButtonStart = () => {
         this.timerService.startTimer();
         this.setState({ startDisable: true });
     }

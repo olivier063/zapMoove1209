@@ -1,6 +1,7 @@
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import React, { Component } from 'react'
 
+
 export default class TimerAuto extends Component {
     constructor(props) {
         super(props);
@@ -11,6 +12,7 @@ export default class TimerAuto extends Component {
             seconds_Counter: '00',
             startDisable: false
         }
+   
     }
 
     componentWillUnmount() {

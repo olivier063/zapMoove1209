@@ -20,10 +20,12 @@ import Home from './screens/home';
 import TestCondition from './screens/testCondition';
 import EditAccount from './screens/editAccount';
 import PresentationEscape from './screens/presentationEscape';
-import EscapeRunHistory from './screens/escapeRunHistory';
-
-
+// import EscapeRunHistory from './screens/escapeRunHistory';
+import Chrono from './components/chrono';
 import TrainingMapView2 from './screens/trainingMapView2';
+import TrainingPointsExplications from './screens/trainingPointsExplications';
+import TrainingState from './screens/trainingState';
+
 
 
 
@@ -52,14 +54,15 @@ export default function App() {
           />
           <Stack.Screen name="CHOIX ESCAPE RUN" component={EscapeRunChoixCourse} 
            options={({ navigation }) => ({
-            headerRight: () => <TouchableOpacity onPress={() => navigation.navigate("HISTORIQUE")}>
+            headerRight: () => <TouchableOpacity onPress={() => navigation.navigate("CHRONO")}>
               <Image source={require("./assets/imageHistorique.png")}
                 resizeMode="contain"
                 style={styles.imageHistorique} />
             </TouchableOpacity>
           })}
           />
-          <Stack.Screen name="HISTORIQUE" component={EscapeRunHistory} />
+          <Stack.Screen name="CHRONO" component={Chrono} />
+          {/* <Stack.Screen name="HISTORIQUE" component={EscapeRunHistory} /> */}
           <Stack.Screen name="PRESENTATION ESCAPE" component={PresentationEscape} />
           <Stack.Screen name="CHOIX COURSE CONNECTEE" component={CourseConnecteeChoixCourse} />
           <Stack.Screen name="CHOIX COMPETITION" component={CompetitionChoixCourse} />
@@ -75,6 +78,11 @@ export default function App() {
           <Stack.Screen name="TEST CONDITION" component={TestCondition} />
           <Stack.Screen name="MODIFIER LE COMPTE" component={EditAccount} />
           <Stack.Screen name="CARTE TRAINING" component={TrainingMapView2} />
+          <Stack.Screen name="EXPLICATION DES POINTS" component={TrainingPointsExplications} />
+          <Stack.Screen name="TRAINING STATE" component={TrainingState} />
+
+
+          
          
         </Stack.Navigator>
       </NavigationContainer>
