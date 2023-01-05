@@ -94,7 +94,7 @@ export default class Chrono extends Component {
 
                 </TouchableOpacity>
 
-            <TrainingMapView2 />
+        
             </View>
 
         );

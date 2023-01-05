@@ -10,7 +10,6 @@ export default class Home extends Component {
             modalVisible: false,
             prenom: "",
             nom: "",
-            homme: "",
         }
         // le addListener permet d'ecouter le changement d'etat du composant et affiche les nom prenom de l'utilisateur à sa connection
         this.props.navigation.addListener('focus', () => {
@@ -27,13 +26,11 @@ export default class Home extends Component {
             this.setState({
                 prenom: loginState["PRENOM"], // le PRENOM et NOM majuscule correspondent au Json
                 nom: loginState["NOM"],
-                homme: loginState["HOMME"],
             });
         } catch (error) { 
             this.setState({
                 prenom: "",
                 nom: "",
-                homme: "",
             });
         }
     }
@@ -51,10 +48,10 @@ export default class Home extends Component {
             <View style={{ backgroundColor: 'white', height: '100%' }}>
                 <View style={styles.creerCompte}>
 
-                    {(this.state.homme != null) ?
-                   ( <Text style={styles.compte}>Bienvenu {this.state.prenom}</Text>) :
-                   ( <Text style={styles.compte}>Bienvenue {this.state.prenom}</Text>)
-                    }
+            
+                    <Text style={styles.compte}>Content de vous revoir {this.state.prenom} !</Text>
+                   
+                    
     
                 </View>
 

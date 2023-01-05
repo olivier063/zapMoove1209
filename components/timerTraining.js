@@ -1,6 +1,7 @@
 import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import React, { Component } from 'react'
 import TimerTrainingService from '../services/timerTrainingService';
+import * as turf from '@turf/turf';
 
 
 
@@ -11,7 +12,7 @@ export default class TimerTraining extends Component {
     constructor(props) {
         super(props);
 
-        console.log("PROPS",this.props)
+        console.log("PROPS TIMER TRAINING", this.props)
         const maxTime = 0;
         this.timerTrainingService = new TimerTrainingService(maxTime);
         // const { navigation } = this.props.navigation;
@@ -35,6 +36,7 @@ export default class TimerTraining extends Component {
         };
     }
 
+
     // le setTimer se fait à la montee du composant sinon erreur: (Can't call setState on a component that is not yet mounted), le setTimer est dans le constructor de timerTrainingService
     componentDidMount() {
         this.timerTrainingService.setTimer();
@@ -48,15 +50,19 @@ export default class TimerTraining extends Component {
         if (this.props.resetTimer) {
             this.timerTrainingService.stopTimer();
             this.props.isTimerReset()
+
         }
     }
 
     // this.props.user permet de recuperer la fonction userLocation de trainingMapView2 que l'on a passé dans le composant
     onButtonStart = () => {
-        this.props.user()
+        // on a passe le calculDistance dans le watcher qui lui meme appel le onPositionChange
+        this.props.watcher();
+        this.props.user();
         this.timerTrainingService.startTimer();
         this.setState({ startButton: false });
         this.setState({ startDisable: true });
+
     }
 
     onButtonPause = () => {
@@ -72,15 +78,16 @@ export default class TimerTraining extends Component {
 
     // const { navigate } = this.props.navigation;
     // this.props.snapshot permet de recuperer la fonction takeSnapshot de trainingMapView2 que l'on a passé dans le composant
-    alertActions = () => {
+    alertActions = async () => {
         this.timerTrainingService.stopTimer();
-        // this.props.snapshot();
+        // const image = await this.props.snapshot();
+        // console.log(image)
+
         this.setState({ startButton: true });
         this.setState({ icone: true });
 
-        this.props.setImage(uri);
-        this.props.navigation.navigate("TRAINING STATE", { image: this.props.image });
-
+        // etant donnee le return dans le takeSnapShot, on peut ecrir : {image} direct. De plus, on passe avec les props minutes, seconds et hours qui sont dans les state. on les recupere dans l'enfant avec les props
+        this.props.navigation.navigate("TRAINING STATE", { image: this.props.image, distance: this.props.distance, minutes: this.state.minutes, seconds: this.state.seconds, hours: this.state.hours });
     }
 
     stopRun = () => {
@@ -106,8 +113,6 @@ export default class TimerTraining extends Component {
     render() {
 
         const { minutes, seconds, hours } = this.state;
-
-
 
         return (
             <View style={styles.MainContainer}>

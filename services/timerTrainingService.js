@@ -21,7 +21,6 @@ class TimerTrainingService {
                 this.seconds = this.seconds + 1
             }
 
-            // retour de vacances, modifier le if pour: if seconds === 59 alors on ajoute une minute
             if (this.seconds === 60) {
 
                 this.minutes = this.minutes + 1

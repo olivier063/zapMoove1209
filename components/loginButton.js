@@ -68,6 +68,7 @@ export default function LoginButton() {
                 key: 'loginState', // Note: Do not use underscore("_") in key!
                 data: json,
             })
+            // console.log(json)
             // const loginState = await StorageService.load({key: 'loginState'});
             navigation.navigate(path)
 

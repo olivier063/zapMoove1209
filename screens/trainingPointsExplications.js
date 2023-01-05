@@ -13,12 +13,12 @@ isValid = () => {
       <View style={{alignItems: 'center'}}>
         <Text style={{fontSize: 30, fontWeight: 'bold', marginTop: 10}}>DETAILS</Text>
         
-         <Text style={{marginTop: 10, fontSize: 16}}> Bienvenu.e sur votre page d'entrainement</Text>
-          <Text style={{marginTop: 5, fontSize: 16}}> 
+         <Text style={{marginTop: 10, fontSize: 16}}>Bienvenu.e sur votre page d'entraînement</Text>
+          <Text style={{marginTop: 5, fontSize: 16, textAlign: 'center'}}> 
           Vous pouvez acceder aux exercices selon différents niveaux
           de difficultés.{"\n"}
-          Pour se faire, il vous faut debloquer des points en terminant dans son intégralité les différents programmes
-          afin de passer au niveau de difficulté supérieur.{"\n"}
+          Pour se faire, il vous faut debloquer des points en terminant dans son intégralité l'un des différents programmes
+          afin de passer au niveau de difficulté supérieur.{"\n"}{"\n"}
           Amusez-vous bien !!
           </Text>
       </View>
