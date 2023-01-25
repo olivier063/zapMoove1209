@@ -1,6 +1,8 @@
-import { Text, View, TouchableOpacity, Image, StyleSheet} from 'react-native'
+import { Text, View, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native'
 import React, { Component } from 'react'
 import StorageService from '../services/storageService';
+import mapService from '../services/mapService';
+import * as Location from 'expo-location';
 
 export default class Home extends Component {
     constructor(props) {
@@ -14,20 +16,20 @@ export default class Home extends Component {
         // le addListener permet d'ecouter le changement d'etat du composant et affiche les nom prenom de l'utilisateur à sa connection
         this.props.navigation.addListener('focus', () => {
             this.getStorage();
-          });    
+        });
         //   console.log(props)
     }
 
-        // permet de load les donnees utilisateur, ici le prenom et le nom de l'utilisateur
+    // permet de load les donnees utilisateur, ici le prenom et le nom de l'utilisateur
     async getStorage() {
         try {
             const loginState = await StorageService.load({ key: 'loginState' });
-            console.log("LOGIN STATE in HOME",loginState) 
+            console.log("LOGIN STATE in HOME", loginState)
             this.setState({
                 prenom: loginState["PRENOM"], // le PRENOM et NOM majuscule correspondent au Json
                 nom: loginState["NOM"],
             });
-        } catch (error) { 
+        } catch (error) {
             this.setState({
                 prenom: "",
                 nom: "",
@@ -36,27 +38,94 @@ export default class Home extends Component {
     }
 
 
-
     componentDidMount() {
         this.getStorage();
     }
-    
+
+    async permission() {
+        // let { status } = await mapService.askPermission();
+        // if (status !== 'granted') {
+        //     console.log('permissions refusees')
+        // }  this.props.navigation.navigate("CHOISIR UN MODE")
+
+
+        //    let { status } = await Location.requestForegroundPermissionsAsync();
+        //         if (status !== 'granted') {
+        //             console.log('Permission to access location denied');
+        //         } this.props.navigation.navigate("CHOISIR UN MODE")
+
+        let { status } = await Location.requestForegroundPermissionsAsync({
+            ios: {
+                scope: 'whenInUse',
+            },
+            android: {
+                context: 'whenInUse',
+            },
+        });
+        if (status !== 'granted') {
+            console.log("Permission to access location was denied");
+        }
+        let { status2 } = await Location.requestBackgroundPermissionsAsync({
+            ios: {
+                scope: 'always',
+            },
+            android: {
+                context: 'background',
+            },
+        });
+        if (status2 !== 'granted') {
+            console.log("Permission to access location in the background was denied");
+        }
+
+        if (status === 'granted') {
+            this.props.navigation.navigate("CHOISIR UN MODE")
+        }
+    }
+
+    // componentDidUpdate() {
+    //     (async () => {
+    //         let { status } = await Location.requestForegroundPermissionsAsync();
+    //         console.log("STATUS", status)
+    //         if (status !== "granted") {
+    //             Alert.alert("Permission to access foreground location was denied");
+    //             return;
+    //         }
+
+    //         Alert.alert(
+    //             "Attention",
+    //             "Merci de 'TOUJOURS AUTORISER' pour démarrer un course",
+    //             [
+    //                 {
+    //                     text: "OK",
+    //                 }
+    //             ]
+    //         )
+
+    //         let backPerm = await Location.requestBackgroundPermissionsAsync();
+    //         console.log('BACK PERM', backPerm);
+    //     })();
+    // }
+
+
+
     render() {
-       
+
 
         return (
             <View style={{ backgroundColor: 'white', height: '100%' }}>
                 <View style={styles.creerCompte}>
 
-            
+
                     <Text style={styles.compte}>Content de vous revoir {this.state.prenom} !</Text>
-                   
-                    
-    
+
+
+
                 </View>
 
                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
                     <View style={{ flex: 1, alignItems: 'center' }}>
+
+
                         <TouchableOpacity
                             onPress={() => this.props.navigation.navigate("CHOIX COURSE CONNECTEE")}
                         >
@@ -67,6 +136,7 @@ export default class Home extends Component {
                             />
                         </TouchableOpacity>
                         <Text style={styles.text}>Courses Connectées</Text>
+
 
                         <TouchableOpacity
                             onPress={() => this.props.navigation.navigate("CHOISIR UN MODE")}
@@ -80,6 +150,7 @@ export default class Home extends Component {
                         <Text style={styles.text}>Exercices</Text>
                     </View>
 
+
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <TouchableOpacity
                             onPress={() => this.props.navigation.navigate("CHOIX ESCAPE RUN")}
@@ -91,6 +162,7 @@ export default class Home extends Component {
                             />
                         </TouchableOpacity>
                         <Text style={styles.text}>Escape Run</Text>
+
 
                         <TouchableOpacity
                             onPress={() => this.props.navigation.navigate("CHOIX COMPETITION")}

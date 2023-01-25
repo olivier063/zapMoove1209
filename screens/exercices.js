@@ -122,8 +122,8 @@ export class Exercices extends Component {
       <View style={{ height: `100%`, backgroundColor: "white" }}>
         {/* <UniqueModal /> */}
 
-        <View style={{ marginTop: 5, alignItems: 'center'}}>
-          <TouchableOpacity style={{ height: 55, width: 50, backgroundColor: '#92AFD7', borderRadius: 30}}
+        <View style={{ marginTop: 5, alignItems: 'center' }}>
+          <TouchableOpacity style={{ height: 55, width: 55, backgroundColor: '#92AFD7', borderRadius: 30, justifyContent: 'center' }}
             onPress={() => navigate('EXPLICATION DES POINTS')}
           >
             <Text style={{ textAlign: 'center', fontSize: 40, fontWeight: 'bold' }}>?</Text>
@@ -137,7 +137,8 @@ export class Exercices extends Component {
             borderBottomWidth: StyleSheet.hairlineWidth,
             marginTop: 10,
           }}
-        ></View>
+        >
+        </View>
 
 
         {isLoading ? (

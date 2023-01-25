@@ -4,15 +4,13 @@ import TimerTrainingService from '../services/timerTrainingService';
 import * as turf from '@turf/turf';
 
 
-
-
 export default class TimerTraining extends Component {
 
     timerTrainingService = null;
     constructor(props) {
         super(props);
 
-        console.log("PROPS TIMER TRAINING", this.props)
+        // console.log("PROPS TIMER TRAINING", this.props)
         const maxTime = 0;
         this.timerTrainingService = new TimerTrainingService(maxTime);
         // const { navigation } = this.props.navigation;
@@ -33,6 +31,16 @@ export default class TimerTraining extends Component {
             seconds: this.timerTrainingService.getSeconds(),
             hours: this.timerTrainingService.getHours(),
             timerDown: null,
+
+            // states pour le calcul du temps total meme si le bouton pause est cliqué
+            startTime: null,
+            endTime: null,
+            timeDiff: null,
+            h: null,
+            m: null,
+            s: null,
+
+   
         };
     }
 
@@ -40,29 +48,46 @@ export default class TimerTraining extends Component {
     // le setTimer se fait à la montee du composant sinon erreur: (Can't call setState on a component that is not yet mounted), le setTimer est dans le constructor de timerTrainingService
     componentDidMount() {
         this.timerTrainingService.setTimer();
+        this.props.user();
     }
 
 
     // on regarde si la valeur resetTimer du parent est à true, si c'est le cas on remet à zer0 clearInterval pour arreter le decompte
     // de secondes, on passe a false le bouton start, et on reset le timer
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState) {
         // console.log(this.props)
         if (this.props.resetTimer) {
             this.timerTrainingService.stopTimer();
-            this.props.isTimerReset()
-
+            this.props.isTimerReset();
         }
+
+
+    // Calcul du temps total de course meme si le bouton pause est cliqué
+    if (prevState.startTime !== this.state.startTime || prevState.endTime !== this.state.endTime) {
+        if (this.state.startTime && this.state.endTime) {
+          const timeDiff = this.state.endTime - this.state.startTime;
+          const h = Math.floor(timeDiff / (60 * 60 * 1000));
+          const remainder = timeDiff % (60 * 60 * 1000);
+          const m = Math.floor(remainder / (60 * 1000));
+          const s = Math.floor((remainder % (60 * 1000)) / 1000);
+          this.setState({ timeDiff: timeDiff, h: h, m: m, s: s });
+        }
+      }
     }
 
-    // this.props.user permet de recuperer la fonction userLocation de trainingMapView2 que l'on a passé dans le composant
+
+    // this.props.user permet de recuperer la fonction userLocation de trainingMapView2 que 
+    // l'on a passé dans le composant et declenche la geoloc (je peux aussi le mettre dans le willMount 
+    // pour que la geoloc se fasse automatiquement au chargement du composant)
     onButtonStart = () => {
         // on a passe le calculDistance dans le watcher qui lui meme appel le onPositionChange
         this.props.watcher();
-        this.props.user();
+        this.props.user(); 
         this.timerTrainingService.startTimer();
         this.setState({ startButton: false });
         this.setState({ startDisable: true });
-
+        this.setState({ startTime: Date.now() })
+        
     }
 
     onButtonPause = () => {
@@ -80,14 +105,15 @@ export default class TimerTraining extends Component {
     // this.props.snapshot permet de recuperer la fonction takeSnapshot de trainingMapView2 que l'on a passé dans le composant
     alertActions = async () => {
         this.timerTrainingService.stopTimer();
-        // const image = await this.props.snapshot();
+        const image = await this.props.snapshot();
         // console.log(image)
 
         this.setState({ startButton: true });
         this.setState({ icone: true });
-
+        this.setState({ endTime: Date.now() })
+        
         // etant donnee le return dans le takeSnapShot, on peut ecrir : {image} direct. De plus, on passe avec les props minutes, seconds et hours qui sont dans les state. on les recupere dans l'enfant avec les props
-        this.props.navigation.navigate("TRAINING STATE", { image: this.props.image, distance: this.props.distance, minutes: this.state.minutes, seconds: this.state.seconds, hours: this.state.hours });
+        this.props.navigation.navigate("TRAINING STATE", { image: this.props.image, distance: this.props.distance, minutes: this.state.minutes, seconds: this.state.seconds, hours: this.state.hours, averageSpeed: this.props.averageSpeed, paceSpeed: this.props.paceSpeed, elevationGain: this.props.elevationGain, h: this.state.h, m: this.state.m, s: this.state.s });
     }
 
     stopRun = () => {
@@ -136,7 +162,7 @@ export default class TimerTraining extends Component {
                             }}
                             onPress={this.onButtonStart}
                         >
-                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Démarrer la run</Text>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Démarrer le run</Text>
                         </TouchableOpacity>
                         :
                         <View style={{ flexDirection: 'row' }}>
@@ -176,8 +202,9 @@ export default class TimerTraining extends Component {
                                 onPressIn={this.onButtonPause}
                                 onPress={this.stopRun}
                             >
-                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Arrêter la run</Text>
+                                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Arrêter le run</Text>
                             </TouchableOpacity>
+
                         </View>
                     }
                 </View>

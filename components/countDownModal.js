@@ -43,7 +43,7 @@ export default class CountDownModal extends Component {
 
 
     render() {
-        console.log("RENDER countDownModal")
+        // console.log("RENDER countDownModal")
         const { minutes, seconds } = this.state
         // on ajoute la condition timerDown different de null pour eviter la boucle
         if (minutes == 0 && seconds == 0 && this.timerDown !== null) {

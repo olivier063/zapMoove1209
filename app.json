@@ -6,6 +6,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "plugins": [
+      ["expo-location", { "isAndroidBackgroundLocationEnabled": true } ]
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -18,17 +21,35 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.olive06300.zapMoove1209"
+      "package": "com.olive06300.zapMoove1209",
+      "permissions":["ACCESS_COARSE_LOCATION","ACCESS_BACKGROUND_LOCATION","ACCESS_FINE_LOCATION","FOREGROUND_SERVICE"],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCyN289DM_nUDwsbxZERgdnds-2V8ny8v0"
+        }
+      }
+
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "30ba4408-24c5-4b7b-bf6b-9eda2c8a6095"
+      }
     }
   }
 }

@@ -59,7 +59,7 @@ export default class CountDown extends Component {
         console.log(this.timerService.getTimerDown())
         if (minutes == 0 && seconds == 0 && this.timerService.getTimerDown() != null) {
             this.timerService.stopTimer(true);
-            console.log("RENDER countDown")
+            // console.log("RENDER countDown")
             this.props.openModal(true)
         }
     

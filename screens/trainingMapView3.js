@@ -5,12 +5,14 @@ import * as Location from 'expo-location';
 import * as turf from '@turf/turf';
 import TimerTraining from '../components/timerTraining';
 import { useNavigation } from '@react-navigation/native';
+import * as TaskManager from 'expo-task-manager';
+import mapService from '../services/mapService';
 
 
-
+const LOCATION_TASK_NAME = 'background_location_task';
 
 // je passe props en parametre afin de recuperer le useNavigation dans l'enfant qui est une class component
-export default function TrainingMapView2(props) {
+export default function TrainingMapView3(props) {
     const map = React.useRef(null);
 
     const [positions, setPositions] = React.useState([]);
@@ -25,8 +27,7 @@ export default function TrainingMapView2(props) {
     const [paceSpeed, setPaceSpeed] = React.useState(0); //allure moyenne
 
     // const navigate = useNavigation();
-    // console.log("MAP", map)
-
+    // console.log("MAP", map);
 
     const [mapRegion, setMapRegion] = React.useState({
         latitude: 46.227638,
@@ -36,11 +37,82 @@ export default function TrainingMapView2(props) {
     });
 
 
+
+    // React.useEffect(() => {
+    //     (async () => {
+    //       var { status } = await Location.requestForegroundPermissionsAsync();
+    //       if (status !== "granted") {
+    //         Alert.alert("Permission to access location was denied");
+    //         return;
+    //       } else{
+    //         console.log("STATUS",status)
+    //       }
+
+    //       var backPerm = await Location.requestBackgroundPermissionsAsync();
+    //       console.log("BACK PERM",backPerm);
+    //     })();
+    //   }, []);
+
+    const [status, setStatus] = React.useState(null)
+
+    React.useEffect(() => {
+        (async () => {
+            console.log("TOTO")
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setStatus('Permission to access location was denied');
+                return;
+            } else {
+                const requestPermissions = async () => {
+                    const {status} = await Location.requestBackgroundPermissionsAsync();
+                    console.log("STATUS BACK",status)
+                     if (status === 'granted') {
+                       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+                        accuracy:Location.Accuracy.High,
+                          timeInterval: 1000,
+                          distanceInterval: 80,
+                       });
+                     }
+                   };
+            
+                   TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+                    if (error) {
+                      // Error occurred - check `error.message` for more details.
+                      return;
+                    }
+                    if (data) {
+                      const { locations } = data;
+                      // do something with the locations captured in the background
+                    //   console.log("LOCATION",locations)
+                      onPositionChange(locations[0])
+                    }
+                  }); 
+                requestPermissions()
+                console.log('Access granted!!')
+                setStatus(status)
+                console.log('STATUS', status)
+            }
+
+        })();
+    }, []);
+
+    // const watch_location = async () => {
+    //     if (status === 'granted') {
+    //         let location = await Location.watchPositionAsync({
+    //             accuracy: Location.Accuracy.High,
+    //             timeInterval: 10000,
+    //             distanceInterval: 80,
+    //         })
+    //         false,
+    //             (location_update) => {
+    //                 console.log('update location!', location_update.coords)
+    //             }
+    //     }
+    // }
+
+
     const userLocation = async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            setErrorMsg('Permission to access location denied');
-        }
+      if (status === 'granted'){
         let location = await Location.getCurrentPositionAsync({ enableHightAccuracy: true })
         setMapRegion({
             latitude: location.coords.latitude,
@@ -48,19 +120,27 @@ export default function TrainingMapView2(props) {
             latitudeDelta: 0.002922,
             longitudeDelta: 0.002421,
         })
+
+      }
+        // let location = await Location.getCurrentPositionAsync({ enableHightAccuracy: true })
+
+     
+
         // console.log(location.coords.latitude, location.coords.longitude);
         setIcone(true);
     }
+
+   
 
 
     // le useEffect a le meme effet que le componentWillUpdate mais dans une fonction component
     // React.useEffect(() => {
     // userLocation();
-
     // }, []);
 
     const onPositionChange = (position) => {
         // console.log("ON POSITION CHANGE", position)
+   
         // console.log("MAP", map)
         if (map.current == null) {
             return
@@ -70,20 +150,21 @@ export default function TrainingMapView2(props) {
         const newDistance = positions[0] ? distanceBetween(positions[positions.length - 1], position) : 0;
 
         positions.push(position)
+       
         // console.log("POSITIONS", positions)
         setPositions(positions);
         setDistance(newDistance + distance);
+       
         setDuration(duration);
+   
         calculDistance();
         // console.log("DISTANCE", distance);
-        console.log("DURATION", duration);
+        // console.log("DURATION", duration);
 
     }
-
-
     const watcher = async () => {
         const options = { enableHighAccuracy: true, timeInterval: 1000, distanceInterval: 1 }
-        await Location.watchPositionAsync(options, onPositionChange)
+        // await Location.watchPositionAsync(options, onPositionChange)
     }
 
     const distanceBetween = (from, to) => {
@@ -103,8 +184,8 @@ export default function TrainingMapView2(props) {
         setMapRegion({
             latitude: mapRegion.latitude,
             longitude: mapRegion.longitude,
-            latitudeDelta: 0.2922,
-            longitudeDelta: 0.2421,
+            latitudeDelta: mapRegion.latitudeDelta,
+            longitudeDelta: mapRegion.longitudeDelta,
         })
         // console.log("MAP REGION", mapRegion)
         // 'takeSnapshot' takes a config object with the
@@ -112,7 +193,7 @@ export default function TrainingMapView2(props) {
         // console.log("MAP", map)
         const snapshot = map.current.takeSnapshot({
             width: 300,      // optional, when omitted the view-width is used
-            height: 300,     // optional, when omitted the view-height is used
+            height: 150,     // optional, when omitted the view-height is used
             //   region: {..},    // iOS only, optional region to render
             format: 'png',   // image formats: 'png', 'jpg' (default: 'png')
             quality: 0.8,    // image quality: 0..1 (only relevant for jpg, default: 1)
@@ -127,7 +208,7 @@ export default function TrainingMapView2(props) {
     //CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE...............................
     const position = {}
     const calculDistance = async () => {
-
+ 
         //CHANGE const par var points
         var points = [];
         positions.forEach(position => {
@@ -156,10 +237,10 @@ export default function TrainingMapView2(props) {
                 if (!isNaN(elevationDifference)) {
                     totalElevationGain += elevationDifference;
                 }
-                setElevationGain(totalElevationGain);
-                console.log("ELEVATION", elevationGain)
+                setElevationGain(totalElevationGain.toFixed(3));
+                // console.log("ELEVATION", elevationGain)
             }
-
+         
             //VITESSE MOYENNE
             let totalTime = 0;
             for (let i = 0; i < points.length - 1; i++) {
@@ -250,6 +331,7 @@ export default function TrainingMapView2(props) {
     //...................................................................TASK MANAGER
 
 
+
     return (
 
         <View style={styles.container}>
@@ -262,10 +344,9 @@ export default function TrainingMapView2(props) {
             <MapView style={styles.map}
                 region={mapRegion}
                 ref={map}
-
                 showsUserLocation={true}
                 followsUserLocation={true}
-                userLocationUpdateInterval={5000}
+                // userLocationUpdateInterval={1000}
             >
 
                 {/* {icone === true ?
@@ -298,7 +379,7 @@ export default function TrainingMapView2(props) {
             <View style={{ backgroundColor: "#92AFD7", height: '100%' }}>
                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
                     <View style={{ flex: 1, alignItems: 'center' }}>
-                        <Text>Distance</Text>
+                        <Text>Distance </Text>
                     </View>
                     <View style={{ flex: 1, alignItems: 'center' }}>
                         <Text>Dénivelé</Text>
@@ -315,7 +396,7 @@ export default function TrainingMapView2(props) {
 
                 {/* ON PASSE DANS LES PROPS DU COMPONENT POUR APPELER LA FONCTION DU PARENT VIA L'ENFANT (TimerTraining et takeSnapshot) Attention, on appelle la fonction dans l'enfant par le mot clef et non pas le nom de la fonction */}
                 <TimerTraining user={userLocation} snapshot={takeSnapshot} navigation={props.navigation} image={image} calculDistance={calculDistance} position={position} distance={totalRunInMeters} watcher={watcher} averageSpeed={averageSpeed} paceSpeed={paceSpeed} elevationGain={elevationGain} />
-                {/* <Chatgpt /> */}
+
             </View>
         </View>
     );

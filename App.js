@@ -26,6 +26,8 @@ import TrainingMapView2 from './screens/trainingMapView2';
 import TrainingPointsExplications from './screens/trainingPointsExplications';
 import TrainingState from './screens/trainingState';
 import TrainingHistory from './screens/trainingHistory';
+import TrainingStateHistory from './screens/trainingStateHistory';
+import TrainingMapView3 from './screens/trainingMapView3';
 
 
 
@@ -44,7 +46,7 @@ export default function App() {
 
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="MENU PRINCIPAL" component={Home} // L37 - L39 permettent de placer un icone dans la barre du menu
+          <Stack.Screen name="MENU PRINCIPAL" component={Home} // options et headerRight permettent de placer un icone dans la barre du menu
             options={({ navigation }) => ({
               headerRight: () => <TouchableOpacity onPress={() => navigation.navigate("CONNEXION")}>
                 <Image source={require("./assets/connection.png")}
@@ -88,8 +90,13 @@ export default function App() {
           <Stack.Screen name="MODIFIER LE COMPTE" component={EditAccount} />
           <Stack.Screen name="CARTE TRAINING" component={TrainingMapView2} />
           <Stack.Screen name="EXPLICATION DES POINTS" component={TrainingPointsExplications} />
-          <Stack.Screen name="TRAINING STATE" component={TrainingState} />
+
+          {/* option={{headerShown: false}} permet de ne pas afficher la barre de titre et donc la navigation arriere */}
+          <Stack.Screen name="TRAINING STATE" component={TrainingState} options={{headerShown: false}} /> 
           <Stack.Screen name="TRAINING HISTORIQUE" component={TrainingHistory} />
+          <Stack.Screen name="TRAINING STATE HISTORIQUE" component={TrainingStateHistory} />
+          <Stack.Screen name="MAP VIEW" component={TrainingMapView3} />
+
 
 
           
