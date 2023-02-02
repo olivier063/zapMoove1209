@@ -2,13 +2,29 @@ import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
-import { lastValueFrom } from 'rxjs';
-import { isSearchBarAvailableForCurrentPlatform } from 'react-native-screens';
+import mapService from './mapService';
 
-const TASK_NAME = 'background-timer-task';
+
+const TIMER_TASK_NAME = 'background-timer-task';
+const LOCATION_TASK_NAME = 'background_location_task';
 
 class TaskManagerService {
 
+
+  backgroundLocation = () => {
+    TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+        if (error) {
+            // Error occurred - check `error.message` for more details.
+            return;
+        }
+        if (data) {
+            const { locations } = data;
+            // do something with the locations captured in the background
+              // console.log("LOCATION",locations)
+            mapService.onPositionChange(locations[0])
+        }
+    });
+}
 
 
     chronoBackground = async () => {
@@ -39,7 +55,7 @@ class TaskManagerService {
         // };
 
 
-        TaskManager.defineTask(TASK_NAME, ({ data, error }) => {
+        TaskManager.defineTask(TIMER_TASK_NAME, ({ data, error }) => {
             if (error) {
               console.error(error);
               return;
@@ -51,18 +67,19 @@ class TaskManagerService {
           });
           
           const startBackgroundTask = () => {
-            TaskManager.runTask(TASK_NAME, {
+            TaskManager.runTask(TIMER_TASK_NAME, {
               // optionnel, vous pouvez passer des données à votre tâche en arrière-plan
               data: {},
             });
           };
 
-          
-
-
-                    
-
     }
+
+    
+
+
+
+
 }
 
 const taskManagerService = new TaskManagerService();

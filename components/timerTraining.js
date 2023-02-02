@@ -1,7 +1,8 @@
 import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import React, { Component } from 'react'
 import TimerTrainingService from '../services/timerTrainingService';
-import * as turf from '@turf/turf';
+import taskManagerService from '../services/taskManagerService';
+import mapService from '../services/mapService';
 
 
 export default class TimerTraining extends Component {
@@ -23,6 +24,10 @@ export default class TimerTraining extends Component {
                 // startDisable: ((this.timerTrainingService.getSeconds() === 0 && this.timerTrainingService.getMinutes() === 0) || this.timerTrainingService.getSeconds() === maxTime ? false : true)
             })
         })
+
+        // mapService.mapChange.subscribe( mapStructure => {
+            
+        // })
 
         this.state = {
             startButton: true,
@@ -48,7 +53,7 @@ export default class TimerTraining extends Component {
     // le setTimer se fait à la montee du composant sinon erreur: (Can't call setState on a component that is not yet mounted), le setTimer est dans le constructor de timerTrainingService
     componentDidMount() {
         this.timerTrainingService.setTimer();
-        this.props.user();
+        mapService.userLocation();
     }
 
 
@@ -80,10 +85,11 @@ export default class TimerTraining extends Component {
     // l'on a passé dans le composant et declenche la geoloc (je peux aussi le mettre dans le willMount 
     // pour que la geoloc se fasse automatiquement au chargement du composant)
     onButtonStart = () => {
-        // on a passe le calculDistance dans le watcher qui lui meme appel le onPositionChange
-        this.props.watcher();
-        this.props.user();
-        this.props.backgroundLocation();
+      
+      
+        mapService.userLocation();
+        // this.props.backgroundLocation();
+        taskManagerService.backgroundLocation();
         this.timerTrainingService.startTimer();
         this.setState({ startButton: false });
         this.setState({ startDisable: true });
@@ -106,7 +112,7 @@ export default class TimerTraining extends Component {
     // this.props.snapshot permet de recuperer la fonction takeSnapshot de trainingMapView2 que l'on a passé dans le composant
     alertActions = async () => {
         this.timerTrainingService.stopTimer();
-        const image = await this.props.snapshot();
+        const image = await mapService.takeSnapshot();
         // console.log(image)
 
         this.setState({ startButton: true });
@@ -114,7 +120,7 @@ export default class TimerTraining extends Component {
         this.setState({ endTime: Date.now() })
        
         // etant donnee le return dans le takeSnapShot, on peut ecrir : {image} direct. De plus, on passe avec les props minutes, seconds et hours qui sont dans les state. on les recupere dans l'enfant avec les props
-        this.props.navigation.navigate("TRAINING STATE", { image: this.props.image, distance: this.props.distance, minutes: this.state.minutes, seconds: this.state.seconds, hours: this.state.hours, averageSpeed: this.props.averageSpeed, paceSpeed: this.props.paceSpeed, elevationGain: this.props.elevationGain, h: this.state.h, m: this.state.m, s: this.state.s, timeDiff: this.state.timeDiff});
+        this.props.navigation.navigate("TRAINING STATE", { image: mapService.mapStructure.image, distance: mapService.mapStructure.totalRunInMeters, minutes: this.state.minutes, seconds: this.state.seconds, hours: this.state.hours, averageSpeed: mapService.mapStructure.averageSpeed, paceSpeed: mapService.mapStructure.paceSpeed, elevationGain: mapService.mapStructure.elevationGain, h: this.state.h, m: this.state.m, s: this.state.s, timeDiff: this.state.timeDiff});
     }
 
     stopRun = () => {

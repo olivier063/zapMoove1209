@@ -39,10 +39,8 @@ export default class TrainingHistory extends Component {
       this.setState({
         allData: [],
       })
+      this.setState({isData: false})
     }
-    // if (this.state.allData === []) {
-    //   this.setState({ isData: false })
-    // }
   }
 
 
@@ -50,18 +48,25 @@ export default class TrainingHistory extends Component {
 
 
   render() {
-    console.log("LENGTH", this.state.allData.length)
+    // console.log("ALL DATA", this.state.allData)
     // console.log("PROPSSSS", this.props) 
-    console.log("RENDER", this.state)
+    // console.log("RENDER", this.state)
     return (
       <View style={{ backgroundColor: 'white', height: '100%' }}>
+        {/* La ternaire se place hors FlatList sinon elle ne rentre pas dans l'array vide */}
+         {this.state.allData.length === 0 ? 
+           <View style={{ height: '100%', marginTop: 150 }}>
+           <Text style={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
+             Aucun historique,{'\n'} entraînez-vous !
+           </Text>
+         </View> :
         <FlatList
           data={this.state.allData}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
 
             <View >
-              {/* {this.state.allData.length ? */}
+           
                 <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("TRAINING STATE HISTORIQUE", { image: item.image, distance: item.distance, minutes: item.minutes, seconds: item.seconds, hours: item.hours, averageSpeed: item.averageSpeed, paceSpeed: item.paceSpeed, elevationGain: item.elevationGain, h: item.h, m: item.m, s: item.s, currentDate: item.currentDate, index: index, allData: this.state.allData })}
                 >
@@ -93,17 +98,13 @@ export default class TrainingHistory extends Component {
                   </View>
                 </TouchableOpacity>
 
-                {/* :  */}
-                <View style={{ height: '100%', marginTop: 150 }}>
-                  <Text style={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
-                    Aucun historique,{'\n'} entraînez-vous !
-                  </Text>
-                </View>
-              {/* } */}
+              
+         
             </View>
           )}
+  
         />
-
+          }
       </View>
     )
   }

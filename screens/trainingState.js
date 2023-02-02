@@ -7,7 +7,7 @@ import { timestamp } from 'rxjs';
 
 export default function TrainingState(props) {
 
-  console.log("PROPS TRAINING STATE", props)
+  // console.log("PROPS TRAINING STATE", props)
   const navigation = useNavigation();
 
   //TIMESTAMP affiché dans le trainingState au dessus du resumé........................................................
@@ -62,7 +62,7 @@ export default function TrainingState(props) {
       expires: null,
     });
 
-    console.log("SAVE runData", runData)
+    // console.log("SAVE runData", runData)
 
     // gpxService.createGPXFile(positions, props.route.params.timeDiff)
     // console.log(gpxData)
