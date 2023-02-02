@@ -37,111 +37,83 @@ export default function TrainingMapView3(props) {
     });
 
 
-
-    // React.useEffect(() => {
-    //     (async () => {
-    //       var { status } = await Location.requestForegroundPermissionsAsync();
-    //       if (status !== "granted") {
-    //         Alert.alert("Permission to access location was denied");
-    //         return;
-    //       } else{
-    //         console.log("STATUS",status)
-    //       }
-
-    //       var backPerm = await Location.requestBackgroundPermissionsAsync();
-    //       console.log("BACK PERM",backPerm);
-    //     })();
-    //   }, []);
-
     const [status, setStatus] = React.useState(null)
 
     React.useEffect(() => {
         (async () => {
-            console.log("TOTO")
+            // console.log("TOTO")
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 setStatus('Permission to access location was denied');
                 return;
             } else {
                 const requestPermissions = async () => {
-                    const {status} = await Location.requestBackgroundPermissionsAsync();
-                    console.log("STATUS BACK",status)
-                     if (status === 'granted') {
-                       await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-                        accuracy:Location.Accuracy.High,
-                          timeInterval: 1000,
-                          distanceInterval: 80,
-                       });
-                     }
-                   };
-            
-                   TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
-                    if (error) {
-                      // Error occurred - check `error.message` for more details.
-                      return;
+                    const { status } = await Location.requestBackgroundPermissionsAsync();
+                    console.log("STATUS BACK", status)
+                    if (status === 'granted') {
+                        await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+                            accuracy: Location.Accuracy.BestForNavigation,
+                            timeInterval: 1000,
+                            distanceInterval: 5,
+                        });
                     }
-                    if (data) {
-                      const { locations } = data;
-                      // do something with the locations captured in the background
-                    //   console.log("LOCATION",locations)
-                      onPositionChange(locations[0])
-                    }
-                  }); 
+                };
+
+                // TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+                //     if (error) {
+                //         // Error occurred - check `error.message` for more details.
+                //         return;
+                //     }
+                //     if (data) {
+                //         const { locations } = data;
+                //         // do something with the locations captured in the background
+                //         //   console.log("LOCATION",locations)
+                //         onPositionChange(locations[0])
+                //     }
+                // });
                 requestPermissions()
                 console.log('Access granted!!')
                 setStatus(status)
                 console.log('STATUS', status)
             }
-
         })();
     }, []);
 
-    // const watch_location = async () => {
-    //     if (status === 'granted') {
-    //         let location = await Location.watchPositionAsync({
-    //             accuracy: Location.Accuracy.High,
-    //             timeInterval: 10000,
-    //             distanceInterval: 80,
-    //         })
-    //         false,
-    //             (location_update) => {
-    //                 console.log('update location!', location_update.coords)
-    //             }
-    //     }
-    // }
+
+    const backgroundLocation = () => {
+        TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+            if (error) {
+                // Error occurred - check `error.message` for more details.
+                return;
+            }
+            if (data) {
+                const { locations } = data;
+                // do something with the locations captured in the background
+                //   console.log("LOCATION",locations)
+                onPositionChange(locations[0])
+            }
+        });
+    }
 
 
     const userLocation = async () => {
-      if (status === 'granted'){
-        let location = await Location.getCurrentPositionAsync({ enableHightAccuracy: true })
-        setMapRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.002922,
-            longitudeDelta: 0.002421,
-        })
-
-      }
-        // let location = await Location.getCurrentPositionAsync({ enableHightAccuracy: true })
-
-     
-
-        // console.log(location.coords.latitude, location.coords.longitude);
-        setIcone(true);
+        if (status === 'granted') {
+            let location = await Location.getCurrentPositionAsync({ enableHightAccuracy: true })
+            setMapRegion({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.002922,
+                longitudeDelta: 0.002421,
+            })
+            setIcone(true);
+        }
     }
 
-   
-
-
-    // le useEffect a le meme effet que le componentWillUpdate mais dans une fonction component
-    // React.useEffect(() => {
-    // userLocation();
-    // }, []);
 
     const onPositionChange = (position) => {
         // console.log("ON POSITION CHANGE", position)
-   
         // console.log("MAP", map)
+
         if (map.current == null) {
             return
         }
@@ -150,14 +122,20 @@ export default function TrainingMapView3(props) {
         const newDistance = positions[0] ? distanceBetween(positions[positions.length - 1], position) : 0;
 
         positions.push(position)
-       
+
         // console.log("POSITIONS", positions)
         setPositions(positions);
         setDistance(newDistance + distance);
-       
         setDuration(duration);
-   
         calculDistance();
+
+        //LE SET MAP REGION PERMET DE CENTRER LA POSITION DE L'UTILISATEUR
+        setMapRegion({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: 0.002922,
+            longitudeDelta: 0.002421,
+        });
         // console.log("DISTANCE", distance);
         // console.log("DURATION", duration);
 
@@ -184,8 +162,8 @@ export default function TrainingMapView3(props) {
         setMapRegion({
             latitude: mapRegion.latitude,
             longitude: mapRegion.longitude,
-            latitudeDelta: mapRegion.latitudeDelta,
-            longitudeDelta: mapRegion.longitudeDelta,
+            latitudeDelta: mapRegion.latitudeDelta * 5,
+            longitudeDelta: mapRegion.longitudeDelta * 2,
         })
         // console.log("MAP REGION", mapRegion)
         // 'takeSnapshot' takes a config object with the
@@ -208,7 +186,7 @@ export default function TrainingMapView3(props) {
     //CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE...............................
     const position = {}
     const calculDistance = async () => {
- 
+
         //CHANGE const par var points
         var points = [];
         positions.forEach(position => {
@@ -237,10 +215,10 @@ export default function TrainingMapView3(props) {
                 if (!isNaN(elevationDifference)) {
                     totalElevationGain += elevationDifference;
                 }
-                setElevationGain(totalElevationGain.toFixed(3));
+                setElevationGain(totalElevationGain.toFixed(2));
                 // console.log("ELEVATION", elevationGain)
             }
-         
+
             //VITESSE MOYENNE
             let totalTime = 0;
             for (let i = 0; i < points.length - 1; i++) {
@@ -299,76 +277,23 @@ export default function TrainingMapView3(props) {
     }
     //...............................CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE
 
-    //TASK MANAGER...................................................................
-    // TaskManager.defineTask('LOCATION_TASK', ({ data, error }) => {
-    //     if (error) {
-    //       console.error(error);
-    //       return;
-    //     }
-
-    //     if (data) {
-    //       const { locations } = data;
-    //       console.log(locations);
-    //       // Enregistrez les positions de l'utilisateur dans votre base de données ou effectuez une autre action ici
-    //     }
-    //   });
-
-    //   const startLocationTracking = async () => {
-    //     await Location.startLocationUpdatesAsync('LOCATION_TASK', {
-    //       accuracy: Location.Accuracy.Balanced,
-    //       timeInterval: 1000,
-    //       distanceInterval: 0
-    //     });
-    //   };
-
-    //   // Demandez la permission de l'utilisateur pour accéder à sa localisation en arrière-plan et démarrez le suivi de la localisation lorsque la permission est accordée
-    //   const requestLocationPermission = async () => {
-    //     const { status } = await Location.requestBackgroundPermissionsAsync();
-    //     if (status === 'granted') {
-    //       startLocationTracking();
-    //     }
-    //   };
-    //...................................................................TASK MANAGER
-
-
-
     return (
 
         <View style={styles.container}>
-
-            {/* <Image
-                source={{ uri: image }}
-                style={{ height: 80, width: 80 }}
-            /> */}
 
             <MapView style={styles.map}
                 region={mapRegion}
                 ref={map}
                 showsUserLocation={true}
                 followsUserLocation={true}
-                // userLocationUpdateInterval={1000}
+
             >
-
-                {/* {icone === true ?
-                    <Marker
-                        coordinate={mapRegion} title='MOI'
-                    // pinColor='#2196F3'
-                    // draggable={true}
-                    >
-                        <Image
-                            source={require("../assets/runImage.jpeg")}
-                            style={{ height: 35, width: 35, borderRadius: 50 }}
-                        />
-                    </Marker>
-                    : ""} */}
-
                 {/* POLYLINE SE DESSINE LORS DES DEPLACEMENTS PAR UNE LIGNE ORANGE */}
                 <Polyline
                     strokeColor="#e9ac47"
                     strokeWidth={6}
                     coordinates={positions.map(position => position.coords)}
                 />
-
                 {/* ICI NOUS DEFINISSONS LE RAYON SUR UN POINT DEFINI DE LA MAP */}
                 {/* <Circle
                     center={{ latitude: 43.700000, longitude: 7.250000 }}
@@ -395,7 +320,7 @@ export default function TrainingMapView3(props) {
                 </View>
 
                 {/* ON PASSE DANS LES PROPS DU COMPONENT POUR APPELER LA FONCTION DU PARENT VIA L'ENFANT (TimerTraining et takeSnapshot) Attention, on appelle la fonction dans l'enfant par le mot clef et non pas le nom de la fonction */}
-                <TimerTraining user={userLocation} snapshot={takeSnapshot} navigation={props.navigation} image={image} calculDistance={calculDistance} position={position} distance={totalRunInMeters} watcher={watcher} averageSpeed={averageSpeed} paceSpeed={paceSpeed} elevationGain={elevationGain} />
+                <TimerTraining user={userLocation} snapshot={takeSnapshot} navigation={props.navigation} image={image} calculDistance={calculDistance} position={position} distance={totalRunInMeters} watcher={watcher} averageSpeed={averageSpeed} paceSpeed={paceSpeed} elevationGain={elevationGain} backgroundLocation={backgroundLocation} />
 
             </View>
         </View>

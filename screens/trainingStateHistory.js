@@ -5,33 +5,35 @@ import StorageService from '../services/storageService';
 export default class TrainingStateHistory extends Component {
   constructor(props) {
     super(props)
-    console.log("PROPS",this.props)
+    console.log("PROPS", this.props)
     this.state = {
-   
+
     }
-}
+  }
 
 
   deleteRun = async (index) => {
     try {
-    let runDataArray = await StorageService.load({
-      key: 'runData'}); //Récupère le tableau de stockage
-    console.log(index)
-  
+      let runDataArray = await StorageService.load({
+        key: 'runData'
+      }); //Récupère le tableau de stockage
+      console.log(index)
+
       runDataArray.splice(index, 1); //Supprime la valeur du tableau
       await StorageService.save({
         key: 'runData',
         data: runDataArray
-      }); 
+      });
+    
     } catch {
-      
-    }   
+
+    }
     this.props.navigation.navigate("TRAINING HISTORIQUE")
   }
 
-  
+
   render() {
-    console.log("INDEX",this.props.route.params.index)
+    console.log("INDEX", this.props.route.params.index)
     console.log("ALL DATA", this.props.route.params.allData)
     return (
       <View>
@@ -52,7 +54,7 @@ export default class TrainingStateHistory extends Component {
           }}
         >
         </View>
-        
+
         <View style={{ backgroundColor: '#DAE3EA', height: 30 }}>
           <Text style={{ marginLeft: 10, marginTop: 5, fontSize: 15, textAlign: 'center' }}>Résumé</Text>
         </View>
@@ -82,11 +84,11 @@ export default class TrainingStateHistory extends Component {
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 1, backgroundColor: '#DAE3EA', margin: 10, borderRadius: 7 }}>
             <Text style={{ textAlign: 'center', fontSize: 16 }}>Allure moyenne</Text>
-            <Text style={{ textAlign: 'center', fontSize: 19 }}>{this.props.route.params.paceSpeed}''</Text>
+            <Text style={{ textAlign: 'center', fontSize: 19 }}>{this.props.route.params.paceSpeed}'' min/km</Text>
           </View>
           <View style={{ flex: 1, backgroundColor: '#DAE3EA', margin: 10, borderRadius: 7 }}>
             <Text style={{ textAlign: 'center', fontSize: 16 }}>Dénivelé positif</Text>
-            <Text style={{ textAlign: 'center', fontSize: 19 }}>{this.props.route.params.elevationGain}</Text>
+            <Text style={{ textAlign: 'center', fontSize: 19 }}>{this.props.route.params.elevationGain} m</Text>
           </View>
         </View>
 

@@ -5,7 +5,7 @@ export default class Logo extends Component {
   render() {
     return (
       <View>
-         <View>
+         <View style={{backgroundColor: 'white'}}>
             <Image
             source={require('../assets/BlockMarque-ZapMoove.jpg')}
             style={styles.imagePrincipale}

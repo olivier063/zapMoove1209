@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 
 export default class ExerciceMenu extends Component {
   render() {
+    // console.log(this.props)
     return (
       <View >
         <View  style={styles.textContainer}>

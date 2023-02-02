@@ -28,13 +28,21 @@ import TrainingState from './screens/trainingState';
 import TrainingHistory from './screens/trainingHistory';
 import TrainingStateHistory from './screens/trainingStateHistory';
 import TrainingMapView3 from './screens/trainingMapView3';
+import * as TaskManager from 'expo-task-manager';
 
+//Pour eviter une erreur du Task Manager, je le mets dans le App Entry (vu StackOverFlow)
+const LOCATION_TASK_NAME = 'background_location_task';
 
-
-
-
-
-
+TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+  if (error) {
+    // Error occurred - check `error.message` for more details.
+    return;
+  }
+  if (data) {
+    const { locations } = data;
+    // do something with the locations captured in the background
+  }
+}); 
 
 const Stack = createNativeStackNavigator();
 

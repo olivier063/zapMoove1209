@@ -32,15 +32,15 @@ export default class TimerTraining extends Component {
             hours: this.timerTrainingService.getHours(),
             timerDown: null,
 
-            // states pour le calcul du temps total meme si le bouton pause est cliqué
+            // states pour le calcul du temps total meme si le bouton pause est cliqué.....
             startTime: null,
             endTime: null,
             timeDiff: null,
             h: null,
             m: null,
             s: null,
-
-   
+            //................................................................................
+    
         };
     }
 
@@ -62,17 +62,17 @@ export default class TimerTraining extends Component {
         }
 
 
-    // Calcul du temps total de course meme si le bouton pause est cliqué
-    if (prevState.startTime !== this.state.startTime || prevState.endTime !== this.state.endTime) {
-        if (this.state.startTime && this.state.endTime) {
-          const timeDiff = this.state.endTime - this.state.startTime;
-          const h = Math.floor(timeDiff / (60 * 60 * 1000));
-          const remainder = timeDiff % (60 * 60 * 1000);
-          const m = Math.floor(remainder / (60 * 1000));
-          const s = Math.floor((remainder % (60 * 1000)) / 1000);
-          this.setState({ timeDiff: timeDiff, h: h, m: m, s: s });
+        // Calcul du temps total de course meme si le bouton pause est cliqué
+        if (prevState.startTime !== this.state.startTime || prevState.endTime !== this.state.endTime) {
+            if (this.state.startTime && this.state.endTime) {
+                const timeDiff = this.state.endTime - this.state.startTime;
+                const h = Math.floor(timeDiff / (60 * 60 * 1000));
+                const remainder = timeDiff % (60 * 60 * 1000);
+                const m = Math.floor(remainder / (60 * 1000));
+                const s = Math.floor((remainder % (60 * 1000)) / 1000);
+                this.setState({ timeDiff: timeDiff, h: h, m: m, s: s });
+            }
         }
-      }
     }
 
 
@@ -82,12 +82,13 @@ export default class TimerTraining extends Component {
     onButtonStart = () => {
         // on a passe le calculDistance dans le watcher qui lui meme appel le onPositionChange
         this.props.watcher();
-        this.props.user(); 
+        this.props.user();
+        this.props.backgroundLocation();
         this.timerTrainingService.startTimer();
         this.setState({ startButton: false });
         this.setState({ startDisable: true });
         this.setState({ startTime: Date.now() })
-        
+
     }
 
     onButtonPause = () => {
@@ -111,9 +112,9 @@ export default class TimerTraining extends Component {
         this.setState({ startButton: true });
         this.setState({ icone: true });
         this.setState({ endTime: Date.now() })
-        
+       
         // etant donnee le return dans le takeSnapShot, on peut ecrir : {image} direct. De plus, on passe avec les props minutes, seconds et hours qui sont dans les state. on les recupere dans l'enfant avec les props
-        this.props.navigation.navigate("TRAINING STATE", { image: this.props.image, distance: this.props.distance, minutes: this.state.minutes, seconds: this.state.seconds, hours: this.state.hours, averageSpeed: this.props.averageSpeed, paceSpeed: this.props.paceSpeed, elevationGain: this.props.elevationGain, h: this.state.h, m: this.state.m, s: this.state.s });
+        this.props.navigation.navigate("TRAINING STATE", { image: this.props.image, distance: this.props.distance, minutes: this.state.minutes, seconds: this.state.seconds, hours: this.state.hours, averageSpeed: this.props.averageSpeed, paceSpeed: this.props.paceSpeed, elevationGain: this.props.elevationGain, h: this.state.h, m: this.state.m, s: this.state.s, timeDiff: this.state.timeDiff});
     }
 
     stopRun = () => {
