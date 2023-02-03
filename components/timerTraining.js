@@ -4,6 +4,7 @@ import TimerTrainingService from '../services/timerTrainingService';
 import taskManagerService from '../services/taskManagerService';
 import mapService from '../services/mapService';
 
+const LOCATION_TASK_NAME = 'background_location_task';
 
 export default class TimerTraining extends Component {
 
@@ -24,10 +25,6 @@ export default class TimerTraining extends Component {
                 // startDisable: ((this.timerTrainingService.getSeconds() === 0 && this.timerTrainingService.getMinutes() === 0) || this.timerTrainingService.getSeconds() === maxTime ? false : true)
             })
         })
-
-        // mapService.mapChange.subscribe( mapStructure => {
-            
-        // })
 
         this.state = {
             startButton: true,
@@ -86,7 +83,7 @@ export default class TimerTraining extends Component {
     // pour que la geoloc se fasse automatiquement au chargement du composant)
     onButtonStart = () => {
       
-      
+        // taskManagerService.getRegisteredTasks();
         mapService.userLocation();
         // this.props.backgroundLocation();
         taskManagerService.backgroundLocation();
@@ -94,7 +91,6 @@ export default class TimerTraining extends Component {
         this.setState({ startButton: false });
         this.setState({ startDisable: true });
         this.setState({ startTime: Date.now() })
-
     }
 
     onButtonPause = () => {
@@ -112,6 +108,10 @@ export default class TimerTraining extends Component {
     // this.props.snapshot permet de recuperer la fonction takeSnapshot de trainingMapView2 que l'on a passé dans le composant
     alertActions = async () => {
         this.timerTrainingService.stopTimer();
+
+        // ON APPEL TASK MANAGER POUR DESENREGISTER LA TACHE ET ARRETER LA GEOLOCALISATION
+        taskManagerService.unregisterTask(LOCATION_TASK_NAME)
+
         const image = await mapService.takeSnapshot();
         // console.log(image)
 

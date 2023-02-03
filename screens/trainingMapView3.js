@@ -11,7 +11,7 @@ const LOCATION_TASK_NAME = 'background_location_task';
 
 // je passe props en parametre afin de recuperer le useNavigation dans l'enfant qui est une class component
 export default function TrainingMapView3(props) {
-    
+
 
     const [mapRegion, setMapRegion] = React.useState({
         latitude: 46.227638,
@@ -21,15 +21,15 @@ export default function TrainingMapView3(props) {
     });
 
 
- 
+
 
 
     React.useEffect(() => {
         (async () => {
             // console.log("TOTO")
 
-              const {status} = await Location.requestForegroundPermissionsAsync();
-              mapService.status = status
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            mapService.status = status
             //   console.log("MAP SERVICE",mapService.status)
             if (mapService.status !== 'granted') {
                 mapService.status = 'Permission to access location was denied';
@@ -37,7 +37,7 @@ export default function TrainingMapView3(props) {
             } else {
                 const requestPermissions = async () => {
 
-                    const {status} = await Location.requestBackgroundPermissionsAsync();
+                    const { status } = await Location.requestBackgroundPermissionsAsync();
                     mapService.status = status
                     console.log("STATUS BACK", mapService.status)
                     if (mapService.status === 'granted') {
@@ -61,7 +61,7 @@ export default function TrainingMapView3(props) {
         })();
     }, []);
 
-   
+
 
 
     return (
@@ -107,7 +107,7 @@ export default function TrainingMapView3(props) {
                 </View>
 
                 {/* ON PASSE DANS LES PROPS DU COMPONENT POUR APPELER LA FONCTION DU PARENT VIA L'ENFANT (TimerTraining et takeSnapshot) Attention, on appelle la fonction dans l'enfant par le mot clef et non pas le nom de la fonction */}
-                <TimerTraining  navigation={props.navigation} />
+                <TimerTraining navigation={props.navigation} />
 
             </View>
         </View>

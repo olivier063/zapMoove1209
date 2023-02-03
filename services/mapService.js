@@ -1,4 +1,3 @@
-import StorageService from './storageService';
 import * as Location from 'expo-location';
 import { ReplaySubject } from 'rxjs';
 import * as React from 'react';
@@ -7,10 +6,10 @@ import * as turf from '@turf/turf';
 
 class MapService {
     mapChange = new ReplaySubject();
-     map = React.createRef(null);
-     status = null;
+    map = React.createRef(null);
+    status = null;
 
-      mapRegion = {
+    mapRegion = {
         latitude: 46.227638,
         longitude: 2.213749,
         latitudeDelta: 15,
@@ -27,8 +26,8 @@ class MapService {
     }
 
 
-     userLocation = async () => {
-        console.log("STATUS",this.status)
+    userLocation = async () => {
+        console.log("STATUS", this.status)
         if (this.status === 'granted') {
             let location = await Location.getCurrentPositionAsync({ enableHightAccuracy: true })
             this.mapRegion = {
@@ -37,7 +36,7 @@ class MapService {
                 latitudeDelta: 0.002922,
                 longitudeDelta: 0.002421,
             }
-         
+
         }
     }
 
@@ -48,18 +47,7 @@ class MapService {
         if (this.map.current == null) {
             return
         }
-        // const duration = positions[0] ? Math.round(currentPosition.timestamp / 1000) - Math.round(positions[0].timestamp / 1000) : 0;
-
-        // const newDistance = positions[0] ? distanceBetween(positions[positions.length - 1], position) : 0;
-
         this.mapStructure.positions.push(currentPosition)
-
-        // console.log("POSITIONS", positions)
-        // setPositions(positions);
-       
-       
-
-        // this.mapStructure.positions = positions;
         this.mapStructure.currentPosition = currentPosition;
 
         //LE SET MAP REGION PERMET DE CENTRER LA POSITION DE L'UTILISATEUR
@@ -78,7 +66,7 @@ class MapService {
     }
 
 
-     distanceBetween = (from, to) => {
+    distanceBetween = (from, to) => {
         const options = { units: 'meters' };
         const origin = turf.point([from.coords.longitude, from.coords.latitude]);
         const destination = turf.point([to.coords.longitude, to.coords.latitude]);
@@ -87,7 +75,7 @@ class MapService {
     // console.log('POSITIONS', positions)
 
     //SNAPSHOT..........................................................
-     takeSnapshot = async () => {
+    takeSnapshot = async () => {
         if (this.map.current == null) {
             return
         }
@@ -114,72 +102,75 @@ class MapService {
         this.mapStructure.image = uri
         return uri
     }
-//SNAPSHOT..........................................................
+    //SNAPSHOT..........................................................
 
- //CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE...............................
-  position = {}
-  calculDistance = async () => {
+    //CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE...............................
+    position = {}
+    calculDistance = async () => {
 
-     //CHANGE const par var points
-     var points = [];
-     this.mapStructure.positions.forEach(position => {
-         points.push(position);
-     });
+        //CHANGE const par var points
+        var points = [];
+        this.mapStructure.positions.forEach(position => {
+            points.push(position);
+        });
 
-     if (points.length > 1) {
-         let totalDistance = 0;
+        if (points.length > 1) {
+            let totalDistance = 0;
 
-         let totalElevationGain = 0;
+            let totalElevationGain = 0;
 
-         for (let i = 0; i < points.length - 1; i++) {
-             const p1 = points[i];
-             const p2 = points[i + 1];
+            for (let i = 0; i < points.length - 1; i++) {
+                const p1 = points[i];
+                const p2 = points[i + 1];
 
-             //CHANGE const par var distance
-             var distance = turf.distance([p1.coords.longitude, p1.coords.latitude], [p2.coords.longitude, p2.coords.latitude], { units: 'meters' });
-             if (!isNaN(distance)) {
-                 totalDistance += distance;
-             }
-             //To FIXED permet d'afficher 2 chiffres après la virgule.
-            this.mapStructure.totalRunInMeters = totalDistance.toFixed(2)
+                //CHANGE const par var distance
+                var distance = turf.distance([p1.coords.longitude, p1.coords.latitude], [p2.coords.longitude, p2.coords.latitude], { units: 'meters' });
+                if (!isNaN(distance)) {
+                    totalDistance += distance;
+                }
+                //To FIXED permet d'afficher 2 chiffres après la virgule.
+                this.mapStructure.totalRunInMeters = totalDistance.toFixed(2)
 
-             //DENIVELE Calcul de la différence de hauteur entre les deux points 
-             const elevationDifference = p2.coords.altitude - p1.coords.altitude;
-             if (!isNaN(elevationDifference)) {
-                 totalElevationGain += elevationDifference;
-             }
-             this.mapStructure.elevationGain = totalElevationGain.toFixed(2);
-             // console.log("ELEVATION", elevationGain)
-         }
+                //DENIVELE Calcul de la différence de hauteur entre les deux points 
+                const elevationDifference = p2.coords.altitude - p1.coords.altitude;
+                if (!isNaN(elevationDifference)) {
+                    totalElevationGain += elevationDifference;
+                }
+                this.mapStructure.elevationGain = totalElevationGain.toFixed(2);
+                // console.log("ELEVATION", elevationGain)
+            }
 
-         //VITESSE MOYENNE
-         let totalTime = 0;
-         for (let i = 0; i < points.length - 1; i++) {
-             //Calculer la différence de temps entre les deux points
-             const timeDifference = new Date(points[i + 1].timestamp) - new Date(points[i].timestamp);
-             if (!isNaN(timeDifference)) {
-                 totalTime += timeDifference;
-             }
-             //Convertir le temps en secondes
-             const timeInSeconds = totalTime / 1000;
-             //Calculer la vitesse moyenne en m/s et on multipli par 3.6 pour avoir en km/h.
-             const averageSpeed = totalDistance / timeInSeconds * 3.6;
+            //VITESSE MOYENNE
+            let totalTime = 0;
+            for (let i = 0; i < points.length - 1; i++) {
+                //Calculer la différence de temps entre les deux points
+                const timeDifference = new Date(points[i + 1].timestamp) - new Date(points[i].timestamp);
+                if (!isNaN(timeDifference)) {
+                    totalTime += timeDifference;
+                }
+                //Convertir le temps en secondes
+                const timeInSeconds = totalTime / 1000;
+                //Calculer la vitesse moyenne en m/s et on multipli par 3.6 pour avoir en km/h.
+                const averageSpeed = totalDistance / timeInSeconds * 3.6;
 
-             this.mapStructure.averageSpeed = averageSpeed.toFixed(2);
-             // console.log("ALLURE MOYENNE",averageSpeed, ": km/heures");
-             // console.log(duration)
-         }
+                this.mapStructure.averageSpeed = averageSpeed.toFixed(2);
+                // console.log("ALLURE MOYENNE",averageSpeed, ": km/heures");
+                // console.log(duration)
+            }
 
-         //ALLURE
-         const timeInMinutes = totalTime / 60000;
-         const allure = timeInMinutes / (totalDistance / 1000); //on divise par 1000 pour avoir des metres
-         this.mapStructure.paceSpeed = allure.toFixed(2)
-         // console.log("ALLURE",allure,"minutes par km");
-     }
- }
- //...............................CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE
+            //ALLURE
+            const timeInMinutes = totalTime / 60000;
+            const allure = timeInMinutes / (totalDistance / 1000); //on divise par 1000 pour avoir des metres
+            this.mapStructure.paceSpeed = allure.toFixed(2)
+            // console.log("ALLURE",allure,"minutes par km");
+        }
+    }
 
- //DENIVELE POSITIF.......................................................
+
+
+    //...............................CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE
+
+    //DENIVELE POSITIF.......................................................
     //   const turf = require('@turf/turf');
 
     // // Calcul du dénivelé sur une distance donnée (en mètres)
