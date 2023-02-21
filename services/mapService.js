@@ -2,12 +2,17 @@ import * as Location from 'expo-location';
 import { ReplaySubject } from 'rxjs';
 import * as React from 'react';
 import * as turf from '@turf/turf';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ViewShot from "react-native-view-shot";
+import * as FileSystem from 'expo-file-system';
 
 
 class MapService {
     mapChange = new ReplaySubject();
     map = React.createRef(null);
     status = null;
+
+
 
     mapRegion = {
         latitude: 46.227638,
@@ -22,11 +27,39 @@ class MapService {
         totalRunInMeters: 0,
         elevationGain: 0,
         image: null,
-        averageSpeed: 0
+        averageSpeed: 0,
+        city: null
     }
 
+    resetAll = () => {
+        this.mapRegion = {
+            latitude: 46.227638,
+            longitude: 2.213749,
+            latitudeDelta: 15,
+            longitudeDelta: 15,
+        };
+        this.mapStructure = {
+            positions: [],
+            currentPosition: null,
+            totalRunInMeters: 0,
+            elevationGain: 0,
+            image: null,
+            averageSpeed: 0,
+            city: null
+        }
+    }
 
     userLocation = async () => {
+        this.mapStructure = {
+            positions: [],
+            currentPosition: null,
+            totalRunInMeters: 0,
+            elevationGain: 0,
+            image: null,
+            averageSpeed: 0,
+            city: null
+        }
+        // console.log("STRUCTURE", this.mapStructure)
         console.log("STATUS", this.status)
         if (this.status === 'granted') {
             let location = await Location.getCurrentPositionAsync({ enableHightAccuracy: true })
@@ -37,32 +70,40 @@ class MapService {
                 longitudeDelta: 0.002421,
             }
 
+            //AFFICHE LA VILLE DANS LAQUELLE ON A COURU.........
+            let geocode = await Location.reverseGeocodeAsync(location.coords);
+            let city = geocode[0].city;
+            try {
+                await AsyncStorage.setItem('city', city);
+                // console.log(city)
+                this.mapStructure.city = city;
+            } catch (error) {
+                console.log(error);
+            }
+            //.........AFFICHE LA VILLE DANS LAQUELLE ON A COURU
         }
     }
 
     onPositionChange = (currentPosition) => {
         // console.log("ON POSITION CHANGE", position)
         // console.log("MAP", this.map)
-
         if (this.map.current == null) {
             return
         }
         this.mapStructure.positions.push(currentPosition)
         this.mapStructure.currentPosition = currentPosition;
 
-        //LE SET MAP REGION PERMET DE CENTRER LA POSITION DE L'UTILISATEUR
+        //LE THIS MAP REGION PERMET DE CENTRER LA POSITION DE L'UTILISATEUR
         this.mapRegion = {
             latitude: currentPosition.coords.latitude,
             longitude: currentPosition.coords.longitude,
             latitudeDelta: 0.002922,
             longitudeDelta: 0.002421,
         };
-
         this.calculDistance();
         this.mapChange.next(this.mapStructure);
         // console.log("DISTANCE", distance);
         // console.log("DURATION", duration);
-
     }
 
 
@@ -83,8 +124,8 @@ class MapService {
         this.mapRegion = {
             latitude: this.mapRegion.latitude,
             longitude: this.mapRegion.longitude,
-            latitudeDelta: this.mapRegion.latitudeDelta * 5,
-            longitudeDelta: this.mapRegion.longitudeDelta * 2,
+            latitudeDelta: this.mapRegion.latitudeDelta,
+            longitudeDelta: this.mapRegion.longitudeDelta,
         }
         // console.log("MAP REGION", mapRegion)
         // 'takeSnapshot' takes a config object with the
@@ -95,7 +136,7 @@ class MapService {
             // height: 150,     // optional, when omitted the view-height is used
             //   region: {..},    // iOS only, optional region to render
             format: 'png',   // image formats: 'png', 'jpg' (default: 'png')
-            quality: 0.8,    // image quality: 0..1 (only relevant for jpg, default: 1)
+            quality: 1,    // image quality: 0..1 (only relevant for jpg, default: 1)
             result: 'file'   // result types: 'file', 'base64' (default: 'file')
         });
         const uri = await snapshot;
@@ -103,6 +144,16 @@ class MapService {
         return uri
     }
     //SNAPSHOT..........................................................
+
+    // takeSnapshot2 = async () => {
+    //     try {
+    //         const result = await this.map.current.capture();
+    //         console.log(result);
+    //       } catch (error) {
+    //         console.error(error);
+    //       }
+    // }
+
 
     //CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE...............................
     position = {}
@@ -152,12 +203,10 @@ class MapService {
                 const timeInSeconds = totalTime / 1000;
                 //Calculer la vitesse moyenne en m/s et on multipli par 3.6 pour avoir en km/h.
                 const averageSpeed = totalDistance / timeInSeconds * 3.6;
-
                 this.mapStructure.averageSpeed = averageSpeed.toFixed(2);
                 // console.log("ALLURE MOYENNE",averageSpeed, ": km/heures");
                 // console.log(duration)
             }
-
             //ALLURE
             const timeInMinutes = totalTime / 60000;
             const allure = timeInMinutes / (totalDistance / 1000); //on divise par 1000 pour avoir des metres
@@ -165,10 +214,15 @@ class MapService {
             // console.log("ALLURE",allure,"minutes par km");
         }
     }
-
-
-
     //...............................CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE
+
+    
+
+
+
+
+
+
 
     //DENIVELE POSITIF.......................................................
     //   const turf = require('@turf/turf');

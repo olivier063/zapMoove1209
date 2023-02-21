@@ -2,14 +2,12 @@ import * as TaskManager from 'expo-task-manager';
 import mapService from './mapService';
 
 
-
-
-const TIMER_TASK_NAME = 'background-timer-task';
 const LOCATION_TASK_NAME = 'background_location_task';
+const POLYLINE_TASK_NAME = 'polyline_task'
+
 
 
 class TaskManagerService {
-
 
   backgroundLocation = () => {
     TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
@@ -21,7 +19,7 @@ class TaskManagerService {
         const { locations } = data;
         // do something with the locations captured in the background
         console.log("LOCATION",locations)
-
+        
         this.getRegisteredTasks();
         mapService.onPositionChange(locations[0])
       }
@@ -32,10 +30,7 @@ class TaskManagerService {
   getRegisteredTasks = async () => {
     try {
       const tasks = await TaskManager.getRegisteredTasksAsync();
-      [{
-        taskType: "test"
-      }]
-      console.log("TASKS",tasks);
+      // console.log("TASKS",tasks);
 
     } catch (error) {
       console.error(error);
@@ -45,7 +40,7 @@ class TaskManagerService {
     try {
       const isRegistered = await TaskManager.isTaskRegisteredAsync(LOCATION_TASK_NAME);
       if (isRegistered) {
-        console.log(`Task '${LOCATION_TASK_NAME}' is registered.`);
+        // console.log(`Task '${LOCATION_TASK_NAME}' is registered.`);
         
       } else {
         console.log(`Task '${LOCATION_TASK_NAME}' is not registered.`);
@@ -61,64 +56,30 @@ class TaskManagerService {
     
     try {
       await TaskManager.unregisterTaskAsync(LOCATION_TASK_NAME);
-      console.log(`Task '${LOCATION_TASK_NAME}' unregistered successfully.`);
+      console.log(`Task '${LOCATION_TASK_NAME}' unregistered successfully.`); 
     } catch (error) {
       console.error(error);
     }
   }
 
 
-
-
-  chronoBackground = async () => {
-
-    // Défini une fonction qui sera appelée lorsque la tâche en arrière-plan est démarrée
-    // TaskManager.defineTask(TASK_NAME, ({ data, error }) => {
-    //     if (error) {
-    //         console.error(error);
-    //         return;
-    //     }
-    //     if (data) {
-    //         const { locations } = data;
-    //         console.log(locations);
-    //         // Mettre à jour votre chronomètre ici
-    //     }
-    // });
-
-    // const startBackgroundTask = async () => {
-    //     await Location.startLocationUpdatesAsync(TASK_NAME, {
-    //         accuracy: Location.Accuracy.Balanced,
-    //         timeInterval: 1000,
-    //         distanceInterval: 1,
-    //     });
-    // };
-
-    // const stopBackgroundTask = async () => {
-    //     await Location.stopLocationUpdatesAsync(TASK_NAME);
-    // };
-
-
-    TaskManager.defineTask(TIMER_TASK_NAME, ({ data, error }) => {
+  backgroundPolyline = () => {
+    TaskManager.defineTask(POLYLINE_TASK_NAME, ({ data, error }) => {
       if (error) {
-        console.error(error);
+        // Error occurred - check `error.message` for more details.
         return;
       }
       if (data) {
-        console.log(data);
-        // Mettre à jour votre chronomètre ici
+        const { locations } = data;
+        // do something with the locations captured in the background
+        // console.log("LOCATION",locations)
+        
+
+        mapService.userLocation(locations)
+        console.log('COORDINATES',coordinates)
       }
     });
-
-    const startBackgroundTask = () => {
-      TaskManager.runTask(TIMER_TASK_NAME, {
-        // optionnel, vous pouvez passer des données à votre tâche en arrière-plan
-        data: {},
-      });
-    };
   }
-
-
-
 
 
 

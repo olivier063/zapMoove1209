@@ -30,9 +30,9 @@ import TrainingStateHistory from './screens/trainingStateHistory';
 import TrainingMapView3 from './screens/trainingMapView3';
 import * as TaskManager from 'expo-task-manager';
 
+
 //Pour eviter une erreur du Task Manager, je le mets dans le App Entry (vu StackOverFlow)
 const LOCATION_TASK_NAME = 'background_location_task';
-
 TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
   if (error) {
     // Error occurred - check `error.message` for more details.
@@ -43,6 +43,8 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
     // do something with the locations captured in the background
   }
 }); 
+
+
 
 const Stack = createNativeStackNavigator();
 
@@ -104,6 +106,7 @@ export default function App() {
           <Stack.Screen name="TRAINING HISTORIQUE" component={TrainingHistory} />
           <Stack.Screen name="TRAINING STATE HISTORIQUE" component={TrainingStateHistory} />
           <Stack.Screen name="MAP VIEW" component={TrainingMapView3} />
+
 
 
 

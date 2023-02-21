@@ -35,7 +35,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.olive06300.zapMoove1209",
-      "permissions":["ACCESS_COARSE_LOCATION","ACCESS_BACKGROUND_LOCATION","ACCESS_FINE_LOCATION","FOREGROUND_SERVICE"],
+      "permissions":["ACCESS_COARSE_LOCATION","ACCESS_BACKGROUND_LOCATION","ACCESS_FINE_LOCATION","FOREGROUND_SERVICE" ],
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyCyN289DM_nUDwsbxZERgdnds-2V8ny8v0"

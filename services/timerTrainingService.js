@@ -1,5 +1,7 @@
 import { Observable, ReplaySubject } from "rxjs";
 
+
+
 class TimerTrainingService {
     maxTime = 30;
     timerDown = null;
@@ -16,7 +18,6 @@ class TimerTrainingService {
     startTimer() {
 
         this.timerDown = setInterval(() => {
-
             if (this.seconds >= 0) {
                 this.seconds = this.seconds + 1
             }

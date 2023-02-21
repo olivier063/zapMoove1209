@@ -9,7 +9,6 @@ export default class TrainingHistory extends Component {
     //ON CREE UN ARRAY DANS LES STATES POUR Y METTRE TOUTES LES DONNEES DE RUN DATA AFIN DE POUVOIR CREER UNE FLATLIST A PARTIR DE CE TABLEAU
     this.state = {
       allData: [],
-      isData: true
     }
     this.props.navigation.addListener('focus', () => {
       this.getStorageHistory();
@@ -26,20 +25,20 @@ export default class TrainingHistory extends Component {
   async getStorageHistory() {
     try {
       const runData = await StorageService.load({ key: 'runData' });
-
-      // ON CLASSE LES DONNEES PAR CURRENTE DATE AVEC LE .SORT SUR RUNDATA
-      runData.sort((a, b) => b.currentDate.localeCompare(a.currentDate));
-
       this.setState({
         allData: runData,
       })
+
+      // ON CLASSE LES DONNEES PAR CURRENTE DATE AVEC LE .SORT SUR RUNDATA
+      runData.sort((a, b) => b.currentDate.localeCompare(a.currentDate));
+      // PLUTOT QUE LE .SORT, ON UTILISE LE .REVERSE POUR CLASSER LES COURSES: Le dernier enregistrement en haut de liste.
+      // runData.reverse();
 
     } catch (error) {
       console.log("CATCH getStorageHistory", error)
       this.setState({
         allData: [],
       })
-      this.setState({isData: false})
     }
   }
 
@@ -54,19 +53,19 @@ export default class TrainingHistory extends Component {
     return (
       <View style={{ backgroundColor: 'white', height: '100%' }}>
         {/* La ternaire se place hors FlatList sinon elle ne rentre pas dans l'array vide */}
-         {this.state.allData.length === 0 ? 
-           <View style={{ height: '100%', marginTop: 150 }}>
-           <Text style={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
-             Aucun historique,{'\n'} entraînez-vous !
-           </Text>
-         </View> :
-        <FlatList
-          data={this.state.allData}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index }) => (
+        {this.state.allData.length === 0 ?
+          <View style={{ height: '100%', marginTop: 150 }}>
+            <Text style={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
+              Aucun historique,{'\n'} entraînez-vous !
+            </Text>
+          </View> :
+          <FlatList
+            data={this.state.allData}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
 
-            <View >
-           
+              <View >
+
                 <TouchableOpacity
                   onPress={() => this.props.navigation.navigate("TRAINING STATE HISTORIQUE", { image: item.image, distance: item.distance, minutes: item.minutes, seconds: item.seconds, hours: item.hours, averageSpeed: item.averageSpeed, paceSpeed: item.paceSpeed, elevationGain: item.elevationGain, h: item.h, m: item.m, s: item.s, currentDate: item.currentDate, index: index, allData: this.state.allData })}
                 >
@@ -80,7 +79,7 @@ export default class TrainingHistory extends Component {
 
                     <View style={{ flex: 1, justifyContent: 'center' }}>
                       <Text style={{ fontSize: 16 }}>
-                        Votre course du :
+                        {item.city} le :
                       </Text>
                       <Text style={{ fontSize: 15, fontWeight: 'bold' }}>
                         {item.currentDate}
@@ -98,13 +97,13 @@ export default class TrainingHistory extends Component {
                   </View>
                 </TouchableOpacity>
 
-              
-         
-            </View>
-          )}
-  
-        />
-          }
+
+
+              </View>
+            )}
+
+          />
+        }
       </View>
     )
   }

@@ -5,7 +5,7 @@ import StorageService from '../services/storageService';
 export default class TrainingStateHistory extends Component {
   constructor(props) {
     super(props)
-    console.log("PROPS", this.props)
+    // console.log("PROPS", this.props)
     this.state = {
 
     }
@@ -17,7 +17,7 @@ export default class TrainingStateHistory extends Component {
       let runDataArray = await StorageService.load({
         key: 'runData'
       }); //Récupère le tableau de stockage
-      console.log(index)
+      // console.log(index)
 
       runDataArray.splice(index, 1); //Supprime la valeur du tableau
       await StorageService.save({
@@ -33,8 +33,10 @@ export default class TrainingStateHistory extends Component {
 
 
   render() {
-    console.log("INDEX", this.props.route.params.index)
-    console.log("ALL DATA", this.props.route.params.allData)
+    // console.log("INDEX", this.props.route.params.index)
+    // console.log("ALL DATA", this.props.route.params.allData)
+   
+
     return (
       <View>
         <Image

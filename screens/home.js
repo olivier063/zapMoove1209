@@ -1,8 +1,10 @@
 import { Text, View, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native'
 import React, { Component } from 'react'
 import StorageService from '../services/storageService';
-import mapService from '../services/mapService';
-import * as Location from 'expo-location';
+
+
+
+
 
 export default class Home extends Component {
     constructor(props) {
@@ -57,7 +59,7 @@ export default class Home extends Component {
 
                 </View>
 
-                <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', marginTop: 20, margin: 5 }}>
                     <View style={{ flex: 1, alignItems: 'center' }}>
 
 
@@ -110,10 +112,11 @@ export default class Home extends Component {
                         </TouchableOpacity>
                         <Text style={styles.text}>Compétitions</Text>
                     </View>
-
-
-
+           
+                
                 </View>
+                {/* <BackgroundFetchScreen/> */}
+         
             </View>
         )
     }

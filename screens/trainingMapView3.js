@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-na
 import * as Location from 'expo-location';
 import TimerTraining from '../components/timerTraining';
 import mapService from '../services/mapService';
+import ViewShot from "react-native-view-shot";
+
 
 
 
@@ -12,7 +14,7 @@ const LOCATION_TASK_NAME = 'background_location_task';
 // je passe props en parametre afin de recuperer le useNavigation dans l'enfant qui est une class component
 export default function TrainingMapView3(props) {
 
-
+    // recentre sur la france
     const [mapRegion, setMapRegion] = React.useState({
         latitude: 46.227638,
         longitude: 2.213749,
@@ -21,43 +23,27 @@ export default function TrainingMapView3(props) {
     });
 
 
-
-
-
     React.useEffect(() => {
         (async () => {
+            //On reset toutes les donnees à la montee du comnposant pour que 
+            // lorsque l'on rerentre dans mapView, il n'y ai plus de traces de la precedente Run
+            // Le reset All etait avant dans le unregisterTask du taskManagerService
+            mapService.resetAll();
             // console.log("TOTO")
+            //recentre sur la france
+            setMapRegion({
+                latitude: 46.227638,
+                longitude: 2.213749,
+                latitudeDelta: 15,
+                longitudeDelta: 15,
+            })
 
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            mapService.status = status
-            //   console.log("MAP SERVICE",mapService.status)
-            if (mapService.status !== 'granted') {
-                mapService.status = 'Permission to access location was denied';
-                return;
-            } else {
-                const requestPermissions = async () => {
+            mapService.mapChange.subscribe(mapStructure => {
+                // console.log("STRUCTURE", mapStructure)
+                setMapRegion(mapService.mapRegion)
+            });
 
-                    const { status } = await Location.requestBackgroundPermissionsAsync();
-                    mapService.status = status
-                    console.log("STATUS BACK", mapService.status)
-                    if (mapService.status === 'granted') {
-                        // LE TIME INTERVAL DEFINI QUE LA MIS A JOUR DE LA POLYLINE SE FERA TOUTE LES 5 SECONDES
-                        await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-                            accuracy: Location.Accuracy.BestForNavigation,
-                            timeInterval: 5000,
 
-                        });
-                    }
-                };
-
-                requestPermissions()
-                console.log('Access granted!!')
-                console.log('STATUS', mapService.status)
-
-                mapService.mapChange.subscribe(mapStructure => {
-                    setMapRegion(mapService.mapRegion)
-                });
-            }
         })();
     }, []);
 
@@ -68,6 +54,7 @@ export default function TrainingMapView3(props) {
 
         <View style={styles.container}>
 
+            {/* <ViewShot ref={ref => (viewShot = ref)} container={true}> */}
             <MapView style={styles.map}
                 region={mapRegion}
                 ref={mapService.map}
@@ -87,6 +74,7 @@ export default function TrainingMapView3(props) {
                     radius={100}
                 /> */}
             </MapView>
+            {/* </ViewShot> */}
 
             <View style={{ backgroundColor: "#92AFD7", height: '100%' }}>
                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
@@ -108,6 +96,8 @@ export default function TrainingMapView3(props) {
 
                 {/* ON PASSE DANS LES PROPS DU COMPONENT POUR APPELER LA FONCTION DU PARENT VIA L'ENFANT (TimerTraining et takeSnapshot) Attention, on appelle la fonction dans l'enfant par le mot clef et non pas le nom de la fonction */}
                 <TimerTraining navigation={props.navigation} />
+
+
 
             </View>
         </View>

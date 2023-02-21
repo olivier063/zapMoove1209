@@ -12,7 +12,7 @@ export default function TrainingState(props) {
 
   //TIMESTAMP affiché dans le trainingState au dessus du resumé........................................................
   const [currentDate, setCurrentDate] = useState('');
-  
+
 
   useEffect(() => {
     var date = new Date().getDate(); //Current Date
@@ -38,7 +38,7 @@ export default function TrainingState(props) {
     } catch {
 
     }
-  
+
     const runData = {
       image: props.route.params.image,
       distance: props.route.params.distance,
@@ -52,6 +52,7 @@ export default function TrainingState(props) {
       m: props.route.params.m,
       s: props.route.params.s,
       currentDate: currentDate,
+      city: props.route.params.city
 
     };
 
@@ -61,24 +62,18 @@ export default function TrainingState(props) {
       data: datas,
       expires: null,
     });
-
-    // console.log("SAVE runData", runData)
-
-    // gpxService.createGPXFile(positions, props.route.params.timeDiff)
-    // console.log(gpxData)
-
     navigation.navigate("CHOISIR UN MODE")
   }
 
 
   return (
     <View>
-      <View style={{height: 180, width: '100%'}}>
-      <Image
-        source={{ uri: props.route.params.image }}
-        style={{ height: '100%', width: "100%" }}
-      // resizeMode="contain"
-      />
+      <View style={{ height: 180, width: '100%' }}>
+        <Image
+          source={{ uri: props.route.params.image }}
+          style={{ height: '100%', width: "100%" }}
+        // resizeMode="contain"
+        />
       </View>
       <Text style={{ marginLeft: 10, marginTop: 5, fontSize: 15 }}>Entraînement</Text>
       <Text style={{ marginLeft: 10, fontSize: 15 }}>{currentDate}</Text>
