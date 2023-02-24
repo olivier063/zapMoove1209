@@ -24,18 +24,35 @@ export default class TrainingStateHistory extends Component {
         key: 'runData',
         data: runDataArray
       });
-    
+
     } catch {
 
     }
     this.props.navigation.navigate("TRAINING HISTORIQUE")
   }
 
+  //image-picker.............................................. IL FAUT NPM IMAGE PICKER!!!!!!!
+  pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    // console.log("RESULT", result);
+    const uri = result.uri;
+    setImage(uri);
+    // console.log("URI", uri);
+    return uri;
+  };
+  //..............................................image-picker
+
 
   render() {
     // console.log("INDEX", this.props.route.params.index)
     // console.log("ALL DATA", this.props.route.params.allData)
-   
+
 
     return (
       <View>
@@ -45,8 +62,11 @@ export default class TrainingStateHistory extends Component {
         // resizeMode="contain"
         />
         <Text style={{ marginLeft: 10, marginTop: 5, fontSize: 15 }}>Entraînement</Text>
-        <Text style={{ marginLeft: 10, fontSize: 15 }}>{this.props.route.params.currentDate}</Text>
 
+        <View style={{flexDirection: 'row'}}>
+        <Text style={{ marginLeft: 10, fontSize: 15 }}>{this.props.route.params.currentDate}</Text>
+        
+        </View>
         {/* ce style permet d'ajouter une ligne separatrice */}
         <View
           style={{

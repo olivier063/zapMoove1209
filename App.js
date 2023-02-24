@@ -1,9 +1,9 @@
 
-import { StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import Logo from './components/logo';
 import EscapeRunChoixCourse from './screens/escapeRunChoixCourse';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import CourseConnecteeChoixCourse from './screens/courseConnecteeChoixCourse';
 import CompetitionChoixCourse from './screens/competitionChoixCourse';
@@ -29,6 +29,7 @@ import TrainingHistory from './screens/trainingHistory';
 import TrainingStateHistory from './screens/trainingStateHistory';
 import TrainingMapView3 from './screens/trainingMapView3';
 import * as TaskManager from 'expo-task-manager';
+import CourseConnecteeEnvoiGpx from './screens/courseConnecteeEnvoiGpx';
 
 
 //Pour eviter une erreur du Task Manager, je le mets dans le App Entry (vu StackOverFlow)
@@ -44,9 +45,36 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
   }
 }); 
 
-
-
 const Stack = createNativeStackNavigator();
+// const navigation = useNavigation();
+
+
+// ...
+const partager = () => {
+  Alert.alert(
+    "JE PARTAGE : ",
+    "(Tapez en dehors pour fermer la fenêtre)",
+    [
+      {
+        text: "ajouter exercice dans course",
+        onPress: () => navigation.navigate('MaPage'),
+      },
+      {
+        text: "Mes coordonnées GPX",
+      },
+      {
+        text: "Cet écran",
+      },
+    ],
+    { 
+      cancelable: true, 
+    }
+  );
+};
+
+
+//...
+
 
 export default function App() {
   return (
@@ -104,8 +132,17 @@ export default function App() {
           {/* option={{headerShown: false}} permet de ne pas afficher la barre de titre et donc la navigation arriere */}
           <Stack.Screen name="TRAINING STATE" component={TrainingState} options={{headerShown: false}} /> 
           <Stack.Screen name="TRAINING HISTORIQUE" component={TrainingHistory} />
-          <Stack.Screen name="TRAINING STATE HISTORIQUE" component={TrainingStateHistory} />
+          <Stack.Screen name="TRAINING STATE HISTORIQUE" component={TrainingStateHistory} 
+          options={({ navigation }) => ({
+            headerRight: () => <TouchableOpacity onPress={() => partager()}>
+              <Image source={require("./assets/partagerIcone.jpeg")}
+                resizeMode="contain"
+                style={styles.imageHistorique} />
+            </TouchableOpacity>
+          })}
+          />
           <Stack.Screen name="MAP VIEW" component={TrainingMapView3} />
+          <Stack.Screen name="ENVOYER GPX" component={CourseConnecteeEnvoiGpx} />
 
 
 
@@ -130,5 +167,6 @@ const styles = StyleSheet.create({
   imageHistorique:{
     height: 30,
     width: 100,
-  }
+  },
+
 })

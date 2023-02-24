@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
+import TimerTrainingService from '../services/timerTrainingService';
+import timerTrainingService from '../services/timerTrainingService';
 
 const BACKGROUND_FETCH_TASK = 'chrono-background-fetch';
 
@@ -13,6 +15,9 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
   console.log("DEFINE TASK")
   console.log(`Got background fetch call at date: ${new Date(now).toISOString()}`);
 
+  timerTrainingService.startTimer()
+  console.log(timerTrainingService.seconds)
+  
   // Be sure to return the successful result type!
   return BackgroundFetch.BackgroundFetchResult.NewData;
 });

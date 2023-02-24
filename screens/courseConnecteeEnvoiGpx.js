@@ -2,7 +2,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList, 
 import React, { Component } from 'react'
 import StorageService from '../services/storageService';
 
-export default class CourseConnecteeChoixCourse extends Component {
+export default class CourseConnecteeEnvoiGpx extends Component {
 
   constructor(props) {
     super(props);

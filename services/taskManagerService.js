@@ -3,7 +3,7 @@ import mapService from './mapService';
 
 
 const LOCATION_TASK_NAME = 'background_location_task';
-const POLYLINE_TASK_NAME = 'polyline_task'
+
 
 
 
@@ -18,7 +18,7 @@ class TaskManagerService {
       if (data) {
         const { locations } = data;
         // do something with the locations captured in the background
-        console.log("LOCATION",locations)
+        // console.log("LOCATION TASK MANAGER SERVICE",locations)
         
         this.getRegisteredTasks();
         mapService.onPositionChange(locations[0])
@@ -60,25 +60,6 @@ class TaskManagerService {
     } catch (error) {
       console.error(error);
     }
-  }
-
-
-  backgroundPolyline = () => {
-    TaskManager.defineTask(POLYLINE_TASK_NAME, ({ data, error }) => {
-      if (error) {
-        // Error occurred - check `error.message` for more details.
-        return;
-      }
-      if (data) {
-        const { locations } = data;
-        // do something with the locations captured in the background
-        // console.log("LOCATION",locations)
-        
-
-        mapService.userLocation(locations)
-        console.log('COORDINATES',coordinates)
-      }
-    });
   }
 
 

@@ -3,8 +3,7 @@ import { ReplaySubject } from 'rxjs';
 import * as React from 'react';
 import * as turf from '@turf/turf';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ViewShot from "react-native-view-shot";
-import * as FileSystem from 'expo-file-system';
+import createGpx from 'gps-to-gpx'
 
 
 class MapService {
@@ -28,7 +27,9 @@ class MapService {
         elevationGain: 0,
         image: null,
         averageSpeed: 0,
-        city: null
+        city: null,
+
+        path: null,
     }
 
     resetAll = () => {
@@ -216,11 +217,35 @@ class MapService {
     }
     //...............................CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE
 
-    
+    //GPX...................................................................async car await pour le path
+    convertToGpx = async () => {
+        const gpsPoints = this.mapStructure.positions.map((location) => ({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            elevation: location.coords.altitude,
+            time: new Date(location.timestamp).toISOString(),
+        }));
 
+        const data = {
+            waypoints: gpsPoints,
+            activityType: 'Running ' + this.mapStructure.city,
+            startTime: new Date().toISOString(),
+        };
 
+        const gpx = createGpx(data.waypoints, {
+            activityName: data.activityType,
+            startTime: data.startTime,
+        });
+        // console.log("GPS POINTS",gpsPoints)
+        console.log("GPX", gpx);
+        // path est dans le mapStructure
+        const uri = await createGpx;
+        this.mapStructure.path = uri
+        console.log("PATH", uri)
+        return uri
 
-
+    };
+    //...................................................................GPX
 
 
 

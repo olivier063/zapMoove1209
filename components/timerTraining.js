@@ -4,7 +4,7 @@ import TimerTrainingService from '../services/timerTrainingService';
 import taskManagerService from '../services/taskManagerService';
 import mapService from '../services/mapService';
 import * as Location from 'expo-location';
-import gpxService from '../services/gpxService';
+
 
 
 const LOCATION_TASK_NAME = 'background_location_task';
@@ -129,21 +129,18 @@ export default class TimerTraining extends Component {
 
 
     alertActions = async () => {
-        this.timerTrainingService.stopTimer();
 
+        const gpx = await mapService.convertToGpx();
+        this.timerTrainingService.stopTimer();
         // ON APPEL TASK MANAGER POUR DESENREGISTER LA TACHE ET ARRETER LA GEOLOCALISATION
         taskManagerService.unregisterTask(LOCATION_TASK_NAME)
-        
-
         const image = await mapService.takeSnapshot();
         // const image = await this.props.handleCapture();
         // console.log("IMAGE",image)
-
         this.setState({ startButton: true });
         this.setState({ icone: true });
-        this.setState({ endTime: Date.now() })
+        this.setState({ endTime: Date.now() });
     
-       
         // etant donnee le return dans le takeSnapShot, on peut ecrir : {image} direct. De plus, on passe avec les props minutes, seconds et hours qui sont dans les state. on les recupere dans l'enfant avec les props
         this.props.navigation.navigate("TRAINING STATE", { image: mapService.mapStructure.image, distance: mapService.mapStructure.totalRunInMeters, minutes: this.state.minutes, seconds: this.state.seconds, hours: this.state.hours, averageSpeed: mapService.mapStructure.averageSpeed, paceSpeed: mapService.mapStructure.paceSpeed, elevationGain: mapService.mapStructure.elevationGain, h: this.state.h, m: this.state.m, s: this.state.s, timeDiff: this.state.timeDiff, city: mapService.mapStructure.city});
     }

@@ -74,5 +74,6 @@ class TimerTrainingService {
 
 
 
-
+// const timerTrainingService = new TimerTrainingService();
+// export default timerTrainingService;
 export default TimerTrainingService;
