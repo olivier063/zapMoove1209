@@ -7,7 +7,7 @@ import { timestamp } from 'rxjs';
 
 export default function TrainingState(props) {
 
-  // console.log("PROPS TRAINING STATE", props)
+  console.log("PROPS TRAINING STATE", props)
   const navigation = useNavigation();
 
   //TIMESTAMP affiché dans le trainingState au dessus du resumé........................................................

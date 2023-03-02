@@ -1,13 +1,18 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Platform } from 'react-native'
 import React, { Component } from 'react'
 import StorageService from '../services/storageService';
+import shareService from '../services/shareService';
+import { captureScreen } from 'react-native-view-shot';
+import * as ImagePicker from 'expo-image-picker';
+import * as MediaLibrary from 'expo-media-library';
+import * as Sharing from 'expo-sharing';
 
 export default class TrainingStateHistory extends Component {
   constructor(props) {
     super(props)
-    // console.log("PROPS", this.props)
+    console.log("PROPS", this.props)
     this.state = {
-
+      screenShot: null,
     }
   }
 
@@ -31,20 +36,115 @@ export default class TrainingStateHistory extends Component {
     this.props.navigation.navigate("TRAINING HISTORIQUE")
   }
 
-  //image-picker.............................................. IL FAUT NPM IMAGE PICKER!!!!!!!
+
+
+
+  shareOptions = () => {
+    Alert.alert(
+      "JE PARTAGE : ",
+      "(Tapez en dehors pour fermer la fenêtre)",
+      [
+        {
+          text: "ajouter exercice dans course",
+          onPress: () => this.props.navigation.navigate("CHOISISSEZ UNE COURSE"),
+        },
+        {
+          text: "Mes coordonnées GPX",
+          onPress: () => shareService.onShare(),
+        },
+        {
+          text: "Cet écran",
+          onPress: () => this.hasAndroidPermission(),
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
+  };
+
+
+
+  //PARTAGE de l'ecran à des amis..................................
+  hasAndroidPermission = async () => {
+    // const permission = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+    const permission = Platform.Version >= 33 ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+    // console.log("CHECK PERMISSION",  PermissionsAndroid.PERMISSIONS)
+
+    let hasPermission = await MediaLibrary.getPermissionsAsync();
+    console.log(hasPermission)
+    if (hasPermission.granted !== true) {
+      hasPermission = await MediaLibrary.requestPermissionsAsync();
+      console.log(hasPermission)
+    }
+    if (hasPermission.granted === true) {
+      console.log("CHECK PERMISSION", permission)
+      console.log("HAS PERMISSION", hasPermission)
+
+      try {
+        const uriScreen = await captureScreen({
+          format: "png",
+          quality: 0.8,
+        });
+
+        console.log("SCREEN SHOT", uriScreen);
+        this.setState({ screenShot: uriScreen });
+
+      } catch (error) {
+        console.error("Oops, snapshot failed", error);
+        Alert.alert("Capture échouée");
+      }
+      this.savePicture()
+    }
+  }
+
+  savePicture = async () => {
+    const image = await MediaLibrary.saveToLibraryAsync(this.state.screenShot)
+    console.log("IMAGE", this.state.screenShot)
+    if (!this.state.screenShot) {
+      console.log("Pas d'image enregistrée")
+      Alert.alert("Pas d'image enregistrée")
+    }
+    this.share();
+  };
+
+  share = async () => {
+    const isAvailable = await Sharing.isAvailableAsync()
+    console.log(isAvailable)
+    if (isAvailable === true) {
+      try {
+        const imageShare = await Sharing.shareAsync(this.state.screenShot, {})
+      } catch(error){
+        console.log(error)
+
+        Alert.alert(
+          'Oups',
+          "un problème est survenu, pour repartager cette image, veuillez quitter l'application.",
+          [
+            {
+              text: 'OK',
+            }
+          ],
+        );
+
+      }
+    }
+  }
+  //..................................PARTAGE de l'ecran à des amis
+
+
+  //image-picker..............................................(Permet de modifier la taille de l'image que l'on envoi, mais peu pertinent pour le partage de screenShot)
   pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      allowsEditing: false,
       aspect: [4, 3],
       quality: 1,
     });
     // console.log("RESULT", result);
-    const uri = result.uri;
-    setImage(uri);
-    // console.log("URI", uri);
-    return uri;
+    // const uri = result.uri;
+    // return uri;
   };
   //..............................................image-picker
 
@@ -55,7 +155,9 @@ export default class TrainingStateHistory extends Component {
 
 
     return (
-      <View>
+
+      <View style={{ backgroundColor: 'white', height: '100%' }}>
+
         <Image
           source={{ uri: this.props.route.params.image }}
           style={{ height: 165, width: '100%' }}
@@ -63,10 +165,18 @@ export default class TrainingStateHistory extends Component {
         />
         <Text style={{ marginLeft: 10, marginTop: 5, fontSize: 15 }}>Entraînement</Text>
 
-        <View style={{flexDirection: 'row'}}>
-        <Text style={{ marginLeft: 10, fontSize: 15 }}>{this.props.route.params.currentDate}</Text>
-        
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={{ marginLeft: 10, fontSize: 15, flex: 1 }}>{this.props.route.params.currentDate}</Text>
+
+          <TouchableOpacity onPress={() => this.shareOptions()}>
+            <Image
+              source={require("../assets/partagerIcone.jpeg")}
+              resizeMode="contain"
+              style={styles.imageHistorique}
+            />
+          </TouchableOpacity>
         </View>
+
         {/* ce style permet d'ajouter une ligne separatrice */}
         <View
           style={{
@@ -131,6 +241,7 @@ export default class TrainingStateHistory extends Component {
         <View style={{ marginTop: 5, alignItems: 'center' }}>
           <TouchableOpacity style={{ backgroundColor: "red", height: 40, width: 250, borderRadius: 7, justifyContent: 'center', margin: 0, borderColor: 'black', borderWidth: 1 }}
             onPress={() => this.deleteRun(this.props.route.params.index)}
+          // onPress={() => this.share()}
           >
             <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
               SUPPRIMER
@@ -142,3 +253,12 @@ export default class TrainingStateHistory extends Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  imageHistorique: {
+    height: 30,
+    width: 100,
+    marginTop: -15,
+  },
+
+})

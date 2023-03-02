@@ -6,12 +6,13 @@ export default class CourseConnecteeChoixCourse extends Component {
 
   constructor(props) {
     super(props);
-
+  
     this.state = {
       data: [],
       isLoading: true,
       id_user: null,
     };
+    console.log(this.state)
   }
 
   async getStorage() {
@@ -58,11 +59,9 @@ export default class CourseConnecteeChoixCourse extends Component {
 
         {isLoading ? <ActivityIndicator /> : (
           <FlatList
-
             data={data}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
-
 
               <>
 
@@ -83,7 +82,6 @@ export default class CourseConnecteeChoixCourse extends Component {
                     {item.COURSE},
                   </Text>
                 </View>
-
 
               </>
             )}

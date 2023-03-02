@@ -46,16 +46,13 @@ export default class TimerTraining extends Component {
             m: null,
             s: null,
             //................................................................................
-
         };
     }
-
 
     // le setTimer se fait à la montee du composant sinon erreur: (Can't call setState on a component that is not yet mounted), le setTimer est dans le constructor de timerTrainingService
     componentDidMount() {
         this.timerTrainingService.setTimer();
     }
-
 
     // on regarde si la valeur resetTimer du parent est à true, si c'est le cas on remet à zer0 clearInterval pour arreter le decompte
     // de secondes, on passe a false le bouton start, et on reset le timer
@@ -77,7 +74,6 @@ export default class TimerTraining extends Component {
             }
         }
     }
-
 
     onButtonStart = async () => {
         const { status } = await Location.requestForegroundPermissionsAsync();
@@ -106,11 +102,11 @@ export default class TimerTraining extends Component {
         }
         mapService.userLocation();
         taskManagerService.backgroundLocation();
-//...........................................................................
+        //...........................................................................
 
         this.timerTrainingService.startTimer();
 
-//...........................................................................
+        //...........................................................................
         this.setState({ startButton: false });
         this.setState({ startDisable: true });
         this.setState({ startTime: Date.now() })
@@ -127,22 +123,39 @@ export default class TimerTraining extends Component {
         this.setState({ pauseButton: true });
     }
 
-
     alertActions = async () => {
 
-        const gpx = await mapService.convertToGpx();
         this.timerTrainingService.stopTimer();
         // ON APPEL TASK MANAGER POUR DESENREGISTER LA TACHE ET ARRETER LA GEOLOCALISATION
         taskManagerService.unregisterTask(LOCATION_TASK_NAME)
         const image = await mapService.takeSnapshot();
+
+        const gpx = await mapService.convertToGpx();
+
         // const image = await this.props.handleCapture();
         // console.log("IMAGE",image)
         this.setState({ startButton: true });
         this.setState({ icone: true });
         this.setState({ endTime: Date.now() });
-    
+
         // etant donnee le return dans le takeSnapShot, on peut ecrir : {image} direct. De plus, on passe avec les props minutes, seconds et hours qui sont dans les state. on les recupere dans l'enfant avec les props
-        this.props.navigation.navigate("TRAINING STATE", { image: mapService.mapStructure.image, distance: mapService.mapStructure.totalRunInMeters, minutes: this.state.minutes, seconds: this.state.seconds, hours: this.state.hours, averageSpeed: mapService.mapStructure.averageSpeed, paceSpeed: mapService.mapStructure.paceSpeed, elevationGain: mapService.mapStructure.elevationGain, h: this.state.h, m: this.state.m, s: this.state.s, timeDiff: this.state.timeDiff, city: mapService.mapStructure.city});
+        this.props.navigation.navigate("TRAINING STATE",
+            {
+                image: mapService.mapStructure.image,
+                distance: mapService.mapStructure.totalRunInMeters,
+                minutes: this.state.minutes,
+                seconds: this.state.seconds,
+                hours: this.state.hours,
+                averageSpeed: mapService.mapStructure.averageSpeed,
+                paceSpeed: mapService.mapStructure.paceSpeed,
+                elevationGain: mapService.mapStructure.elevationGain,
+                h: this.state.h,
+                m: this.state.m,
+                s: this.state.s,
+                timeDiff: this.state.timeDiff,
+                city: mapService.mapStructure.city,
+                path: mapService.mapStructure.path
+            });
     }
 
     stopRun = () => {

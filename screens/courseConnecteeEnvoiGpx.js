@@ -48,21 +48,20 @@ export default class CourseConnecteeEnvoiGpx extends Component {
     this.getStorage();
   }
 
+
   render() {
     const { data, isLoading } = this.state;
     return (
 
       //  le heigth 90% a resolu le Pb de scroll to bottom
 
-      <View style={{ height: `90%`, backgroundColor: "white" }}>
+      <View style={{ height: `100%`, backgroundColor: "white" }}>
 
         {isLoading ? <ActivityIndicator /> : (
           <FlatList
-
             data={data}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
-
 
               <>
 
@@ -83,7 +82,6 @@ export default class CourseConnecteeEnvoiGpx extends Component {
                     {item.COURSE},
                   </Text>
                 </View>
-
 
               </>
             )}
@@ -122,8 +120,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
-
-
 
 });

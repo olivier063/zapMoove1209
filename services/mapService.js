@@ -146,15 +146,6 @@ class MapService {
     }
     //SNAPSHOT..........................................................
 
-    // takeSnapshot2 = async () => {
-    //     try {
-    //         const result = await this.map.current.capture();
-    //         console.log(result);
-    //       } catch (error) {
-    //         console.error(error);
-    //       }
-    // }
-
 
     //CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE...............................
     position = {}
