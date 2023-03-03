@@ -52,7 +52,9 @@ export default function TrainingState(props) {
       m: props.route.params.m,
       s: props.route.params.s,
       currentDate: currentDate,
-      city: props.route.params.city
+      city: props.route.params.city,
+
+      pathGpx: props.route.params.pathGpx
 
     };
 

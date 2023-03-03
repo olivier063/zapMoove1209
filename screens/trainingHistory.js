@@ -13,8 +13,8 @@ export default class TrainingHistory extends Component {
     this.props.navigation.addListener('focus', () => {
       this.getStorageHistory();
     });
-    // console.log("PROPSSSS", this.props) 
-    // console.log("STATE", this.state)
+    // console.log("PROPSSSS TRAINING HISTORY", this.props) 
+    // console.log("STATE TRAINING HISTORY", this.state)
   }
 
   componentDidMount() {
@@ -28,7 +28,7 @@ export default class TrainingHistory extends Component {
       this.setState({
         allData: runData,
       })
-
+      // console.log("RUN DATA",runData)
       // ON CLASSE LES DONNEES PAR CURRENTE DATE AVEC LE .SORT SUR RUNDATA
       runData.sort((a, b) => b.currentDate.localeCompare(a.currentDate));
       // PLUTOT QUE LE .SORT, ON UTILISE LE .REVERSE POUR CLASSER LES COURSES: Le dernier enregistrement en haut de liste.
@@ -67,7 +67,24 @@ export default class TrainingHistory extends Component {
               <View >
 
                 <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate("TRAINING STATE HISTORIQUE", { image: item.image, distance: item.distance, minutes: item.minutes, seconds: item.seconds, hours: item.hours, averageSpeed: item.averageSpeed, paceSpeed: item.paceSpeed, elevationGain: item.elevationGain, h: item.h, m: item.m, s: item.s, currentDate: item.currentDate, index: index, allData: this.state.allData })}
+                  onPress={() => this.props.navigation.navigate("TRAINING STATE HISTORIQUE", 
+                  { 
+                    image: item.image, 
+                    distance: item.distance, 
+                    minutes: item.minutes, 
+                    seconds: item.seconds, 
+                    hours: item.hours, 
+                    averageSpeed: item.averageSpeed, 
+                    paceSpeed: item.paceSpeed, 
+                    elevationGain: item.elevationGain, 
+                    h: item.h, 
+                    m: item.m, 
+                    s: item.s, 
+                    currentDate: item.currentDate, 
+                    index: index, 
+                    allData: this.state.allData,
+                    pathGpx: item.pathGpx
+                  })}
                 >
                   <View style={{ flexDirection: 'row', padding: 10, backgroundColor: '#FF6F00', marginLeft: 20, marginRight: 20, marginTop: 15, borderRadius: 7 }}>
                     <View style={{ flex: 0.5, alignItems: 'center', justifyContent: 'center' }}>

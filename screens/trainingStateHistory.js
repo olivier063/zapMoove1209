@@ -1,7 +1,6 @@
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Platform } from 'react-native'
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Platform, Share } from 'react-native'
 import React, { Component } from 'react'
 import StorageService from '../services/storageService';
-import shareService from '../services/shareService';
 import { captureScreen } from 'react-native-view-shot';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
@@ -10,7 +9,7 @@ import * as Sharing from 'expo-sharing';
 export default class TrainingStateHistory extends Component {
   constructor(props) {
     super(props)
-    console.log("PROPS", this.props)
+    console.log("PROPS TRAINING STATE HISTORY", this.props)
     this.state = {
       screenShot: null,
     }
@@ -46,11 +45,11 @@ export default class TrainingStateHistory extends Component {
       [
         {
           text: "ajouter exercice dans course",
-          onPress: () => this.props.navigation.navigate("CHOISISSEZ UNE COURSE"),
+          onPress: () => this.props.navigation.navigate("CHOISISSEZ UNE COURSE",{pathGpx: this.props.route.params.pathGpx}),
         },
         {
           text: "Mes coordonnées GPX",
-          onPress: () => shareService.onShare(),
+          onPress: () => this.shareGpx(),
         },
         {
           text: "Cet écran",
@@ -105,10 +104,10 @@ export default class TrainingStateHistory extends Component {
       console.log("Pas d'image enregistrée")
       Alert.alert("Pas d'image enregistrée")
     }
-    this.share();
+    this.shareScreenshot();
   };
 
-  share = async () => {
+  shareScreenshot = async () => {
     const isAvailable = await Sharing.isAvailableAsync()
     console.log(isAvailable)
     if (isAvailable === true) {
@@ -130,6 +129,28 @@ export default class TrainingStateHistory extends Component {
       }
     }
   }
+
+  shareGpx = async () => {
+    try {
+      const result = await Share.share({
+        title: 'Mes coordonnées GPX',
+        message:
+        this.props.route.params.pathGpx,
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
   //..................................PARTAGE de l'ecran à des amis
 
 

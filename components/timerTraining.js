@@ -154,7 +154,7 @@ export default class TimerTraining extends Component {
                 s: this.state.s,
                 timeDiff: this.state.timeDiff,
                 city: mapService.mapStructure.city,
-                path: mapService.mapStructure.path
+                pathGpx: mapService.mapStructure.pathGpx
             });
     }
 

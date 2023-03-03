@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, TouchableOpacity, Image, ScrollView, FlatList, ActivityIndicator } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity, Image, FlatList, ActivityIndicator } from 'react-native'
 import React, { Component } from 'react'
 import StorageService from '../services/storageService';
 
@@ -11,8 +11,11 @@ export default class CourseConnecteeChoixCourse extends Component {
       data: [],
       isLoading: true,
       id_user: null,
+
+      // numCourse: null,
+      // numFacture: null,
     };
-    console.log(this.state)
+    // console.log("STATE",this.state)
   }
 
   async getStorage() {
@@ -36,7 +39,17 @@ export default class CourseConnecteeChoixCourse extends Component {
         const response = await fetch(`https://www.zapsports.com/ext/app/mes_courses.htm?ID_USER=${this.state.id_user}`);
         const json = await response.json();
         this.setState({ data: json });
-        console.log("DATA DANS GetCOURSES", this.state.data);
+        console.log("DATA CHOIX COURSE", this.state.data);
+
+        // this.state.data.map(item => {
+        //   // console.log('ITEM', item.NUM_COURSE);
+        //   this.setState({
+        //     numCourse: item.NUM_COURSE,
+        //     numFacture: item.NUM_FACTURE
+        //   })
+        // });
+        // console.log(this.state.numCourse)
+
       } catch (error) {
         console.log(error);
       } finally {
@@ -51,6 +64,7 @@ export default class CourseConnecteeChoixCourse extends Component {
 
   render() {
     const { data, isLoading } = this.state;
+    const { navigate } = this.props.navigation;
     return (
 
       //  le heigth 90% a resolu le Pb de scroll to bottom
@@ -66,7 +80,9 @@ export default class CourseConnecteeChoixCourse extends Component {
               <>
 
                 <View style={styles.imageContainer}>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                  onPress={() => navigate("DETAIL COURSE",{numCourse: item.NUM_COURSE, numFacture: item.NUM_FACTURE})}
+                  >
                     <Image
                       source={{ uri: item.AFFICHE }}
                       style={styles.image}

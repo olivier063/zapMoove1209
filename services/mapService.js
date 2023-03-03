@@ -29,7 +29,7 @@ class MapService {
         averageSpeed: 0,
         city: null,
 
-        path: null,
+        pathGpx: null,
     }
 
     resetAll = () => {
@@ -229,11 +229,11 @@ class MapService {
         });
         // console.log("GPS POINTS",gpsPoints)
         console.log("GPX", gpx);
-        // path est dans le mapStructure
-        const uri = await createGpx;
-        this.mapStructure.path = uri
-        console.log("PATH", uri)
-        return uri
+        // pathGpx est dans le mapStructure
+        // const uriGpx = await createGpx;
+        this.mapStructure.pathGpx = gpx
+        // console.log("PATH GPX", uriGpx)
+        // return uri
 
     };
     //...................................................................GPX

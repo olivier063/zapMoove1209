@@ -30,6 +30,7 @@ import TrainingStateHistory from './screens/trainingStateHistory';
 import TrainingMapView3 from './screens/trainingMapView3';
 import * as TaskManager from 'expo-task-manager';
 import CourseConnecteeEnvoiGpx from './screens/courseConnecteeEnvoiGpx';
+import CourseConnecteeDetailCourse from './screens/courseConnecteeDetailCourse';
 
 
 
@@ -134,7 +135,7 @@ export default function App() {
           <Stack.Screen name="TRAINING STATE HISTORIQUE" component={TrainingStateHistory} />
           <Stack.Screen name="MAP VIEW" component={TrainingMapView3} />
           <Stack.Screen name="CHOISISSEZ UNE COURSE" component={CourseConnecteeEnvoiGpx} />
-
+          <Stack.Screen name="DETAIL COURSE" component={CourseConnecteeDetailCourse} />
 
         </Stack.Navigator>
       </NavigationContainer>
