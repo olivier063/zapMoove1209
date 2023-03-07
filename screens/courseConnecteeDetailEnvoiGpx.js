@@ -35,7 +35,6 @@ export default class CourseConnecteeDetailCourse extends Component {
         }
     }
 
-
     async getCoursesConnectees() {
         await this.getStorage()
         if (this.state.id_user != null)
@@ -91,7 +90,6 @@ export default class CourseConnecteeDetailCourse extends Component {
 
     render() {
         const { data, isLoading } = this.state;
-        const { navigation } = this.props;
         return (
             <View style={{ height: '100%', backgroundColor: "white" }}>
 
@@ -275,19 +273,16 @@ export default class CourseConnecteeDetailCourse extends Component {
                                 </View>
 
                                 <View style={{ alignItems: 'center' }}>
-                                    <TouchableOpacity 
-                                    style={{
-                                        marginTop: 10,
+                                    <TouchableOpacity style={{
+                                        marginTop: 50,
                                         backgroundColor: "#FF6F00",
                                         height: 50,
                                         width: 250,
                                         borderRadius: 30,
                                         justifyContent: 'center'
-                                    }}
-                                    onPress={() => navigation.navigate('COURSE MAP VIEW')}
-                                    >
+                                    }}>
                                         <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 17 }}>
-                                            COMMENCER LA COURSE
+                                            Envoyer GPX
                                         </Text>
                                     </TouchableOpacity>
                                 </View>

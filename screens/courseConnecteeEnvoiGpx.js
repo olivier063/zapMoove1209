@@ -47,15 +47,6 @@ export default class CourseConnecteeEnvoiGpx extends Component {
         this.setState({ data: json });
         console.log("DATA DANS GetCOURSES", this.state.data);
 
-        // this.state.data.map(item => {
-        //   // console.log('ITEM', item.NUM_COURSE);
-        //   this.setState({
-        //     numCourse: item.NUM_COURSE,
-        //     numFacture: item.NUM_FACTURE
-        //   })
-        // });
-        // console.log(this.state.numCourse)
-        // console.log(this.state.numFacture)
       } catch (error) {
         console.log(error);
       } finally {

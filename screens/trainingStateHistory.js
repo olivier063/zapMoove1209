@@ -9,7 +9,7 @@ import * as Sharing from 'expo-sharing';
 export default class TrainingStateHistory extends Component {
   constructor(props) {
     super(props)
-    console.log("PROPS TRAINING STATE HISTORY", this.props)
+    // console.log("PROPS TRAINING STATE HISTORY", this.props)
     this.state = {
       screenShot: null,
     }
@@ -45,7 +45,7 @@ export default class TrainingStateHistory extends Component {
       [
         {
           text: "ajouter exercice dans course",
-          onPress: () => this.props.navigation.navigate("CHOISISSEZ UNE COURSE",{pathGpx: this.props.route.params.pathGpx}),
+          onPress: () => this.props.navigation.navigate("CHOIX COURSE CONNECTEE",{pathGpx: this.props.route.params.pathGpx}),
         },
         {
           text: "Mes coordonnées GPX",

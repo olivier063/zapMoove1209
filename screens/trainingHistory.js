@@ -5,7 +5,7 @@ import StorageService from '../services/storageService';
 export default class TrainingHistory extends Component {
   constructor(props) {
     super(props)
-
+// console.log("PROPS TRAINING HISTORY",this.props)
     //ON CREE UN ARRAY DANS LES STATES POUR Y METTRE TOUTES LES DONNEES DE RUN DATA AFIN DE POUVOIR CREER UNE FLATLIST A PARTIR DE CE TABLEAU
     this.state = {
       allData: [],

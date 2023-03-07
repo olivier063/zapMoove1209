@@ -85,7 +85,7 @@ class MapService {
         }
     }
 
-    onPositionChange = (currentPosition) => {
+    onPositionChange = async (currentPosition) => {
         // console.log("ON POSITION CHANGE", position)
         // console.log("MAP", this.map)
         if (this.map.current == null) {
@@ -105,6 +105,7 @@ class MapService {
         this.mapChange.next(this.mapStructure);
         // console.log("DISTANCE", distance);
         // console.log("DURATION", duration);
+
     }
 
 
@@ -227,13 +228,9 @@ class MapService {
             activityName: data.activityType,
             startTime: data.startTime,
         });
-        // console.log("GPS POINTS",gpsPoints)
-        console.log("GPX", gpx);
+        // console.log("GPX", gpx);
         // pathGpx est dans le mapStructure
-        // const uriGpx = await createGpx;
         this.mapStructure.pathGpx = gpx
-        // console.log("PATH GPX", uriGpx)
-        // return uri
 
     };
     //...................................................................GPX

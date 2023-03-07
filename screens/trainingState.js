@@ -7,7 +7,7 @@ import { timestamp } from 'rxjs';
 
 export default function TrainingState(props) {
 
-  console.log("PROPS TRAINING STATE", props)
+  // console.log("PROPS TRAINING STATE", props)
   const navigation = useNavigation();
 
   //TIMESTAMP affiché dans le trainingState au dessus du resumé........................................................
@@ -141,7 +141,7 @@ export default function TrainingState(props) {
         </View>
       </View>
 
-      <View style={{ flexDirection: 'row', marginTop: 15 }}>
+      <View style={{ flexDirection: 'row', marginTop: 0 }}>
         <TouchableOpacity style={{ flex: 1, backgroundColor: "#FF6F00", height: 40, borderRadius: 7, justifyContent: 'center', margin: 10, borderColor: 'black', borderWidth: 1 }}
           onPress={() => saveRun()}
         >

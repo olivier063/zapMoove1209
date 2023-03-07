@@ -3,6 +3,7 @@ import MapView, { Polyline } from 'react-native-maps';
 import { StyleSheet, Text, View } from 'react-native';
 import TimerTraining from '../components/timerTraining';
 import mapService from '../services/mapService';
+import TimerTrainingCourseConnectee from '../components/timerTrainingCourseConnectee';
 
 
 
@@ -10,7 +11,7 @@ import mapService from '../services/mapService';
 const LOCATION_TASK_NAME = 'background_location_task';
 
 // je passe props en parametre afin de recuperer le useNavigation dans l'enfant qui est une class component
-export default function TrainingMapView3(props) {
+export default function CourseConnecteeMapView(props) {
 
     // recentre sur la france
     const [mapRegion, setMapRegion] = React.useState({
@@ -93,7 +94,7 @@ export default function TrainingMapView3(props) {
                 </View>
 
                 {/* ON PASSE DANS LES PROPS DU COMPONENT POUR APPELER LA FONCTION DU PARENT VIA L'ENFANT (TimerTraining et takeSnapshot) Attention, on appelle la fonction dans l'enfant par le mot clef et non pas le nom de la fonction */}
-                <TimerTraining navigation={props.navigation} />
+                <TimerTrainingCourseConnectee navigation={props.navigation} />
 
 
 
