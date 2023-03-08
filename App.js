@@ -32,6 +32,8 @@ import * as TaskManager from 'expo-task-manager';
 import CourseConnecteeDetailCourse from './screens/courseConnecteeDetailCourse';
 import CourseConnecteeMapView from './screens/courseConnecteeMapView';
 import CourseConnecteeState from './screens/courseConnecteeState';
+import CourseConnecteeChoixEnvoiGpx from './screens/courseConnecteeChoixEnvoiGpx';
+import CourseConnecteeDetailEnvoiGpx from './screens/courseConnecteeDetailEnvoiGpx';
 
 
 
@@ -137,6 +139,8 @@ export default function App() {
           <Stack.Screen name="DETAIL COURSE" component={CourseConnecteeDetailCourse} />
           <Stack.Screen name="COURSE MAP VIEW" component={CourseConnecteeMapView} />
           <Stack.Screen name="COURSE STATE" component={CourseConnecteeState} />
+          <Stack.Screen name="COURSE GPX" component={CourseConnecteeChoixEnvoiGpx} />
+          <Stack.Screen name="DETAIL ENVOI GPX" component={CourseConnecteeDetailEnvoiGpx} />
 
         </Stack.Navigator>
       </NavigationContainer>

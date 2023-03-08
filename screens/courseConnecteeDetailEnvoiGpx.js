@@ -2,10 +2,10 @@ import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View }
 import React, { Component } from 'react'
 import StorageService from '../services/storageService';
 
-export default class CourseConnecteeDetailCourse extends Component {
+export default class CourseConnecteeDetailEnvoiGpx extends Component {
     constructor(props) {
         super(props);
-        console.log("PROPS DETAIL COURSE", this.props)
+        // console.log("PROPS DETAIL ENVOI GPX", this.props)
         this.state = {
             data: [],
             isLoading: true,
@@ -17,6 +17,7 @@ export default class CourseConnecteeDetailCourse extends Component {
             formattedDateEnd: null,
             formattedTimeEnd: null,
 
+            gpx: null,
         };
         // console.log("STATE",this.state)
     }
@@ -43,11 +44,12 @@ export default class CourseConnecteeDetailCourse extends Component {
                 const json = await response.json();
                 // console.log(json)
 
+                //pourquoi pas directement le setState data: json???? 
                 const array = [];
                 const myValues = array.push(json);
                 // console.log('ARRAY', array);
                 this.setState({ data: array });
-                console.log("DATA DETAIL COURSE", this.state.data);
+                // console.log("DATA DETAIL ENVOI GPX", this.state.data);
 
             } catch (error) {
                 console.log(error);
@@ -63,6 +65,7 @@ export default class CourseConnecteeDetailCourse extends Component {
         this.convertTimestampEnd();
     }
 
+    //Converti les timestamp du json.........................
     convertTimestampStart() {
         const timestamp = this.props.route.params.debut;
         const date = new Date(timestamp * 1000); // On multiplie le timestamp par 1000 pour le convertir en millisecondes
@@ -86,6 +89,68 @@ export default class CourseConnecteeDetailCourse extends Component {
             formattedTimeEnd: formattedTimeEnd,
         })
     }
+    //.........................Converti les timestamp du json
+
+
+    //TRANSMISSION AU SERVEUR DES DONNEES GPX.........................
+    sendGpx = async () => {
+       const sending = await this.gpxToFile();
+        try {
+            const response = await fetch("https://www.zapsports.com/ext/app/gpx.htm", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/xml',
+                },
+                body:({
+                    // ajoutez les données que vous souhaitez envoyer dans le corps de la requête
+                    NUM_VIRTUEL: this.props.route.params.numCourse,
+                    ID_USER: this.state.id_user,
+                    GPX: this.state.gpx,
+                })
+            })
+            if (response) {
+
+                console.log("RESPONSE", response)
+            } else {
+                const json = await response.json()
+                alert(json.message)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    gpxToFile = async () => {
+        const formData = new FormData();
+        formData.append('gpxFile', this.props.route.params.pathGpx);
+        
+        const shareGpx = await formData
+        this.setState({ gpx: shareGpx})
+        // console.log("GPX FORM DATA", this.state.gpx);
+    }
+    //.........................TRANSMISSION AU SERVEUR DES DONNEES GPX
+
+    // uploadFile = (file) => {
+    //     const formData = new FormData();
+    //     formData.append('file', file, 'file.gpx');
+    //     console.log(formData)
+    //     fetch('https://example.com/upload', {
+    //       method: 'POST',
+    //       body: formData,
+    //       headers: {
+    //         'Content-Type': 'application/xml'
+    //       }
+    //     }).then(response => {
+    //       // Traiter la réponse du serveur
+    //       console.log(response)
+    //     }).catch(error => {
+    //       // Traiter les erreurs éventuelles
+    //       console.log(error)
+    //     });
+    //   }
+
+    
+
 
 
     render() {
@@ -108,7 +173,6 @@ export default class CourseConnecteeDetailCourse extends Component {
                                         fontWeight: 'bold',
                                         marginBottom: 15,
                                         marginTop: 15,
-
                                     }}
                                     >
                                         {this.props.route.params.course}
@@ -274,13 +338,15 @@ export default class CourseConnecteeDetailCourse extends Component {
 
                                 <View style={{ alignItems: 'center' }}>
                                     <TouchableOpacity style={{
-                                        marginTop: 50,
+                                        marginTop: 10,
                                         backgroundColor: "#FF6F00",
                                         height: 50,
                                         width: 250,
                                         borderRadius: 30,
                                         justifyContent: 'center'
-                                    }}>
+                                    }}
+                                    onPress={() => this.sendGpx()}
+                                    >
                                         <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 17 }}>
                                             Envoyer GPX
                                         </Text>

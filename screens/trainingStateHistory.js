@@ -45,7 +45,7 @@ export default class TrainingStateHistory extends Component {
       [
         {
           text: "ajouter exercice dans course",
-          onPress: () => this.props.navigation.navigate("CHOIX COURSE CONNECTEE",{pathGpx: this.props.route.params.pathGpx}),
+          onPress: () => this.props.navigation.navigate("COURSE GPX",{pathGpx: this.props.route.params.pathGpx}),
         },
         {
           text: "Mes coordonnées GPX",

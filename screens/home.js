@@ -27,7 +27,7 @@ export default class Home extends Component {
     async getStorage() {
         try {
             const loginState = await StorageService.load({ key: 'loginState' });
-            console.log("LOGIN STATE in HOME", loginState)
+            // console.log("LOGIN STATE in HOME", loginState)
             this.setState({
                 prenom: loginState["PRENOM"], // le PRENOM et NOM majuscule correspondent au Json
                 nom: loginState["NOM"],
