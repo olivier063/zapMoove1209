@@ -6,7 +6,7 @@ export default class CourseConnecteeChoixEnvoiGpx extends Component {
 
   constructor(props) {
     super(props);
-    console.log("PROPS CHOIX ENVOI GPX", this.props)
+    // console.log("PROPS CHOIX ENVOI GPX", this.props)
     this.state = {
       data: [],
       isLoading: true,
@@ -38,7 +38,7 @@ export default class CourseConnecteeChoixEnvoiGpx extends Component {
         const json = await response.json();
         // console.log(typeof json)
         this.setState({ data: json });
-        console.log("DATA CHOIX ENVOI GPX", this.state.data);
+        // console.log("DATA CHOIX ENVOI GPX", this.state.data);
 
       } catch (error) {
         console.log(error);

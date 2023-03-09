@@ -1,11 +1,14 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { Component } from 'react'
 import StorageService from '../services/storageService';
+import xml2js from 'react-native-xml2js';
+
+
 
 export default class CourseConnecteeDetailEnvoiGpx extends Component {
     constructor(props) {
         super(props);
-        console.log("PROPS DETAIL ENVOI GPX", this.props)
+        // console.log("PROPS DETAIL ENVOI GPX", this.props.route.params.pathGpx)
         this.state = {
             data: [],
             isLoading: true,
@@ -17,8 +20,9 @@ export default class CourseConnecteeDetailEnvoiGpx extends Component {
             formattedDateEnd: null,
             formattedTimeEnd: null,
 
-            gpx: null,
             dossard: null,
+
+            fileValidationStatus: null,
         };
         // console.log("STATE",this.state)
     }
@@ -51,8 +55,8 @@ export default class CourseConnecteeDetailEnvoiGpx extends Component {
                 // console.log('ARRAY', array);
                 this.setState({ data: array });
                 // console.log("DATA DETAIL ENVOI GPX", this.state.data);
-            
-                this.setState({dossard: this.state.data[0].DOSSARD })
+
+                this.setState({ dossard: this.state.data[0].DOSSARD })
                 // console.log("DATA DETAIL ENVOI GPX", this.state.dossard);
 
             } catch (error) {
@@ -98,69 +102,71 @@ export default class CourseConnecteeDetailEnvoiGpx extends Component {
 
     //TRANSMISSION AU SERVEUR DES DONNEES GPX.........................
     sendGpx = async () => {
-        try {
-            const data = new FormData();
+        const isValid = await this.isGpxValid()
+        console.log("GPX VALIDATION STATUS:", this.state.fileValidationStatus)
+        if (this.state.fileValidationStatus === 'valid')
 
-            // const blob = new Blob([this.props.route.params.pathGpx], { type: 'text/xml' });
-            // console.log("GPX",this.props.route.params.pathGpx)
-            data.append("FICHIER_GPX", this.props.route.params.pathGpx);
-            data.append("NUM_VIRTUEL", this.props.route.params.numCourse);
-            data.append("ID_USER", this.state.id_user);
-            data.append("NUM_FACTURE", this.props.route.params.numFacture);
-            data.append("DOSSARD", this.state.dossard);
-            console.log("DATA",data)
-            
-            const response = await fetch("https://www.zapsports.com/ext/app/gpx.htm", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': "multipart/form-data",
-                },
-                body: data
-            })
-            if (response) {
-                const json = await response.text()
-                console.log("RESPONSE", json)
-                
-            } else {
-                console.log('pas de reponse')
+            try {
+                const data = new FormData();
+                // const blob = new Blob([this.props.route.params.pathGpx], { type: 'text/xml' });
+                // console.log("GPX",this.props.route.params.pathGpx)
+                data.append("FICHIER_GPX", this.props.route.params.pathGpx);
+                data.append("NUM_VIRTUEL", this.props.route.params.numCourse);
+                data.append("ID_USER", this.state.id_user);
+                data.append("NUM_FACTURE", this.props.route.params.numFacture);
+                data.append("DOSSARD", this.state.dossard);
+                // console.log("DATA", data);
+
+                const response = await fetch("https://www.zapsports.com/ext/app/gpx.htm", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': "multipart/form-data",
+                    },
+                    body: data
+                })
+                if (response) {
+                    const json = await response.text()
+                    console.log("RESPONSE", json)
+
+                } else {
+                    console.log('pas de reponse')
+                }
+            } catch (error) {
+                console.log(error);
             }
-        } catch (error) {
-            console.log(error);
-        }
     }
     //.........................TRANSMISSION AU SERVEUR DES DONNEES GPX
 
-    // sendGpx = async () => {
-    //     try {
-    //         const data = new FormData();
-    //         data.append("NUM_VIRTUEL", this.props.route.params.numCourse);
-    //         data.append("ID_USER", this.state.id_user);
+    //Verifier si le fichier GPX est valide avant envoi...............................
+    isGpxValid = async () => {
+        const gpxFile = this.props.route.params.pathGpx
+        try {
+            const result = await this.validateGPXFile(gpxFile);
+            console.log('Fichier GPX valide :', result);
+            this.setState({ fileValidationStatus: 'valid' });
+            // console.log("VALIDATION STATUS", this.state.fileValidationStatus)
+        } catch (error) {
+            console.error('Erreur de validation du fichier GPX :', error);
+            this.setState({ fileValidationStatus: 'invalid' });
+        }
+    }
 
-    //         const blob = new Blob([this.props.route.params.pathGpx], { type: 'text/xml' });
-    //         console.log("GPX",this.props.route.params.pathGpx)
-    //         data.append("files[FICHIER_GPX]", this.props.route.params.pathGpx, "ZAP_MOOVE_GPX.gpx");
-    //         console.log("DATA",data)
-            
-    //         const response = await fetch("https://www.zapsports.com/ext/app/gpx.htm", {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': "multipart/form-data",
-    //             },
-    //             body: data
-    //         })
-    //         if (response) {
-    //             const json = await response.text()
-    //             console.log("RESPONSE", json)
-    //         } else {
-
-    //             alert(json.message)
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-  
-    // 'tmp_name'
+    validateGPXFile = (gpxFile) => {
+        return new Promise((resolve, reject) => {
+            xml2js.parseString(gpxFile, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    if (!result.gpx || !result.gpx.trk || !result.gpx.trk[0].trkseg) {
+                        reject(new Error('Le fichier GPX n\'est pas valide : structure incorrecte'));
+                    } else {
+                        resolve(result);
+                    }
+                }
+            });
+        });
+    };
+    //...............................Verifier si le fichier GPX est valide avant envoi
 
 
     render() {

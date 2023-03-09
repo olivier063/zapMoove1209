@@ -233,6 +233,8 @@ class MapService {
         this.mapStructure.pathGpx = gpx;
 
     };
+
+    
     //...................................................................GPX
 
 
