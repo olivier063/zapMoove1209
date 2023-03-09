@@ -10,10 +10,13 @@ class TimerTrainingService {
     hours = 0;
     timerChange = new ReplaySubject();
 
-    constructor(maxTime) {
-        this.maxTime = maxTime;
-    }
+    // constructor(maxTime) {
+    //     this.maxTime = maxTime;
+    // }
 
+    setMaxTime(maxTime){
+        this.maxTime = maxTime
+    }
     
     startTimer() {
 
@@ -74,6 +77,6 @@ class TimerTrainingService {
 
 
 
-// const timerTrainingService = new TimerTrainingService();
-// export default timerTrainingService;
-export default TimerTrainingService;
+const timerTrainingService = new TimerTrainingService();
+export default timerTrainingService;
+// export default TimerTrainingService;

@@ -51,32 +51,6 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
 }); 
 
 const Stack = createNativeStackNavigator();
-// const navigation = useNavigation();
-
-
-// ...
-// const partager = () => {
-//   Alert.alert(
-//     "JE PARTAGE : ",
-//     "(Tapez en dehors pour fermer la fenêtre)",
-//     [
-//       {
-//         text: "ajouter exercice dans course",
-//         onPress: () => navigation.navigate('MaPage'),
-//       },
-//       {
-//         text: "Mes coordonnées GPX",
-//       },
-//       {
-//         text: "Cet écran",
-//       },
-//     ],
-//     { 
-//       cancelable: true, 
-//     }
-//   );
-// };
-//...
 
 
 export default function App() {

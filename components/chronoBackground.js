@@ -2,22 +2,24 @@ import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
-import TimerTrainingService from '../services/timerTrainingService';
 import timerTrainingService from '../services/timerTrainingService';
 
-const BACKGROUND_FETCH_TASK = 'chrono-background-fetch';
+const BACKGROUND_CHRONO_TASK = 'chrono-background-fetch';
 
 // 1. Define the task by providing a name and the function that should be executed
 // Note: This needs to be called in the global scope (e.g outside of your React components)
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
-  const now = Date.now();
+TaskManager.defineTask(BACKGROUND_CHRONO_TASK, async () => {
 
-  console.log("DEFINE TASK")
-  console.log(`Got background fetch call at date: ${new Date(now).toISOString()}`);
+  const now = new Date();
+  const options = { timeZone: 'Europe/Paris' };
+  const dateParis = now.toLocaleString('fr-FR', options);
+  console.log(`Got background fetch call at date: ${dateParis}`);
 
   timerTrainingService.startTimer()
+  console.log(timerTrainingService.hours)
+  console.log(timerTrainingService.minutes)
   console.log(timerTrainingService.seconds)
-  
+
   // Be sure to return the successful result type!
   return BackgroundFetch.BackgroundFetchResult.NewData;
 });
@@ -26,21 +28,22 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
 // and some configuration options for how the background fetch should behave
 // Note: This does NOT need to be in the global scope and CAN be used in your React components!
 async function registerBackgroundFetchAsync() {
-  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-    
+  return BackgroundFetch.registerTaskAsync(BACKGROUND_CHRONO_TASK, {
+
     // le minimum interval est de 1 minute au minimum !!!!!!!!!!!!! Suis-je KENI pour le chrono ??????
     minimumInterval: 1, // 15 minutes
     stopOnTerminate: true, // android only,
     startOnBoot: true, // android only
   });
-  
+
 }
 
 // 3. (Optional) Unregister tasks by specifying the task name
 // This will cancel any future background fetch calls that match the given name
 // Note: This does NOT need to be in the global scope and CAN be used in your React components!
 async function unregisterBackgroundFetchAsync() {
-  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+ 
+  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_CHRONO_TASK);
 }
 
 
@@ -55,7 +58,7 @@ export default function BackgroundFetchScreen() {
 
   const checkStatusAsync = async () => {
     const status = await BackgroundFetch.getStatusAsync();
-    const isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_FETCH_TASK);
+    const isRegistered = await TaskManager.isTaskRegisteredAsync(BACKGROUND_CHRONO_TASK);
     setStatus(status);
     setIsRegistered(isRegistered);
   };
@@ -82,7 +85,7 @@ export default function BackgroundFetchScreen() {
         <Text>
           Background fetch task name:{' '}
           <Text style={styles.boldText}>
-            {isRegistered ? BACKGROUND_FETCH_TASK : 'Not registered yet!'}
+            {isRegistered ? BACKGROUND_CHRONO_TASK : 'Not registered yet!'}
           </Text>
         </Text>
       </View>

@@ -5,7 +5,7 @@ import StorageService from '../services/storageService';
 export default class CourseConnecteeDetailEnvoiGpx extends Component {
     constructor(props) {
         super(props);
-        // console.log("PROPS DETAIL ENVOI GPX", this.props)
+        console.log("PROPS DETAIL ENVOI GPX", this.props)
         this.state = {
             data: [],
             isLoading: true,
@@ -18,6 +18,7 @@ export default class CourseConnecteeDetailEnvoiGpx extends Component {
             formattedTimeEnd: null,
 
             gpx: null,
+            dossard: null,
         };
         // console.log("STATE",this.state)
     }
@@ -50,6 +51,9 @@ export default class CourseConnecteeDetailEnvoiGpx extends Component {
                 // console.log('ARRAY', array);
                 this.setState({ data: array });
                 // console.log("DATA DETAIL ENVOI GPX", this.state.data);
+            
+                this.setState({dossard: this.state.data[0].DOSSARD })
+                // console.log("DATA DETAIL ENVOI GPX", this.state.dossard);
 
             } catch (error) {
                 console.log(error);
@@ -94,63 +98,69 @@ export default class CourseConnecteeDetailEnvoiGpx extends Component {
 
     //TRANSMISSION AU SERVEUR DES DONNEES GPX.........................
     sendGpx = async () => {
-       const sending = await this.gpxToFile();
         try {
+            const data = new FormData();
+
+            // const blob = new Blob([this.props.route.params.pathGpx], { type: 'text/xml' });
+            // console.log("GPX",this.props.route.params.pathGpx)
+            data.append("FICHIER_GPX", this.props.route.params.pathGpx);
+            data.append("NUM_VIRTUEL", this.props.route.params.numCourse);
+            data.append("ID_USER", this.state.id_user);
+            data.append("NUM_FACTURE", this.props.route.params.numFacture);
+            data.append("DOSSARD", this.state.dossard);
+            console.log("DATA",data)
+            
             const response = await fetch("https://www.zapsports.com/ext/app/gpx.htm", {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/xml',
+                    'Content-Type': "multipart/form-data",
                 },
-                body:({
-                    // ajoutez les données que vous souhaitez envoyer dans le corps de la requête
-                    NUM_VIRTUEL: this.props.route.params.numCourse,
-                    ID_USER: this.state.id_user,
-                    GPX: this.state.gpx,
-                })
+                body: data
             })
             if (response) {
-
-                console.log("RESPONSE", response)
+                const json = await response.text()
+                console.log("RESPONSE", json)
+                
             } else {
-                const json = await response.json()
-                alert(json.message)
+                console.log('pas de reponse')
             }
         } catch (error) {
             console.log(error);
         }
     }
-
-    gpxToFile = async () => {
-        const formData = new FormData();
-        formData.append('gpxFile', this.props.route.params.pathGpx);
-        
-        const shareGpx = await formData
-        this.setState({ gpx: shareGpx})
-        // console.log("GPX FORM DATA", this.state.gpx);
-    }
     //.........................TRANSMISSION AU SERVEUR DES DONNEES GPX
 
-    // uploadFile = (file) => {
-    //     const formData = new FormData();
-    //     formData.append('file', file, 'file.gpx');
-    //     console.log(formData)
-    //     fetch('https://example.com/upload', {
-    //       method: 'POST',
-    //       body: formData,
-    //       headers: {
-    //         'Content-Type': 'application/xml'
-    //       }
-    //     }).then(response => {
-    //       // Traiter la réponse du serveur
-    //       console.log(response)
-    //     }).catch(error => {
-    //       // Traiter les erreurs éventuelles
-    //       console.log(error)
-    //     });
-    //   }
+    // sendGpx = async () => {
+    //     try {
+    //         const data = new FormData();
+    //         data.append("NUM_VIRTUEL", this.props.route.params.numCourse);
+    //         data.append("ID_USER", this.state.id_user);
 
-    
+    //         const blob = new Blob([this.props.route.params.pathGpx], { type: 'text/xml' });
+    //         console.log("GPX",this.props.route.params.pathGpx)
+    //         data.append("files[FICHIER_GPX]", this.props.route.params.pathGpx, "ZAP_MOOVE_GPX.gpx");
+    //         console.log("DATA",data)
+            
+    //         const response = await fetch("https://www.zapsports.com/ext/app/gpx.htm", {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': "multipart/form-data",
+    //             },
+    //             body: data
+    //         })
+    //         if (response) {
+    //             const json = await response.text()
+    //             console.log("RESPONSE", json)
+    //         } else {
 
+    //             alert(json.message)
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
+  
+    // 'tmp_name'
 
 
     render() {
@@ -345,7 +355,7 @@ export default class CourseConnecteeDetailEnvoiGpx extends Component {
                                         borderRadius: 30,
                                         justifyContent: 'center'
                                     }}
-                                    onPress={() => this.sendGpx()}
+                                        onPress={() => this.sendGpx()}
                                     >
                                         <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 17 }}>
                                             Envoyer GPX

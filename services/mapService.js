@@ -230,7 +230,7 @@ class MapService {
         });
         // console.log("GPX", gpx);
         // pathGpx est dans le mapStructure
-        this.mapStructure.pathGpx = gpx
+        this.mapStructure.pathGpx = gpx;
 
     };
     //...................................................................GPX
@@ -270,6 +270,6 @@ class MapService {
 
 }
 
-
+//singleton
 const mapService = new MapService();
 export default mapService

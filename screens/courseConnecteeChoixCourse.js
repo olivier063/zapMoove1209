@@ -6,7 +6,7 @@ export default class CourseConnecteeChoixCourse extends Component {
 
   constructor(props) {
     super(props);
-    console.log("PROPS CHOIX COURSE", this.props)
+    // console.log("PROPS CHOIX COURSE", this.props)
     this.state = {
       data: [],
       isLoading: true,

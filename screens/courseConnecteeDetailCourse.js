@@ -5,7 +5,7 @@ import StorageService from '../services/storageService';
 export default class CourseConnecteeDetailCourse extends Component {
     constructor(props) {
         super(props);
-        console.log("PROPS DETAIL COURSE", this.props)
+        // console.log("PROPS DETAIL COURSE", this.props)
         this.state = {
             data: [],
             isLoading: true,

@@ -1,11 +1,9 @@
 import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import React, { Component } from 'react'
-import TimerTrainingService from '../services/timerTrainingService';
 import taskManagerService from '../services/taskManagerService';
 import mapService from '../services/mapService';
 import * as Location from 'expo-location';
-
-
+import timerTrainingService from '../services/timerTrainingService';
 
 const LOCATION_TASK_NAME = 'background_location_task';
 
@@ -18,9 +16,10 @@ export default class TimerTraining extends Component {
 
         // console.log("PROPS TIMER TRAINING", this.props)
         const maxTime = 0;
-        this.timerTrainingService = new TimerTrainingService(maxTime);
+        this.timerTrainingService = timerTrainingService;
         // const { navigation } = this.props.navigation;
-
+        this.timerTrainingService.setMaxTime(maxTime);
+        
         this.timerTrainingService.timerChange.subscribe(state => {
             this.setState({
                 minutes: this.timerTrainingService.getMinutes(),
