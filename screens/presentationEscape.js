@@ -1,10 +1,11 @@
 import { ActivityIndicator, Button, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { Component } from 'react'
+import WebView from 'react-native-webview';
 
 export default class PresentationEscape extends Component {
     constructor(props) {
         super(props);
-        // console.log(this.props)
+        // console.log('PROPS', this.props)
         this.state = {
             data: [],
             evenement: null,
@@ -13,7 +14,20 @@ export default class PresentationEscape extends Component {
             titleEvent: this.props.route.params.titleEvent,
             isLoading: true,
 
+            scenario: this.props.route.params.scenario,
+            depart: this.props.route.params.depart,
+            infoFr: this.props.route.params.infoFr,
+            rayon: this.props.route.params.rayon,
+            url: '',
+
         };
+    }
+
+
+    async componentDidMount() {
+        await this.getTilesPresentationEscape();
+        await this.getTilesColor();
+        // this.selectType();
     }
 
 
@@ -25,16 +39,21 @@ export default class PresentationEscape extends Component {
                 this.state.numEvent
             )
             const json = await response.json()
+            // console.log('JSON', json)
             if (response !== null) {
                 const array = Object.values(json.TILES);
                 this.setState({ data: array });
-                // console.log(array)
-                // console.log(json.EVENEMENT)
-                this.sortTiles()
-                console.log("getTilesPresentation", this.state.data)
-                // this.state.data[0]["LARGEUR"] = 125
+
+
+                const urls = this.state.data.map(item => item.URL_FR);
+                this.setState({ url: urls[0]})
+                console.log('STATE URL',this.state.url);
+
+                console.log('DATA', this.state.data)
+
+                this.sortTiles();
             } else {
-                console.log('erreur IF')
+                console.log('erreur IF getTiles')
             }
         } catch (error) {
             console.log(error);
@@ -52,16 +71,12 @@ export default class PresentationEscape extends Component {
                 this.state.numEvent
             )
             const json = await response.json()
-            // console.log(json)
             if (response !== null) {
-                // const array = Object.values(json.EVENEMENT);
-                //   this.setState({ data: array });
-                // this.state.data.push(json.EVENEMENT)
-                console.log("getTilesColor", this.state.data)
-                this.setState({ evenement: json.EVENEMENT })
-                this.setConfig()
-                // console.log(json.EVENEMENT)
-                console.log("getTilesColor2", this.state.data)
+
+                this.setState({ evenement: json.EVENEMENT });
+                // console.log('EVENT', this.state.evenement)
+                this.setConfig();
+
             } else {
                 console.log('erreur IF')
             }
@@ -101,25 +116,43 @@ export default class PresentationEscape extends Component {
     //couleur
     firstColorTiles() {
         this.state.data.forEach((v) => {
-            console.log(this["COULEUR_PRIMAIRE"])
+            // console.log(this["COULEUR_PRIMAIRE"])
             if (typeof this.state.evenement["COULEUR_PRIMAIRE"] !== undefined) {
                 v["COLOR_ONE"] = (this.state.evenement["COULEUR_PRIMAIRE"])
             }
         })
         this.setState({ data: this.state.data })
-        // console.log(this.state.data)
+        // console.log('DATA',this.state.data)
     }
     // FIN TILES...........................................................
 
-    async componentDidMount() {
-        await this.getTilesPresentationEscape();
-        await this.getTilesColor();
-        // this.getTilesColorTest();
-    }
+
+webOrEscape(type){
+      const types = this.state.data.map(item => item.TYPE);
+      console.log('TYPE',type);
+
+      switch (type) {
+        case "WEB":
+            this.props.navigation.navigate("LIEN WEB",{
+                url: this.state.url,
+            })
+          break;
+        case "ESCAPE":
+            this.props.navigation.navigate("EXPLICATION ESCAPE",
+                {
+                    infoFr: this.state.infoFr,
+                    banniere: this.state.banniere,
+                    scenario: this.state.scenario,
+                })
+          break;
+      }      
+}
+
+
 
     render() {
 
-        const { data, isLoading, mData } = this.state;
+        const { data, isLoading } = this.state;
         const { navigate } = this.props.navigation;
 
         return (
@@ -142,7 +175,15 @@ export default class PresentationEscape extends Component {
                                 horizontal={false}
                                 keyExtractor={(item, index) => index.toString()}  // Extract keys for each item in the array
                                 renderItem={({ item }) => ( //each item from the array will be rendered here
-                                    <TouchableOpacity style={{ width: item["LARGEUR"]}}>
+                                    <TouchableOpacity style={{ width: item["LARGEUR"] }}
+                                        onPress={() => this.webOrEscape(item["TYPE"])}
+
+
+                                        // onPress={() => this.webOrEscape(item["TYPE","URL_FR"])}
+                                        // onPress={() => this.webOrEscape({type: item["TYPE"], url_fr: item["URL_FR"]})}
+
+
+                                    >
                                         <Text style={{
                                             marginTop: 5,
                                             height: 50,

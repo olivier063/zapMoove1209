@@ -1,8 +1,8 @@
 import * as React from 'react';
 import MapView, { Polyline } from 'react-native-maps';
 import { StyleSheet, Text, View } from 'react-native';
-import TimerTraining from '../components/timerTraining';
 import mapService from '../services/mapService';
+import TimerTrainingEscapeRun from '../components/timerTrainingEscapeRun';
 
 
 
@@ -10,7 +10,7 @@ import mapService from '../services/mapService';
 const LOCATION_TASK_NAME = 'background_location_task';
 
 // je passe props en parametre afin de recuperer le useNavigation dans l'enfant qui est une class component
-export default function TrainingMapView3(props) {
+export default function EscapeRunMapView(props) {
 
     // recentre sur la france
     const [mapRegion, setMapRegion] = React.useState({
@@ -92,7 +92,7 @@ export default function TrainingMapView3(props) {
                     </View>
                 </View>
 
-                <TimerTraining navigation={props.navigation} />
+                {/* <TimerTrainingEscapeRun navigation={props.navigation} /> */}
 
 
 

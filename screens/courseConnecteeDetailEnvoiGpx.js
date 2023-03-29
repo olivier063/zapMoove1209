@@ -104,13 +104,16 @@ export default class CourseConnecteeDetailEnvoiGpx extends Component {
     sendGpx = async () => {
         const isValid = await this.isGpxValid()
         console.log("GPX VALIDATION STATUS:", this.state.fileValidationStatus)
-        if (this.state.fileValidationStatus === 'valid')
-
+        if (this.state.fileValidationStatus != 'valid'){
+            console.log('fichier non valide')
+            return
+        }
+        
             try {
                 const data = new FormData();
                 // const blob = new Blob([this.props.route.params.pathGpx], { type: 'text/xml' });
                 // console.log("GPX",this.props.route.params.pathGpx)
-                data.append("FICHIER_GPX", this.props.route.params.pathGpx);
+                data.append("FICHIER_GPX", this.props.route.params.pathGpx, { type: 'gpx+xml' });
                 data.append("NUM_VIRTUEL", this.props.route.params.numCourse);
                 data.append("ID_USER", this.state.id_user);
                 data.append("NUM_FACTURE", this.props.route.params.numFacture);

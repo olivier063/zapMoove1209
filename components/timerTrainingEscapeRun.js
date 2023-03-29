@@ -5,11 +5,9 @@ import mapService from '../services/mapService';
 import * as Location from 'expo-location';
 import timerTrainingService from '../services/timerTrainingService';
 
-
-
 const LOCATION_TASK_NAME = 'background_location_task';
 
-export default class TimerTrainingCourseConnectee extends Component {
+export default class TimerTrainingEscapeRun extends Component {
 
 
     timerTrainingService = null;
@@ -21,7 +19,7 @@ export default class TimerTrainingCourseConnectee extends Component {
         this.timerTrainingService = timerTrainingService;
         // const { navigation } = this.props.navigation;
         this.timerTrainingService.setMaxTime(maxTime);
-
+        
         this.timerTrainingService.timerChange.subscribe(state => {
             this.setState({
                 minutes: this.timerTrainingService.getMinutes(),
@@ -140,7 +138,7 @@ export default class TimerTrainingCourseConnectee extends Component {
         this.setState({ endTime: Date.now() });
 
         // etant donnee le return dans le takeSnapShot, on peut ecrir : {image} direct. De plus, on passe avec les props minutes, seconds et hours qui sont dans les state. on les recupere dans l'enfant avec les props
-        this.props.navigation.navigate("COURSE STATE",
+        this.props.navigation.navigate("TRAINING STATE",
             {
                 image: mapService.mapStructure.image,
                 distance: mapService.mapStructure.totalRunInMeters,
@@ -178,6 +176,8 @@ export default class TimerTrainingCourseConnectee extends Component {
             ]
         )
     };
+
+    
 
 
     render() {

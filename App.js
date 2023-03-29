@@ -21,19 +21,23 @@ import TestCondition from './screens/testCondition';
 import EditAccount from './screens/editAccount';
 import PresentationEscape from './screens/presentationEscape';
 import EscapeRunHistory from './screens/escapeRunHistory';
-// import Chrono from './components/chrono';
 import TrainingPointsExplications from './screens/trainingPointsExplications';
 import TrainingState from './screens/trainingState';
 import TrainingHistory from './screens/trainingHistory';
 import TrainingStateHistory from './screens/trainingStateHistory';
 import TrainingMapView3 from './screens/trainingMapView3';
 import * as TaskManager from 'expo-task-manager';
-// import CourseConnecteeEnvoiGpx from './screens/courseConnecteeEnvoiGpx';
 import CourseConnecteeDetailCourse from './screens/courseConnecteeDetailCourse';
 import CourseConnecteeMapView from './screens/courseConnecteeMapView';
 import CourseConnecteeState from './screens/courseConnecteeState';
 import CourseConnecteeChoixEnvoiGpx from './screens/courseConnecteeChoixEnvoiGpx';
 import CourseConnecteeDetailEnvoiGpx from './screens/courseConnecteeDetailEnvoiGpx';
+import EscapeRunExplication from './screens/escapeRunExplication';
+import EscapeRunMapView from './screens/escapeRunMapView';
+import EscapeRunDepart from './screens/escapeRunDepart';
+import EscapeRunLienWeb from './screens/escapeRunLienWeb';
+import EscapeRunMapViewPosition from './screens/escapeRunMapViewPosition';
+import EscapeRunEnigme from './screens/escapeRunEnigme';
 
 
 
@@ -79,7 +83,6 @@ export default function App() {
             </TouchableOpacity>
           })}
           />
-          {/* <Stack.Screen name="CHRONO" component={Chrono} /> */}
           <Stack.Screen name="HISTORIQUE" component={EscapeRunHistory} />
           <Stack.Screen name="PRESENTATION ESCAPE" component={PresentationEscape} />
           <Stack.Screen name="CHOIX COURSE CONNECTEE" component={CourseConnecteeChoixCourse} />
@@ -104,17 +107,30 @@ export default function App() {
           <Stack.Screen name="TEST CONDITION" component={TestCondition} />
           <Stack.Screen name="MODIFIER LE COMPTE" component={EditAccount} />
           <Stack.Screen name="EXPLICATION DES POINTS" component={TrainingPointsExplications} />
+
           {/* option={{headerShown: false}} permet de ne pas afficher la barre de titre et donc la navigation arriere */}
-          <Stack.Screen name="TRAINING STATE" component={TrainingState} options={{headerShown: false}} /> 
+          <Stack.Screen name="TRAINING STATE" component={TrainingState} options={{headerShown: false}} />
+
           <Stack.Screen name="TRAINING HISTORIQUE" component={TrainingHistory} />
           <Stack.Screen name="TRAINING STATE HISTORIQUE" component={TrainingStateHistory} />
           <Stack.Screen name="MAP VIEW" component={TrainingMapView3} />
-          {/* <Stack.Screen name="CHOISISSEZ UNE COURSE" component={CourseConnecteeEnvoiGpx} /> */}
           <Stack.Screen name="DETAIL COURSE" component={CourseConnecteeDetailCourse} />
           <Stack.Screen name="COURSE MAP VIEW" component={CourseConnecteeMapView} />
           <Stack.Screen name="COURSE STATE" component={CourseConnecteeState} />
           <Stack.Screen name="COURSE GPX" component={CourseConnecteeChoixEnvoiGpx} />
           <Stack.Screen name="DETAIL ENVOI GPX" component={CourseConnecteeDetailEnvoiGpx} />
+          <Stack.Screen name="EXPLICATION ESCAPE" component={EscapeRunExplication} />
+          <Stack.Screen name="ESCAPE RUN MAP" component={EscapeRunMapView} />
+          <Stack.Screen name="ESCAPE RUN DEPART" component={EscapeRunDepart} />
+          <Stack.Screen name="LIEN WEB" component={EscapeRunLienWeb} />
+          <Stack.Screen name="ESCAPE RUN MAP POSITION" component={EscapeRunMapViewPosition} />
+          <Stack.Screen name="ESCAPE RUN ENIGME" component={EscapeRunEnigme}/>
+
+
+
+
+
+
 
         </Stack.Navigator>
       </NavigationContainer>

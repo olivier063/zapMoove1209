@@ -8,7 +8,8 @@ export default class EscapeRunChoixCourse extends Component {
 
     this.state = {
       data: [],
-      isLoading: true
+      isLoading: true,
+
     };
   }
 
@@ -18,7 +19,7 @@ export default class EscapeRunChoixCourse extends Component {
       const json = await response.json();
       this.setState({ data: json });
 
-      // console.log(json[0])
+      console.log('DATA', this.state.data)
 
     } catch (error) {
       console.log(error);
@@ -26,6 +27,8 @@ export default class EscapeRunChoixCourse extends Component {
       this.setState({ isLoading: false });
     }
   }
+
+
 
   componentDidMount() {
     this.getEscapeCourses();
@@ -52,7 +55,19 @@ export default class EscapeRunChoixCourse extends Component {
 
                 <View style={styles.imageContainer}>
                   <TouchableOpacity
-                    onPress={() => navigate("PRESENTATION ESCAPE", { numEvent: item.NUM_EVT, banniere: item.BANNIERE, titleEvent: item.EVENEMENT })}
+                    onPress={() => navigate("PRESENTATION ESCAPE",
+                      {
+                        numEvent: item.NUM_EVT,
+                        banniere: item.BANNIERE,
+                        titleEvent: item.EVENEMENT,
+
+                        scenario: item.SCENARIO,
+                        depart: item.DEPART,
+                        infoFr: item.INFO_FR,
+                        rayon: item.RAYON,
+                        type: item.TYPE,
+                        
+                      })}
                   >
                     <Image
                       source={{ uri: item.BANNIERE }}

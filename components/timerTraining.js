@@ -177,6 +177,8 @@ export default class TimerTraining extends Component {
         )
     };
 
+    
+
 
     render() {
 
