@@ -35,6 +35,13 @@ export default class CompetitionChoixCourse extends Component {
         //  le heigth 90% a resolu le Pb de scroll to bottom
 
        <View style={{ height: `90%` }}> 
+
+        <View  style={styles.textContainer2}>
+            <TouchableOpacity onPress={ () => this.props.navigation.navigate('MAP VIEW')}>
+                <Text style={{marginLeft: 10}}>ENTRAINEMENT</Text>
+                <Text style={{marginLeft: 10}}>Course à pied, marche, vélo</Text>
+            </TouchableOpacity>
+        </View>
             
             {isLoading ? <ActivityIndicator/> : (
                 <FlatList
@@ -99,6 +106,15 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
   },
+
+  textContainer2: {
+    margin: 10,
+    borderWidth: 0.5,
+    borderColor:'black',
+    backgroundColor: 'white',
+    borderRadius: 7,
+
+}
 
   
 

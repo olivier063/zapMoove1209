@@ -109,6 +109,29 @@ class MapService {
         }
     }
 
+    userLocationEscape = async () => {
+        this.mapStructure = {
+            positions: [],
+            currentPosition: null,
+            totalRunInMeters: 0,
+            elevationGain: 0,
+            image: null,
+            averageSpeed: 0,
+            city: null
+        }
+        // console.log("STRUCTURE", this.mapStructure)
+        console.log("STATUS", this.status)
+        if (this.status === 'granted') {
+            let location = await Location.getCurrentPositionAsync({ enableHightAccuracy: true })
+            this.mapRegion = {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.002922,
+                longitudeDelta: 0.002421,
+            }
+        }
+    }
+
     onPositionChange = async (currentPosition) => {
         // console.log("ON POSITION CHANGE", position)
         // console.log("MAP", this.map)

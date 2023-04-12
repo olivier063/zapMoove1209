@@ -1,18 +1,31 @@
 import { Alert, FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { Component } from 'react'
 import EscapeRunModalMap from '../components/escapeRunModalMap';
-
+import EscapeRunCountDownQuestion from '../components/escapeRunCountDownQuestion';
+import EscapeRunCountDownGeneral from '../components/escapeRunCountDownGeneral';
+import EscapeRunCountDownQuestion2 from '../components/escapeRunCountDownQuestion2';
 
 export default class EscapeRunEnigme extends Component {
     constructor(props) {
         super(props);
-        console.log('PROPS', this.props)
+        // console.log('PROPS', this.props)
         this.state = {
             modalVisible: false,
 
             data: [],
+            titre: '',
             currentIndex: 0,
+            condition: '',
+            reponseFr: '',
+            reponses: [],
+            temps_max: 0,
+            temps_reponse: 0,
+            effet_valeur: 0,
+            key_bonne_reponse: 0,
 
+            destination_latitude: 0,
+            destination_longitude: 0,
+            rayon_detection: 0,
 
         };
     }
@@ -20,10 +33,10 @@ export default class EscapeRunEnigme extends Component {
     componentDidMount() {
         this.getEscapeScenario();
     }
-    // componentDidUpdate(){
-    //     this.getEscapeScenario();
 
-    // }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return nextState.reponseFr !== this.state.reponseFr;
+    //   }
 
 
     setModalVisible = () => {
@@ -70,33 +83,55 @@ export default class EscapeRunEnigme extends Component {
         )
     };
 
-    getEscapeScenario = async () => {
-        try {
-            const response = await fetch(this.props.route.params.scenario);
-            const json = await response.json();
-
-            console.log(json.SCENARIO[this.state.currentIndex].CONDITION)
-            this.setState({
-                data: json.SCENARIO,
-
-            })
-            console.log(this.state.data.length)
-
-        } catch (error) {
-            console.log(error);
-        }
+    getCurrentScenario = async () => {
+        const reponseFr = this.state.data[this.state.currentIndex].REPONSE_FR;
+        const reponses = reponseFr.split(";;");
+        this.setState({
+            condition: this.state.data[this.state.currentIndex].CONDITION,
+            temps_reponse: this.state.data[this.state.currentIndex].TEMPS_REPONSE,
+            effet_valeur: this.state.data[this.state.currentIndex].EFFET_VALEUR,
+            key_bonne_reponse: this.state.data[this.state.currentIndex].KEY_BONNE_REPONSE,
+       
+            // ici je passe par les state de cet vue pour passer à ma modale ce qui suit mais je pouvais tres bien le faire dns la modale direct
+            destination_latitude: this.state.data[this.state.currentIndex].DESTINATION_LATITUDE,
+            destination_longitude: this.state.data[this.state.currentIndex].DESTINATION_LONGITUDE,
+            reponseFr: reponseFr,
+            reponses: reponses,
+        })
     }
 
+    getEscapeScenario = async () => {
+            try {
+                const response = await fetch(this.props.route.params.scenario);
+                const json = await response.json();
+                console.log('JSON',json)
+                this.setState({
+                    data: json.SCENARIO,
+                }, () => {
+                    this.getCurrentScenario();
+                })      
+            } catch (error) {
+                console.log(error);
+            }
+    }
+
+
+    //pour que le changement d'index charge les nouvelles reponses de la question, je relance la fonction getEscapeScenario
     nextQuestion = () => {
-        this.setState({ currentIndex: this.state.currentIndex + 1 });
-      }
+        const nextIndex = this.state.currentIndex + 1;
+        this.setState({ currentIndex: nextIndex }, () => {
+            this.getCurrentScenario();
+        });
+    }
 
 
     render() {
         const { modalVisible, data } = this.state;
 
-        //je cree une props pour passer dans le composant de la modale
-        const myProp = this.props.route.params.scenario
+        //je cree des props pour passer dans le composant de la modale
+        const myProp = this.props.route.params.scenario;
+        const destination_latitude = this.state.destination_latitude;
+        const destination_longitude = this.state.destination_longitude;
 
         return (
             <View style={{
@@ -105,8 +140,10 @@ export default class EscapeRunEnigme extends Component {
             }}>
                 <Text style={{
                     textAlign: 'center',
-                    marginTop: 10
-                }}>Titre</Text>
+                    marginTop: 10,
+                    fontSize: 20,
+                    fontWeight: 'bold'
+                }}>{this.state.titre}</Text>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
                     <View style={{
@@ -119,10 +156,10 @@ export default class EscapeRunEnigme extends Component {
                         borderRadius: 7,
                     }}>
                         <Text>
-                            progression
+                            PROGRESSION
                         </Text>
-                        <Text>
-                        {this.state.currentIndex + 1}/{data.length}
+                        <Text style={{ fontWeight: 'bold', fontSize: 18 }}>
+                            {this.state.currentIndex + 1}/{data.length}
                         </Text>
                     </View>
 
@@ -137,16 +174,19 @@ export default class EscapeRunEnigme extends Component {
                         marginLeft: 90,
                         borderRadius: 7
                     }}>
-                        <Text>
-                            00:00:00
-                        </Text>
+                    
+
+                        <EscapeRunCountDownGeneral
+                            prop={myProp}
+                        />
+
                     </View>
                 </View>
 
                 <View style={{
                     backgroundColor: 'white',
                     height: 300,
-                    marginTop: 20,
+                    marginTop: 10,
                     margin: 20,
                     borderRadius: 25,
                     alignItems: 'center'
@@ -161,62 +201,167 @@ export default class EscapeRunEnigme extends Component {
                         // dans le renderItem on ajoute l'index pour pouvoir l'utiliser dans la ternaire et donc afficher uniquement l'exercice courant
                         renderItem={({ item, index }) => (
                             <>
+
                                 {index === this.state.currentIndex ?
-                                    <View>
+                                    <View style={{ alignItems: 'center' }}>
                                         <View style={{
                                             marginTop: 10,
                                             borderWidth: 1,
                                             borderColor: 'green',
                                             borderRadius: 7,
                                             height: 50,
-                                            width: '90%',
+                                            width: '100%',
                                             justifyContent: 'center',
                                         }}>
                                             <Text style={{ margin: 5, textAlign: 'center' }}>
                                                 {item.INDICE_FR}
+                                                {item.QUESTION_FR}
                                             </Text>
                                         </View>
 
-                                        <View style={{
-                                            marginTop: 10,
-                                            borderWidth: 1,
-                                            borderColor: 'red',
-                                            borderRadius: 7,
-                                            height: 50,
-                                            width: '30%',
-                                            justifyContent: 'center',
-                                        }}>
-                                            <Text style={{ margin: 5, textAlign: 'center' }}>
-                                                TIMER
-                                            </Text>
-                                        </View>
+                                        {(this.state.temps_reponse != undefined) ?
+                                            <View style={{
+                                                marginTop: 10,
+                                                borderWidth: 1,
+                                                borderColor: 'red',
+                                                borderRadius: 7,
+                                                height: 35,
+                                                width: '100%',
+                                                alignItems: 'center',
+                                            }}>
+                                                <EscapeRunCountDownQuestion
+                                                    time={this.state.temps_reponse}
+                                                    reponseFr={this.state.reponseFr}
+                                                    // nextQuestion={this.nextQuestion}
+                                                />
+                                            </View>
+                                            : (this.state.effet_valeur != undefined) ?
+                                                <View style={{
+                                                    marginTop: 10,
+                                                    borderWidth: 1,
+                                                    borderColor: 'red',
+                                                    borderRadius: 7,
+                                                    height: 35,
+                                                    width: '100%',
+                                                    alignItems: 'center',
+                                                }}>
+                                                    <EscapeRunCountDownQuestion2
+                                                        time={this.state.effet_valeur}
+                                                        reponseFr={this.state.reponseFr}
+                                                        key_bonne_reponse={this.state.key_bonne_reponse}
+                                                        nextQuestion={this.nextQuestion}
+                                                    />
+                                                </View>
+                                                : "toto"
+                                        }
 
-                                        <Text style={{ margin: 5, textAlign: 'center' }}>
-                                            Ceci est une REPONSE pour l'utilisateur
-                                        </Text>
+                                        {item.QUESTION_FR ?
+                                            <View style={{ alignContent: 'center' }}>
 
-                                        <Text style={{ margin: 5, textAlign: 'center' }}>
-                                            Ceci est une REPONSE pour l'utilisateur
-                                        </Text>
+                                                <TouchableOpacity style={{
+                                                    marginTop: 10,
+                                                    height: 30,
+                                                    width: 300,
+                                                    backgroundColor: "#FF6F00",
+                                                    borderRadius: 7,
+                                                }}>
+                                                    <Text style={{ textAlign: 'center', marginTop: 5 }}>
+                                                        {this.state.reponses[0]}
+                                                    </Text>
+                                                </TouchableOpacity>
 
-                                        <Text style={{ margin: 5, textAlign: 'center' }}>
-                                            Ceci est une REPONSE pour l'utilisateur
-                                        </Text>
+                                                <TouchableOpacity style={{
+                                                    marginTop: 10,
+                                                    height: 30,
+                                                    width: 300,
+                                                    backgroundColor: "#FF6F00",
+                                                    borderRadius: 7,
+                                                }}>
+                                                    <Text style={{ textAlign: 'center', marginTop: 5 }}>
+                                                        {this.state.reponses[1]}
+                                                    </Text>
+                                                </TouchableOpacity>
 
-                                        <TouchableOpacity style={{
-                                            backgroundColor: "#FF6F00",
-                                            height: 35,
-                                            width: '80%',
-                                            borderRadius: 7,
-                                            marginTop: 10,
-                                            justifyContent: 'center'
-                                        }}
-                                            onPress={() => this.nextPoint()} >
-                                            <Text style={{ textAlign: 'center' }}>
-                                                je suis arrivé au point(ce bouton apparait quand il s'agit d'une question 'geoloc')
-                                            </Text>
-                                        </TouchableOpacity>
+                                                <TouchableOpacity style={{
+                                                    marginTop: 10,
+                                                    height: 30,
+                                                    width: 300,
+                                                    backgroundColor: "#FF6F00",
+                                                    borderRadius: 7,
+                                                }}>
+                                                    <Text style={{ textAlign: 'center', marginTop: 5 }}>
+                                                        {this.state.reponses[2]}
+                                                    </Text>
+                                                </TouchableOpacity>
+
+                                                <TouchableOpacity style={{
+                                                    marginTop: 10,
+                                                    height: 30,
+                                                    width: 300,
+                                                    backgroundColor: "#FF6F00",
+                                                    borderRadius: 7,
+                                                }}>
+                                                    <Text style={{ textAlign: 'center', marginTop: 5 }}>
+                                                        {this.state.reponses[3]}
+                                                    </Text>
+                                                </TouchableOpacity>
+
+                                                {/* <TouchableOpacity style={{
+                                                    marginTop: 10,
+                                                    height: 30,
+                                                    width: 300,
+                                                    backgroundColor: "#FF6F00",
+                                                    borderRadius: 7,
+                                                }}>
+                                                    <Text style={{ textAlign: 'center', marginTop: 5 }}>
+                                                        {this.state.reponses[4]}
+                                                    </Text>
+                                                </TouchableOpacity> */}
+
+                                                <TouchableOpacity style={{
+                                                    backgroundColor: "#FF6F00",
+                                                    height: 35,
+                                                    width: '80%',
+                                                    borderRadius: 7,
+                                                    marginTop: 30,
+                                                    justifyContent: 'center',
+                                                }}
+                                                    onPress={() => this.nextPoint()} >
+                                                    <Text style={{ textAlign: 'center' }}>
+                                                        NEXT pour les tests
+                                                    </Text>
+                                                </TouchableOpacity>
+
+                                            </View>
+                                            :
+                                            <View>
+                                                <TouchableOpacity style={{
+                                                    backgroundColor: "#FF6F00",
+                                                    height: 35,
+                                                    width: '80%',
+                                                    borderRadius: 7,
+                                                    marginTop: 30,
+                                                    justifyContent: 'center',
+                                                }}
+                                                    onPress={() => this.nextPoint()} >
+                                                    <Text style={{ textAlign: 'center' }}>
+                                                        je suis arrivé au point(ce bouton apparait quand il s'agit d'une question 'geoloc')
+                                                    </Text>
+                                                </TouchableOpacity>
+
+                                                <TouchableOpacity style={{ alignItems: 'center' }}
+                                                    onPress={() => this.setModalVisible()}
+                                                >
+                                                    <Image source={require("../assets/map.png")}
+                                                        resizeMode="contain"
+                                                        style={styles.image} />
+                                                    <Text>où suis-je</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        }
                                     </View>
+
+
                                     : ""}
 
                                 {/* <Text style={{
@@ -299,7 +444,12 @@ export default class EscapeRunEnigme extends Component {
 
 
                                 {/* on vient passer l'url scenario en props via le composant */}
-                                <EscapeRunModalMap prop={myProp} />
+                                <EscapeRunModalMap 
+                                prop={myProp} 
+                                destination_latitude={destination_latitude}  
+                                destination_longitude={destination_longitude}
+                                currentIndex={this.state.currentIndex}
+                                />
 
 
 
@@ -324,14 +474,6 @@ export default class EscapeRunEnigme extends Component {
                         </View>
                     </Modal>
 
-                    <TouchableOpacity style={{ alignItems: 'center' }}
-                        onPress={() => this.setModalVisible()}
-                    >
-                        <Image source={require("../assets/map.png")}
-                            resizeMode="contain"
-                            style={styles.image} />
-                        <Text>où suis-je</Text>
-                    </TouchableOpacity>
 
                 </View>
 
@@ -391,6 +533,7 @@ const styles = StyleSheet.create({
         height: 40,
         width: 50,
         borderRadius: 50,
+        marginTop: 20,
     },
 
 });

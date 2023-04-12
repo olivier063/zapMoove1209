@@ -44,7 +44,7 @@ export default class EscapeRunDepart extends Component {
             console.log('STATUS', mapService.status)
         }
 
-        mapService.userLocation();
+        mapService.userLocationEscape();
         // taskManagerService.backgroundLocation();
         // this.timerTrainingService.startTimer();
 
@@ -81,7 +81,7 @@ export default class EscapeRunDepart extends Component {
             console.log('STATUS', mapService.status)
         }
 
-        mapService.userLocation();
+        mapService.userLocationEscape();
         // taskManagerService.backgroundLocation();
         // this.timerTrainingService.startTimer();
 

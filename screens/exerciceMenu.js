@@ -7,12 +7,12 @@ export default class ExerciceMenu extends Component {
     // console.log(this.props)
     return (
       <View >
-        <View  style={styles.textContainer}>
+        {/* <View  style={styles.textContainer}>
             <TouchableOpacity onPress={ () => this.props.navigation.navigate('MAP VIEW')}>
                 <Text style={{marginLeft: 10}}>ENTRAINEMENT</Text>
                 <Text style={{marginLeft: 10}}>Course à pied, marche, vélo</Text>
             </TouchableOpacity>
-        </View>
+        </View> */}
         <View  style={styles.textContainer}>
             <TouchableOpacity onPress={ () => this.props.navigation.navigate('CHOISIR UN ENTRAINEMENT')}>
                 <Text style={{marginLeft: 10}}>EXERCICES</Text>

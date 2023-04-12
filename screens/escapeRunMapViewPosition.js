@@ -25,24 +25,6 @@ export default function EscapeRunMapViewPosition(props) {
     React.useEffect(() => {
         getEscapeScenario();
        
-        // (async () => {
-        //     //On reset toutes les donnees à la montee du comnposant pour que 
-        //     // lorsque l'on rerentre dans mapView, il n'y ai plus de traces de la precedente Run
-        //     // Le reset All etait avant dans le unregisterTask du taskManagerService
-        //     mapService.resetAll();
-        //     // console.log("TOTO")
-        //     //recentre sur la france
-        //     setMapRegion({
-        //         latitude: 46.227638,
-        //         longitude: 2.213749,
-        //         latitudeDelta: 15,
-        //         longitudeDelta: 15,
-        //     })
-        //     mapService.mapChange.subscribe(mapStructure => {
-        //         // console.log("STRUCTURE", mapStructure)
-        //         setMapRegion(mapService.mapRegion)
-        //     });
-        // })();
 
     }, []);
 

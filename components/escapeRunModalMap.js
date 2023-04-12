@@ -25,25 +25,6 @@ export default function EscapeRunModalMap(props) {
     React.useEffect(() => {
         getEscapeScenario();
        
-        // (async () => {
-        //     //On reset toutes les donnees à la montee du comnposant pour que 
-        //     // lorsque l'on rerentre dans mapView, il n'y ai plus de traces de la precedente Run
-        //     // Le reset All etait avant dans le unregisterTask du taskManagerService
-        //     mapService.resetAll();
-        //     // console.log("TOTO")
-        //     //recentre sur la france
-        //     setMapRegion({
-        //         latitude: 46.227638,
-        //         longitude: 2.213749,
-        //         latitudeDelta: 15,
-        //         longitudeDelta: 15,
-        //     })
-        //     mapService.mapChange.subscribe(mapStructure => {
-        //         // console.log("STRUCTURE", mapStructure)
-        //         setMapRegion(mapService.mapRegion)
-        //     });
-
-        // })();
     }, []);
 
 
@@ -53,18 +34,16 @@ export default function EscapeRunModalMap(props) {
         try {
             const response = await fetch(props.prop);
             const json = await response.json();
-            const myArray = [json.DEPART];
+            console.log("JSON",json)
 
-            // console.log(json)
-            //la split methode permet de scinder les valeurs latitude et longitude du tableau qui ne sont qu'une seule chaine de caractere
-            const [latitudeStr, longitudeStr] = myArray[0].split(',');
-            const latitude = parseFloat(latitudeStr);
-            const longitude = parseFloat(longitudeStr);
-            // console.log(latitude)
-            setLatitude(latitude);
-            setLongitude(longitude);
-            setRayon(parseFloat(json.RAYON));
+            //ici je set en passand par les props de la modale
+            setLatitude(parseFloat(props.destination_latitude));
+            setLongitude(parseFloat(props.destination_longitude));
 
+            //ici je ne recupere que le currentIndex en props et je fetch pour recup le rayonDetection
+            setRayon(parseFloat(json.SCENARIO[props.currentIndex].RAYON_DETECTION))
+            console.log("RAYON",rayon)
+            
         } catch (error) {
             console.log(error);
         }

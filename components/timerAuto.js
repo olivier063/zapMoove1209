@@ -33,7 +33,7 @@ export default class TimerAuto extends Component {
 
             this.setState({
                 minutes_Counter: count.length == 1 ? '0' + count : count,
-                seconds_Counter: num.length == 1 ? '0' + num : num
+                seconds_Counter: num.length == 1 ? '0' + num : num,
             });
         }, 1000);
         this.setState({ timer });
