@@ -19,7 +19,7 @@ export default class EscapeRunChoixCourse extends Component {
       const json = await response.json();
       this.setState({ data: json });
 
-      console.log('DATA', this.state.data)
+      // console.log('DATA', this.state.data)
 
     } catch (error) {
       console.log(error);

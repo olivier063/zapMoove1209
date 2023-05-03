@@ -5,18 +5,19 @@ import taskManagerService from '../services/taskManagerService';
 import * as Location from 'expo-location';
 
 const LOCATION_TASK_NAME = 'background_location_task';
+const GEOFENCING_TASK_NAME = 'myGeofencingTask';
 
 
 export default class EscapeRunDepart extends Component {
     constructor(props) {
         super(props);
-        console.log('PROPS EXPLICATION', this.props)
+        // console.log('PROPS DEPART', this.props)
         this.state = {
             banniere: this.props.route.params.banniere,
             scenario: this.props.route.params.scenario,
-
         };
     }
+
 
     onButtonFindMe = async () => {
         const { status } = await Location.requestForegroundPermissionsAsync();
@@ -49,10 +50,10 @@ export default class EscapeRunDepart extends Component {
         // this.timerTrainingService.startTimer();
 
         this.props.navigation.navigate('ESCAPE RUN MAP POSITION',
-        {
-            banniere: this.state.banniere,
-            scenario: this.state.scenario,
-        })
+            {
+                banniere: this.state.banniere,
+                scenario: this.state.scenario,
+            })
     }
 
     onButtonStartEscape = async () => {
@@ -80,16 +81,15 @@ export default class EscapeRunDepart extends Component {
             console.log('Access granted!!')
             console.log('STATUS', mapService.status)
         }
-
         mapService.userLocationEscape();
         // taskManagerService.backgroundLocation();
         // this.timerTrainingService.startTimer();
 
         this.props.navigation.navigate('ESCAPE RUN ENIGME',
-        {
-            banniere: this.state.banniere,
-            scenario: this.state.scenario,
-        })
+            {
+                banniere: this.state.banniere,
+                scenario: this.state.scenario,
+            })
     }
 
     stopJeu = () => {
@@ -110,6 +110,61 @@ export default class EscapeRunDepart extends Component {
         )
     };
 
+    onButton = () => {
+        this.state.params.id
+        this.state.route.params.polo;
+    }
+
+
+    onButtonStartEscape2 = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        mapService.status = status;
+
+        if (mapService.status !== 'granted') {
+            mapService.status = 'Permission to access location was denied';
+            return;
+        } else {
+            const requestPermissions = async () => {
+                const { status } = await Location.requestBackgroundPermissionsAsync();
+                mapService.status = status;
+                console.log('STATUS BACK', mapService.status);
+                if (mapService.status === 'granted') {
+                    // LE TIME INTERVAL DEFINI QUE LA MIS A JOUR DE LA POSITION SE FERA TOUS LES X SECONDES (1000 = 1 SECONDE)
+                    await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+                        accuracy: Location.Accuracy.BestForNavigation,
+                        timeInterval: 1000,
+                    });
+                    //43.701074, 7.285473
+                    const regions = [
+                        {
+                            identifier: 'MyGeofence',
+                            latitude: 43.701074,
+                            longitude: 7.285473,
+                            radius: 1000,
+                            notifyOnEnter: true,
+                            notifyOnExit: true,
+                        },
+                    ];
+                    await Location.startGeofencingAsync(GEOFENCING_TASK_NAME, regions, {
+                        accuracy: Location.Accuracy.High,
+                        loiteringDelay: 1000,
+                    });
+                }
+            };
+            requestPermissions();
+            // console.log('Access granted!!');
+            console.log('STATUS', mapService.status);
+        }
+        mapService.userLocationEscape();
+        taskManagerService.defineTaskRegion();
+
+        this.props.navigation.navigate('ESCAPE RUN ENIGME', {
+            banniere: this.state.banniere,
+            scenario: this.state.scenario,
+        });
+    };
+
+
     render() {
         return (
             <View style={{ backgroundColor: 'white', height: '100%', alignItems: 'center' }}>
@@ -120,7 +175,7 @@ export default class EscapeRunDepart extends Component {
                 />
 
                 <TouchableOpacity style={{ alignItems: 'center' }}
-                onPress={() => this.onButtonFindMe()}
+                    onPress={() => this.onButtonFindMe()}
                 >
                     <Image source={require("../assets/map.png")}
                         resizeMode="contain"
@@ -141,7 +196,7 @@ export default class EscapeRunDepart extends Component {
                         borderWidth: 1,
                         borderRadius: 7,
                     }}
-                onPress={() => this.onButtonStartEscape() }
+                    onPress={() => this.onButtonStartEscape2()}
                 >
                     <Text style={{
                         fontSize: 18,

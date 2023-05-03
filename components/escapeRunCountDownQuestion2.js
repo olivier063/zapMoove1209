@@ -4,11 +4,11 @@ import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 export default class EscapeRunCountDownQuestion2 extends Component {
     constructor(props) {
         super(props);
-        console.log('PROPS', this.props)
+        console.log('PROPS COUNT DOWN 2', this.props)
         this.state = {
             modalVisible: false,
-            // timeRemaining: this.props.time,
-            timeRemaining: 8,
+            timeRemaining: this.props.time,
+            // timeRemaining: 5,
             bonneReponseTexte: '',
             
         };
@@ -51,6 +51,7 @@ export default class EscapeRunCountDownQuestion2 extends Component {
         this.props.nextQuestion();
     };
 
+    //affichage de la bonne reponse à la fin du chrono
     setReponse = () => {
         if (this.state.timeRemaining === 0) {
             // Le temps est écoulé, afficher la bonne réponse

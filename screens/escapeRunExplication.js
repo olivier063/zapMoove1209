@@ -5,7 +5,7 @@ import React, { Component } from 'react'
 export default class EscapeRunExplication extends Component {
     constructor(props) {
         super(props);
-        console.log('PROPS', this.props)
+        // console.log('PROPS', this.props)
         this.state = {
             infoFr: this.props.route.params.infoFr,
             banniere: this.props.route.params.banniere,

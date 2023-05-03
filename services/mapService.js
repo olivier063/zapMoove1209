@@ -11,8 +11,6 @@ class MapService {
     map = React.createRef(null);
     status = null;
 
-
-
     mapRegion = {
         latitude: 46.227638,
         longitude: 2.213749,
@@ -70,7 +68,6 @@ class MapService {
                 latitudeDelta: 0.002922,
                 longitudeDelta: 0.002421,
             }
-
         }
     }
 
@@ -109,7 +106,8 @@ class MapService {
         }
     }
 
-    userLocationEscape = async () => {
+    //PAS UTILISE.........................................................
+    userLocationEscapeRayon = async () => {
         this.mapStructure = {
             positions: [],
             currentPosition: null,
@@ -129,8 +127,12 @@ class MapService {
                 latitudeDelta: 0.002922,
                 longitudeDelta: 0.002421,
             }
+
+            
+
         }
     }
+    //.........................................................PAS UTILISE
 
     onPositionChange = async (currentPosition) => {
         // console.log("ON POSITION CHANGE", position)
@@ -198,13 +200,11 @@ class MapService {
     //CALCUL DISTANCE, DENIVELE, VITESSE MOYENNE...............................
     position = {}
     calculDistance = async () => {
-
         //CHANGE const par var points
         var points = [];
         this.mapStructure.positions.forEach(position => {
             points.push(position);
         });
-
         if (points.length > 1) {
             let totalDistance = 0;
 
@@ -278,14 +278,10 @@ class MapService {
         // console.log("GPX", gpx);
         // pathGpx est dans le mapStructure
         this.mapStructure.pathGpx = gpx;
-
-    };
-
-    
+    };    
     //...................................................................GPX
 
-
-
+    
     //DENIVELE POSITIF.......................................................
     //   const turf = require('@turf/turf');
 

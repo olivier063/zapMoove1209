@@ -54,6 +54,21 @@ TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
   }
 }); 
 
+const GEOFENCING_TASK_NAME = 'myGeofencingTask';
+TaskManager.defineTask(GEOFENCING_TASK_NAME, ({ data: { eventType, region }, error }) => {
+  if (error) {
+    console.error('Geofencing task error:', error);
+    return;
+  }
+  if (eventType === Location.GeofencingEventType.Enter) {
+    console.log(`Entered geofence ${region.identifier}`);
+    // handle enter event
+  } else if (eventType === Location.GeofencingEventType.Exit) {
+    console.log(`Exited geofence ${region.identifier}`);
+    // handle exit event
+  }
+});
+
 const Stack = createNativeStackNavigator();
 
 
@@ -86,16 +101,16 @@ export default function App() {
           <Stack.Screen name="HISTORIQUE" component={EscapeRunHistory} />
           <Stack.Screen name="PRESENTATION ESCAPE" component={PresentationEscape} />
           <Stack.Screen name="CHOIX COURSE CONNECTEE" component={CourseConnecteeChoixCourse} />
-          <Stack.Screen name="CHOIX COMPETITION" component={CompetitionChoixCourse} />
-          <Stack.Screen name="CHOISIR UN MODE" component={ExerciceMenu} 
-           options={({ navigation }) => ({
-            headerRight: () => <TouchableOpacity onPress={() => navigation.navigate("TRAINING HISTORIQUE")}>
-              <Image source={require("./assets/imageHistorique.png")}
-                resizeMode="contain"
-                style={styles.imageHistorique} />
-            </TouchableOpacity>
-          })}
+          <Stack.Screen name="CHOIX COMPETITION" component={CompetitionChoixCourse} 
+              options={({ navigation }) => ({
+                headerRight: () => <TouchableOpacity onPress={() => navigation.navigate("TRAINING HISTORIQUE")}>
+                  <Image source={require("./assets/imageHistorique.png")}
+                    resizeMode="contain"
+                    style={styles.imageHistorique} />
+                </TouchableOpacity>
+              })}
           />
+          <Stack.Screen name="CHOISIR UN MODE" component={ExerciceMenu} />
           <Stack.Screen name="CHOISIR UN ENTRAINEMENT" component={Exercices} />
           <Stack.Screen name="ENTRAINEMENTS" component={GeneralExercicesNiveau1} />
           <Stack.Screen name="START EXERCICES" component={StartExercices} />
@@ -124,7 +139,7 @@ export default function App() {
           <Stack.Screen name="ESCAPE RUN DEPART" component={EscapeRunDepart} />
           <Stack.Screen name="LIEN WEB" component={EscapeRunLienWeb} />
           <Stack.Screen name="ESCAPE RUN MAP POSITION" component={EscapeRunMapViewPosition} />
-          <Stack.Screen name="ESCAPE RUN ENIGME" component={EscapeRunEnigme}/>
+          <Stack.Screen name="ESCAPE RUN ENIGME" component={EscapeRunEnigme} />
 
 
 

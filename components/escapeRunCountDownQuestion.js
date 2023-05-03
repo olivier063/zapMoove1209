@@ -6,8 +6,8 @@ export default class EscapeRunCountDownQuestion extends Component {
     super(props);
 console.log(this.props)
     this.state = {
-      // timeRemaining: this.props.time,
-      timeRemaining: 5,
+      timeRemaining: this.props.time,
+      // timeRemaining: 5,
     };
   }
 

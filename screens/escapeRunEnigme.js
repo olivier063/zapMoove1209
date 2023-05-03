@@ -4,6 +4,9 @@ import EscapeRunModalMap from '../components/escapeRunModalMap';
 import EscapeRunCountDownQuestion from '../components/escapeRunCountDownQuestion';
 import EscapeRunCountDownGeneral from '../components/escapeRunCountDownGeneral';
 import EscapeRunCountDownQuestion2 from '../components/escapeRunCountDownQuestion2';
+import taskManagerService from '../services/taskManagerService';
+
+const GEOFENCING_TASK_NAME = 'myGeofencingTask'; 
 
 export default class EscapeRunEnigme extends Component {
     constructor(props) {
@@ -12,33 +15,34 @@ export default class EscapeRunEnigme extends Component {
         this.state = {
             modalVisible: false,
 
+            modalVisibleReponseCorrect: false,
+            modalVisibleReponseFalse: false,
+            bonneReponseTexte: '',
+            timeRemaining: 0,
+
             data: [],
             titre: '',
             currentIndex: 0,
             condition: '',
             reponseFr: '',
             reponses: [],
-            temps_max: 0,
             temps_reponse: 0,
             effet_valeur: 0,
+            effet_type: '',
             key_bonne_reponse: 0,
 
             destination_latitude: 0,
             destination_longitude: 0,
             rayon_detection: 0,
-
         };
     }
 
     componentDidMount() {
         this.getEscapeScenario();
-    }
+    } 
+    
 
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     return nextState.reponseFr !== this.state.reponseFr;
-    //   }
-
-
+    //GESTION MODAL..................................................................
     setModalVisible = () => {
         this.setState({ modalVisible: true });
     };
@@ -46,6 +50,22 @@ export default class EscapeRunEnigme extends Component {
         this.setState({ modalVisible: false });
     };
 
+    setModalVisibleReponseCorrect = () => {
+        this.setState({ modalVisibleReponseCorrect: true });
+    };
+    setModalNonVisibleReponseCorrect = () => {
+        this.setState({ modalVisibleReponseCorrect: false });
+        this.nextQuestion();
+    };
+
+    setModalVisibleReponseFalse = () => {
+        this.setState({ modalVisibleReponseFalse: true });
+    };
+    setModalNonVisibleReponseFalse = () => {
+        this.setState({ modalVisibleReponseFalse: false });
+        this.nextQuestion();
+    };
+    //..................................................................GESTION MODAL
 
     stopJeu = () => {
         Alert.alert(
@@ -56,14 +76,18 @@ export default class EscapeRunEnigme extends Component {
                     text: "NON",
                     style: "cancel"
                 },
-
+    
                 {
                     text: "OUI",
-                    onPress: () => this.props.navigation.navigate('MENU PRINCIPAL')
+                    onPress: () => {
+                        taskManagerService.unregisterTaskRegion(GEOFENCING_TASK_NAME);
+                        this.props.navigation.navigate('MENU PRINCIPAL');
+                    }
                 }
             ]
         )
     };
+    
 
     nextPoint = () => {
         Alert.alert(
@@ -90,29 +114,36 @@ export default class EscapeRunEnigme extends Component {
             condition: this.state.data[this.state.currentIndex].CONDITION,
             temps_reponse: this.state.data[this.state.currentIndex].TEMPS_REPONSE,
             effet_valeur: this.state.data[this.state.currentIndex].EFFET_VALEUR,
+
+            //obligé d'ajouter un +1 au current index pour avoir l'effet type de la bonne question sinon j'avais un decalage
+            effet_type: this.state.data[this.state.currentIndex + 1].EFFET_TYPE,
             key_bonne_reponse: this.state.data[this.state.currentIndex].KEY_BONNE_REPONSE,
-       
-            // ici je passe par les state de cet vue pour passer à ma modale ce qui suit mais je pouvais tres bien le faire dns la modale direct
+
+            // ici je passe par les state de cette vue pour passer à ma modale ce qui suit mais je pouvais tres bien le faire dns la modale direct
             destination_latitude: this.state.data[this.state.currentIndex].DESTINATION_LATITUDE,
             destination_longitude: this.state.data[this.state.currentIndex].DESTINATION_LONGITUDE,
             reponseFr: reponseFr,
             reponses: reponses,
         })
+        // console.log('REPONSE FR',this.state.reponseFr)
+        // console.log('EFFET TYPE', this.state.effet_type)
+        // console.log('TEMPS REPONSE', this.state.temps_reponse)
     }
 
     getEscapeScenario = async () => {
-            try {
-                const response = await fetch(this.props.route.params.scenario);
-                const json = await response.json();
-                console.log('JSON',json)
-                this.setState({
-                    data: json.SCENARIO,
-                }, () => {
-                    this.getCurrentScenario();
-                })      
-            } catch (error) {
-                console.log(error);
-            }
+        try {
+            const response = await fetch(this.props.route.params.scenario);
+            const json = await response.json();
+            // console.log('JSON ENIGME', json)
+            this.setState({
+                data: json.SCENARIO,
+                timeRemaining: json.TEMPS_MAX,
+            }, () => {
+                this.getCurrentScenario();
+            })
+        } catch (error) {
+            console.log('ERROR', error);
+        }
     }
 
 
@@ -124,15 +155,66 @@ export default class EscapeRunEnigme extends Component {
         });
     }
 
+    //MODAL QUI S'OUVRE AU CLIQUE DE LA REPONSE SELON BONNE OU MAUVAISE REPONSE.....................................................
+    verifierReponse = (reponseUtilisateur) => {
+        // Vérifier si la réponse de l'utilisateur est correcte
+        const bonneReponse = this.state.key_bonne_reponse;
+        // console.log(this.state.key_bonne_reponse)
+        const reponseFr = this.state.reponseFr;
+        // console.log(this.state.reponseFr)
+
+        const timeRemaining = this.state.timeRemaining
+        console.log('STATE REMAINING',this.state.timeRemaining)
+
+        if (reponseFr) {
+            const reponses = reponseFr.split(";;");
+            const bonneReponseTexte = reponses[bonneReponse];
+            // console.log(reponseUtilisateur)
+            this.setState({ bonneReponseTexte: bonneReponseTexte })
+            if (reponseUtilisateur === bonneReponseTexte) {
+                this.setModalVisibleReponseCorrect();
+
+                this.setState({
+                    timeRemaining: timeRemaining + 60
+                });
+
+            } else {
+                this.setModalVisibleReponseFalse();
+
+                this.setState({
+                    timeRemaining: timeRemaining - 60
+                });
+                
+            }
+        }
+    }
+    //.....................................................MODAL QUI S'OUVRE AU CLIQUE DE LA REPONSE SELON BONNE OU MAUVAISE REPONSE
+
+    //MIS A JOUR DU COUNT DOWN SELON BONNE OU MAUVAISE REPONSE................
+    // handleUserAnswer = (reponseUtilisateur) => {
+    //     const isAnswerCorrect = this.verifierReponse(reponseUtilisateur); 
+    //     if (isAnswerCorrect) {
+    //         this.escapeRunCountDownGeneral.updateTimeRemaining(true);
+    //     } else {
+    //         this.escapeRunCountDownGeneral.updateTimeRemaining(false);
+    //     }
+    // }
+
+
+    // updateTimeRemaining = (isAnswerCorrect) => {
+    //     const timeDiff = isAnswerCorrect ? 60 : -60;
+    //     const newTimeRemaining = this.state.timeRemaining + timeDiff;
+    //     this.setState({ timeRemaining: newTimeRemaining });
+    //   }
+    //................MIS A JOUR DU COUNT DOWN SELON BONNE OU MAUVAISE REPONSE
 
     render() {
-        const { modalVisible, data } = this.state;
+        const { modalVisible, data, modalVisibleReponseCorrect, modalVisibleReponseFalse } = this.state;
 
         //je cree des props pour passer dans le composant de la modale
         const myProp = this.props.route.params.scenario;
         const destination_latitude = this.state.destination_latitude;
         const destination_longitude = this.state.destination_longitude;
-
         return (
             <View style={{
                 backgroundColor: '#86D2EF',
@@ -174,10 +256,12 @@ export default class EscapeRunEnigme extends Component {
                         marginLeft: 90,
                         borderRadius: 7
                     }}>
-                    
+
 
                         <EscapeRunCountDownGeneral
                             prop={myProp}
+                            // updateTimeRemaining={this.updateTimeRemaining}
+                            timeRemaining={this.state.timeRemaining}
                         />
 
                     </View>
@@ -232,7 +316,7 @@ export default class EscapeRunEnigme extends Component {
                                                 <EscapeRunCountDownQuestion
                                                     time={this.state.temps_reponse}
                                                     reponseFr={this.state.reponseFr}
-                                                    // nextQuestion={this.nextQuestion}
+                                                // nextQuestion={this.nextQuestion}
                                                 />
                                             </View>
                                             : (this.state.effet_valeur != undefined) ?
@@ -264,7 +348,9 @@ export default class EscapeRunEnigme extends Component {
                                                     width: 300,
                                                     backgroundColor: "#FF6F00",
                                                     borderRadius: 7,
-                                                }}>
+                                                }}
+                                                    onPress={() => this.verifierReponse(this.state.reponses[0])}
+                                                >
                                                     <Text style={{ textAlign: 'center', marginTop: 5 }}>
                                                         {this.state.reponses[0]}
                                                     </Text>
@@ -276,7 +362,9 @@ export default class EscapeRunEnigme extends Component {
                                                     width: 300,
                                                     backgroundColor: "#FF6F00",
                                                     borderRadius: 7,
-                                                }}>
+                                                }}
+                                                    onPress={() => this.verifierReponse(this.state.reponses[1])}
+                                                >
                                                     <Text style={{ textAlign: 'center', marginTop: 5 }}>
                                                         {this.state.reponses[1]}
                                                     </Text>
@@ -288,7 +376,9 @@ export default class EscapeRunEnigme extends Component {
                                                     width: 300,
                                                     backgroundColor: "#FF6F00",
                                                     borderRadius: 7,
-                                                }}>
+                                                }}
+                                                    onPress={() => this.verifierReponse(this.state.reponses[2])}
+                                                >
                                                     <Text style={{ textAlign: 'center', marginTop: 5 }}>
                                                         {this.state.reponses[2]}
                                                     </Text>
@@ -300,7 +390,9 @@ export default class EscapeRunEnigme extends Component {
                                                     width: 300,
                                                     backgroundColor: "#FF6F00",
                                                     borderRadius: 7,
-                                                }}>
+                                                }}
+                                                    onPress={() => this.verifierReponse(this.state.reponses[3])}
+                                                >
                                                     <Text style={{ textAlign: 'center', marginTop: 5 }}>
                                                         {this.state.reponses[3]}
                                                     </Text>
@@ -444,11 +536,11 @@ export default class EscapeRunEnigme extends Component {
 
 
                                 {/* on vient passer l'url scenario en props via le composant */}
-                                <EscapeRunModalMap 
-                                prop={myProp} 
-                                destination_latitude={destination_latitude}  
-                                destination_longitude={destination_longitude}
-                                currentIndex={this.state.currentIndex}
+                                <EscapeRunModalMap
+                                    prop={myProp}
+                                    destination_latitude={destination_latitude}
+                                    destination_longitude={destination_longitude}
+                                    currentIndex={this.state.currentIndex}
                                 />
 
 
@@ -478,6 +570,116 @@ export default class EscapeRunEnigme extends Component {
                 </View>
 
                 {/* MODAL */}
+
+                {/* MODAL II */}
+
+                <View style={styles.centeredView2}>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalVisibleReponseCorrect}>
+
+                        <View style={styles.centeredView2}>
+                            <View style={styles.modalView}>
+
+
+                                <Text style={{ textAlign: 'center', fontSize: 30, fontWeight: 'bold' }}>
+                                    BRAVO!!
+                                </Text>
+                                <Text style={{ textAlign: 'center', fontSize: 17 }}>
+                                    La bonne reponse est bien :
+                                </Text>
+
+                                <Text style={{ fontSize: 22, fontWeight: 'bold', marginTop: 20 }}>
+                                    {this.state.bonneReponseTexte}
+                                </Text>
+
+                                <Text style={{ marginTop: 20, fontSize: 17 }}>
+                                    Vous avez gagné {this.state.effet_valeur} secondes!!
+                                </Text>
+
+
+
+
+                                <View style={{ flexDirection: "row" }}>
+                                    <View
+                                        style={{ flex: 1, alignItems: "center" }}>
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.button,
+                                                styles.buttonClose,
+                                            ]}
+                                            onPress={() => this.setModalNonVisibleReponseCorrect()}>
+                                            <Text style={styles.textStyle}>
+                                                QUESTION SUIVANTE
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
+
+
+                </View>
+
+                {/* MODAL II */}
+
+                {/* MODAL III */}
+
+                <View style={styles.centeredView2}>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalVisibleReponseFalse}>
+
+                        <View style={styles.centeredView2}>
+                            <View style={styles.modalView}>
+
+
+                                <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: 'bold' }}>
+                                    DOMMAGE!!
+                                </Text>
+                                <Text style={{ fontSize: 17, textAlign: 'center' }}>
+                                    La bonne reponse etait:
+                                </Text>
+
+                                <Text style={{ fontSize: 22, fontWeight: 'bold', marginTop: 20, fontWeight: 'bold' }}>
+                                    {this.state.bonneReponseTexte}
+                                </Text>
+
+                                <Text style={{ marginTop: 20, fontSize: 17 }}>
+                                    Vous avez perdu {this.state.effet_valeur} secondes!!
+                                </Text>
+
+
+
+
+                                <View style={{ flexDirection: "row" }}>
+                                    <View
+                                        style={{ flex: 1, alignItems: "center" }}>
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.button,
+                                                styles.buttonClose,
+                                            ]}
+                                            onPress={() => this.setModalNonVisibleReponseFalse()}>
+                                            <Text style={styles.textStyle}>
+                                                QUESTION SUIVANTE
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
+
+
+                </View>
+
+                {/* MODAL III */}
 
 
 
@@ -517,7 +719,7 @@ const styles = StyleSheet.create({
     },
     buttonClose: {
         backgroundColor: "#2196F3",
-        width: 100,
+        width: 200,
         marginTop: 10
     },
     textStyle: {
@@ -534,6 +736,11 @@ const styles = StyleSheet.create({
         width: 50,
         borderRadius: 50,
         marginTop: 20,
+    },
+    centeredView2: {
+        flex: 1,
+        alignItems: "center",
+        marginTop: 300,
     },
 
 });

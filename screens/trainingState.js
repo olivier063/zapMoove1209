@@ -64,7 +64,7 @@ export default function TrainingState(props) {
       data: datas,
       expires: null,
     });
-    navigation.navigate("CHOISIR UN MODE")
+    navigation.navigate("CHOIX COMPETITION")
   }
 
 
@@ -151,7 +151,7 @@ export default function TrainingState(props) {
         </TouchableOpacity>
 
         <TouchableOpacity style={{ flex: 1, backgroundColor: "red", height: 40, borderRadius: 7, justifyContent: 'center', margin: 10, borderColor: 'black', borderWidth: 1 }}
-          onPress={() => navigation.navigate("CHOISIR UN MODE")}
+          onPress={() => navigation.navigate("CHOIX COMPETITION")}
         >
           <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold' }}>
             SUPPRIMER

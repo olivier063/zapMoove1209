@@ -1,7 +1,7 @@
 import { Text, View, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native'
 import React, { Component } from 'react'
 import StorageService from '../services/storageService';
-import BackgroundFetchScreen from '../components/chronoBackground';
+// import BackgroundFetchScreen from '../components/chronoBackground';
 
 
 

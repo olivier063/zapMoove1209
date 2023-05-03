@@ -2,13 +2,14 @@ import * as React from 'react';
 import MapView, { Circle } from 'react-native-maps';
 import { StyleSheet, View } from 'react-native';
 import mapService from '../services/mapService';
+import * as Location from 'expo-location';
 
 
 const LOCATION_TASK_NAME = 'background_location_task';
 
 // je passe props en parametre afin de recuperer le useNavigation dans l'enfant qui est une class component
 export default function EscapeRunModalMap(props) {
-    console.log('PROPS MODAL', props)
+    // console.log('PROPS MODAL', props)
     // recentre sur la france
     const [mapRegion, setMapRegion] = React.useState({
         latitude: 46.227638,
@@ -24,9 +25,7 @@ export default function EscapeRunModalMap(props) {
 
     React.useEffect(() => {
         getEscapeScenario();
-       
     }, []);
-
 
 
     // on recupere les scenarios pour avoir la longitude et latitude du point de depart et l'afficher dans la mapView
@@ -34,24 +33,20 @@ export default function EscapeRunModalMap(props) {
         try {
             const response = await fetch(props.prop);
             const json = await response.json();
-            console.log("JSON",json)
+            // console.log("JSON MODAL", json)
 
-            //ici je set en passand par les props de la modale
+            //ici je set en passant par les props de la modale
             setLatitude(parseFloat(props.destination_latitude));
             setLongitude(parseFloat(props.destination_longitude));
 
             //ici je ne recupere que le currentIndex en props et je fetch pour recup le rayonDetection
             setRayon(parseFloat(json.SCENARIO[props.currentIndex].RAYON_DETECTION))
-            console.log("RAYON",rayon)
-            
+            console.log("RAYON", rayon)
+
         } catch (error) {
             console.log(error);
         }
     }
-
-
-
-
 
 
     return (

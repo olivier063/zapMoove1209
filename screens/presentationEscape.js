@@ -49,7 +49,7 @@ export default class PresentationEscape extends Component {
                 this.setState({ url: urls[0]})
                 console.log('STATE URL',this.state.url);
 
-                console.log('DATA', this.state.data)
+                // console.log('DATA', this.state.data)
 
                 this.sortTiles();
             } else {
