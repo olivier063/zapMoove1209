@@ -5,6 +5,7 @@ import EscapeRunCountDownQuestion from '../components/escapeRunCountDownQuestion
 import EscapeRunCountDownGeneral from '../components/escapeRunCountDownGeneral';
 import EscapeRunCountDownQuestion2 from '../components/escapeRunCountDownQuestion2';
 import taskManagerService from '../services/taskManagerService';
+import timerEscapeService from '../services/timerEscapeService';
 
 const GEOFENCING_TASK_NAME = 'myGeofencingTask'; 
 
@@ -109,6 +110,8 @@ export default class EscapeRunEnigme extends Component {
 
     getCurrentScenario = async () => {
         const reponseFr = this.state.data[this.state.currentIndex].REPONSE_FR;
+         console.log('DATA', this.state.data[this.state.currentIndex].TEMPS_REPONSE)
+         console.log('INDEX', this.state.currentIndex)
         const reponses = reponseFr.split(";;");
         this.setState({
             condition: this.state.data[this.state.currentIndex].CONDITION,
@@ -174,16 +177,12 @@ export default class EscapeRunEnigme extends Component {
             if (reponseUtilisateur === bonneReponseTexte) {
                 this.setModalVisibleReponseCorrect();
 
-                this.setState({
-                    timeRemaining: timeRemaining + 60
-                });
+               timerEscapeService.removeFromTimer(60);
 
             } else {
                 this.setModalVisibleReponseFalse();
 
-                this.setState({
-                    timeRemaining: timeRemaining - 60
-                });
+                timerEscapeService.removeFromTimer(-60);
                 
             }
         }
@@ -303,7 +302,7 @@ export default class EscapeRunEnigme extends Component {
                                             </Text>
                                         </View>
 
-                                        {(this.state.temps_reponse != undefined) ?
+                                        {(this.state.temps_reponse != undefined && this.state.temps_reponse != 0) ?
                                             <View style={{
                                                 marginTop: 10,
                                                 borderWidth: 1,

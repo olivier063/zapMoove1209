@@ -38,6 +38,7 @@ import EscapeRunDepart from './screens/escapeRunDepart';
 import EscapeRunLienWeb from './screens/escapeRunLienWeb';
 import EscapeRunMapViewPosition from './screens/escapeRunMapViewPosition';
 import EscapeRunEnigme from './screens/escapeRunEnigme';
+import EscapeRunReglement from './screens/escapeRunReglement';
 
 
 
@@ -140,6 +141,7 @@ export default function App() {
           <Stack.Screen name="LIEN WEB" component={EscapeRunLienWeb} />
           <Stack.Screen name="ESCAPE RUN MAP POSITION" component={EscapeRunMapViewPosition} />
           <Stack.Screen name="ESCAPE RUN ENIGME" component={EscapeRunEnigme} />
+          <Stack.Screen name="REGLEMENT" component={EscapeRunReglement} />
 
 
 

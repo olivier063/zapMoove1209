@@ -15,8 +15,22 @@ export default class EscapeRunDepart extends Component {
         this.state = {
             banniere: this.props.route.params.banniere,
             scenario: this.props.route.params.scenario,
+            showButton: false,
         };
+        this.props.navigation.addListener('focus', () => {
+            this.onButtonStartEscape2(false);
+        });
+        taskManagerService.regionChange.subscribe(isInZone => {
+            this.setState({
+                showButton: isInZone
+            })
+        });
     }
+
+    componentDidMount() {
+        this.onButtonStartEscape2(false);
+    }
+
 
 
     onButtonFindMe = async () => {
@@ -104,7 +118,10 @@ export default class EscapeRunDepart extends Component {
 
                 {
                     text: "OUI",
-                    onPress: () => this.props.navigation.navigate('MENU PRINCIPAL')
+                    onPress: () => {
+                        taskManagerService.unregisterTaskRegion(GEOFENCING_TASK_NAME);
+                        this.props.navigation.navigate('MENU PRINCIPAL')
+                    }
                 }
             ]
         )
@@ -116,7 +133,7 @@ export default class EscapeRunDepart extends Component {
     }
 
 
-    onButtonStartEscape2 = async () => {
+    onButtonStartEscape2 = async (redirect = true) => {
         const { status } = await Location.requestForegroundPermissionsAsync();
         mapService.status = status;
 
@@ -134,13 +151,23 @@ export default class EscapeRunDepart extends Component {
                         accuracy: Location.Accuracy.BestForNavigation,
                         timeInterval: 1000,
                     });
-                    //43.701074, 7.285473
+
+                    const response = await fetch(this.props.route.params.scenario);
+                    const json = await response.json();
+                    // console.log(json)
+                    //la split methode permet de scinder les valeurs latitude et longitude du tableau qui ne sont qu'une seule chaine de caractere
+                    const myArray = [json.DEPART];
+                    const [latitudeStr, longitudeStr] = myArray[0].split(',');
+                    const latitude = parseFloat(latitudeStr);
+                    const longitude = parseFloat(longitudeStr);
+                    const rayon = parseFloat(json.RAYON);
+
                     const regions = [
                         {
                             identifier: 'MyGeofence',
-                            latitude: 43.701074,
-                            longitude: 7.285473,
-                            radius: 1000,
+                            latitude: latitude,
+                            longitude: longitude,
+                            radius: rayon,
                             notifyOnEnter: true,
                             notifyOnExit: true,
                         },
@@ -157,11 +184,14 @@ export default class EscapeRunDepart extends Component {
         }
         mapService.userLocationEscape();
         taskManagerService.defineTaskRegion();
+        if (redirect) {
+            this.props.navigation.navigate('ESCAPE RUN ENIGME', {
+                banniere: this.state.banniere,
+                scenario: this.state.scenario,
+            });
+        }
 
-        this.props.navigation.navigate('ESCAPE RUN ENIGME', {
-            banniere: this.state.banniere,
-            scenario: this.state.scenario,
-        });
+
     };
 
 
@@ -183,29 +213,34 @@ export default class EscapeRunDepart extends Component {
                     <Text>où suis-je</Text>
                 </TouchableOpacity>
 
-
-                <TouchableOpacity
-                    style={{
-                        marginTop: 20,
-                        backgroundColor: "#FF6F00",
-                        height: 50,
-                        width: 300,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderColor: 'black',
-                        borderWidth: 1,
-                        borderRadius: 7,
-                    }}
-                    onPress={() => this.onButtonStartEscape2()}
-                >
+                {this.state.showButton ?
+                    <TouchableOpacity
+                        style={{
+                            marginTop: 20,
+                            backgroundColor: "#FF6F00",
+                            height: 50,
+                            width: 300,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderColor: 'black',
+                            borderWidth: 1,
+                            borderRadius: 7,
+                        }}
+                        onPress={() => this.onButtonStartEscape2()}
+                    >
+                        <Text style={{
+                            fontSize: 18,
+                            fontWeight: 'bold',
+                            textAlign: 'center',
+                            color: 'white'
+                        }}>Je suis au départ et souhaite commencer le jeu</Text>
+                    </TouchableOpacity>
+                    : 
                     <Text style={{
-                        fontSize: 18,
+                        marginTop: 20,
+                        fontSize: 20,
                         fontWeight: 'bold',
-                        textAlign: 'center',
-                        color: 'white'
-                    }}>Je suis au départ et souhaite commencer le jeu</Text>
-                </TouchableOpacity>
-
+                        }}>Rejoignez la zone de départ!!</Text>   }
 
                 <TouchableOpacity
                     style={{

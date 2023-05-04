@@ -2,6 +2,7 @@ import * as TaskManager from 'expo-task-manager';
 import mapService from './mapService';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
+import { ReplaySubject } from 'rxjs';
 
 const LOCATION_TASK_NAME = 'background_location_task';
 
@@ -9,6 +10,7 @@ const GEOFENCING_TASK_NAME = 'myGeofencingTask';
 
 
 class TaskManagerService {
+  regionChange = new ReplaySubject();
 
   backgroundLocation = () => {
     TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
@@ -66,6 +68,7 @@ class TaskManagerService {
 
   //GEOFENCING REGION............................................
 
+
   defineTaskRegion = () => {
     TaskManager.defineTask(GEOFENCING_TASK_NAME, ({ data: { eventType, region }, error }) => {
       if (error) {
@@ -75,12 +78,15 @@ class TaskManagerService {
       if (eventType === Location.GeofencingEventType.Enter) {
         // console.log(`Entered geofence ${region.identifier}`);
         console.log('vous êtes dans la zone')
-        // Alert.Alert("vous êtes à l'exterieur la zone, rapprochez vous")
+        // Alert.alert("vous êtes dans la zone")
+
+        this.regionChange.next(true);
 
       } else if (eventType === Location.GeofencingEventType.Exit) {
         // console.log(`Exited geofence ${region.identifier}`);
         console.log("vous êtes à l'exterieur la zone, rapprochez vous")
         Alert.alert("Vous êtes à l'exterieur la zone, rapprochez vous!!")
+        this.regionChange.next(false);
       }
       this.getRegisteredTasksRegion();
       // mapService.onPositionChange(locations[0])

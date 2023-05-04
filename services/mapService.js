@@ -30,6 +30,9 @@ class MapService {
         pathGpx: null,
     }
 
+   
+
+
     resetAll = () => {
         this.mapRegion = {
             latitude: 46.227638,

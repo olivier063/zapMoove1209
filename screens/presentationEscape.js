@@ -18,8 +18,6 @@ export default class PresentationEscape extends Component {
             depart: this.props.route.params.depart,
             infoFr: this.props.route.params.infoFr,
             rayon: this.props.route.params.rayon,
-            url: '',
-
         };
     }
 
@@ -39,16 +37,10 @@ export default class PresentationEscape extends Component {
                 this.state.numEvent
             )
             const json = await response.json()
-            // console.log('JSON', json)
+            // console.log('JSON PRES ESCAPE', json)
             if (response !== null) {
                 const array = Object.values(json.TILES);
                 this.setState({ data: array });
-
-
-                const urls = this.state.data.map(item => item.URL_FR);
-                this.setState({ url: urls[0]})
-                console.log('STATE URL',this.state.url);
-
                 // console.log('DATA', this.state.data)
 
                 this.sortTiles();
@@ -127,26 +119,39 @@ export default class PresentationEscape extends Component {
     // FIN TILES...........................................................
 
 
-webOrEscape(type){
-      const types = this.state.data.map(item => item.TYPE);
-      console.log('TYPE',type);
+    webOrEscape(type, url) {
+        const types = this.state.data.map(item => item.TYPE);
+        console.log('TYPE', type);
 
-      switch (type) {
-        case "WEB":
-            this.props.navigation.navigate("LIEN WEB",{
-                url: this.state.url,
-            })
-          break;
-        case "ESCAPE":
-            this.props.navigation.navigate("EXPLICATION ESCAPE",
-                {
-                    infoFr: this.state.infoFr,
-                    banniere: this.state.banniere,
-                    scenario: this.state.scenario,
-                })
-          break;
-      }      
-}
+        switch (type) {
+            case "WEB":
+                if (url.endsWith('.pdf')) {
+                    this.props.navigation.navigate("REGLEMENT", {
+                        url: url
+                    });
+                } else {
+                    this.props.navigation.navigate("LIEN WEB", {
+                        url: url,
+                    })
+                }
+               
+                break;
+            case "ESCAPE":
+                this.props.navigation.navigate("EXPLICATION ESCAPE",
+                    {
+                        infoFr: this.state.infoFr,
+                        banniere: this.state.banniere,
+                        scenario: this.state.scenario,
+                    })
+                break;
+        }
+    }
+
+    // if(url.indexOf('.pdf') !== -1) {
+    //     // c'est un pdf tu télécharges
+    //   }   else {
+    //     // c'est un lien tu rediriges
+    //   }
 
 
 
@@ -176,11 +181,11 @@ webOrEscape(type){
                                 keyExtractor={(item, index) => index.toString()}  // Extract keys for each item in the array
                                 renderItem={({ item }) => ( //each item from the array will be rendered here
                                     <TouchableOpacity style={{ width: item["LARGEUR"] }}
-                                        onPress={() => this.webOrEscape(item["TYPE"])}
+                                        onPress={() => this.webOrEscape(item["TYPE"], item['URL_FR'])}
 
 
-                                        // onPress={() => this.webOrEscape(item["TYPE","URL_FR"])}
-                                        // onPress={() => this.webOrEscape({type: item["TYPE"], url_fr: item["URL_FR"]})}
+                                    // onPress={() => this.webOrEscape(item["TYPE","URL_FR"])}
+                                    // onPress={() => this.webOrEscape({type: item["TYPE"], url_fr: item["URL_FR"]})}
 
 
                                     >
