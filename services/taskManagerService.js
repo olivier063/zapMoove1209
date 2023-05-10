@@ -79,7 +79,7 @@ class TaskManagerService {
         // console.log(`Entered geofence ${region.identifier}`);
         console.log('vous êtes dans la zone')
         // Alert.alert("vous êtes dans la zone")
-
+        
         this.regionChange.next(true);
 
       } else if (eventType === Location.GeofencingEventType.Exit) {

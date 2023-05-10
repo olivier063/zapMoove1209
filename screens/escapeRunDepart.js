@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import mapService from '../services/mapService';
 import taskManagerService from '../services/taskManagerService';
 import * as Location from 'expo-location';
+import regionService from '../services/regionService';
 
 const LOCATION_TASK_NAME = 'background_location_task';
 const GEOFENCING_TASK_NAME = 'myGeofencingTask';
@@ -127,11 +128,6 @@ export default class EscapeRunDepart extends Component {
         )
     };
 
-    onButton = () => {
-        this.state.params.id
-        this.state.route.params.polo;
-    }
-
 
     onButtonStartEscape2 = async (redirect = true) => {
         const { status } = await Location.requestForegroundPermissionsAsync();
@@ -162,20 +158,11 @@ export default class EscapeRunDepart extends Component {
                     const longitude = parseFloat(longitudeStr);
                     const rayon = parseFloat(json.RAYON);
 
-                    const regions = [
-                        {
-                            identifier: 'MyGeofence',
-                            latitude: latitude,
-                            longitude: longitude,
-                            radius: rayon,
-                            notifyOnEnter: true,
-                            notifyOnExit: true,
-                        },
-                    ];
-                    await Location.startGeofencingAsync(GEOFENCING_TASK_NAME, regions, {
-                        accuracy: Location.Accuracy.High,
-                        loiteringDelay: 1000,
-                    });
+                    regionService.startGeofencing({
+                        latitude: latitude,
+                        longitude: longitude,
+                        rayon: rayon,
+                    })
                 }
             };
             requestPermissions();
@@ -184,15 +171,23 @@ export default class EscapeRunDepart extends Component {
         }
         mapService.userLocationEscape();
         taskManagerService.defineTaskRegion();
+
         if (redirect) {
             this.props.navigation.navigate('ESCAPE RUN ENIGME', {
                 banniere: this.state.banniere,
                 scenario: this.state.scenario,
             });
         }
-
-
     };
+
+    onClickDepart = () => {
+        taskManagerService.unregisterTaskRegion(GEOFENCING_TASK_NAME);
+        this.props.navigation.navigate('ESCAPE RUN ENIGME', {
+            banniere: this.state.banniere,
+            scenario: this.state.scenario,
+        });
+        
+    }
 
 
     render() {
@@ -226,7 +221,8 @@ export default class EscapeRunDepart extends Component {
                             borderWidth: 1,
                             borderRadius: 7,
                         }}
-                        onPress={() => this.onButtonStartEscape2()}
+                        // onPress={() => this.onButtonStartEscape2()}
+                        onPress={() => this.onClickDepart()}
                     >
                         <Text style={{
                             fontSize: 18,

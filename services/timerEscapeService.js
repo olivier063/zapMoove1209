@@ -50,9 +50,9 @@ class TimerEscapeService {
     // creer la meme en mode -=
     removeFromTimer(timeToRemoveInSeconds){
         let totalInSeconds = this.seconds + this.minutes * 60 + this.hours * 3600;
-        console.log('TOTAL', totalInSeconds)
+        // console.log('TOTAL', totalInSeconds)
         totalInSeconds += timeToRemoveInSeconds;
-        console.log('TOTAL 2', totalInSeconds)
+        // console.log('TOTAL 2', totalInSeconds)
         this.hours = Math.floor(totalInSeconds / 3600);
         this.minutes = Math.floor((totalInSeconds - this.hours * 3600) / 60);
         this.seconds = totalInSeconds % 60;

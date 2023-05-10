@@ -9,7 +9,7 @@ const LOCATION_TASK_NAME = 'background_location_task';
 
 // je passe props en parametre afin de recuperer le useNavigation dans l'enfant qui est une class component
 export default function EscapeRunModalMap(props) {
-    // console.log('PROPS MODAL', props)
+    console.log('PROPS MODAL', props)
     // recentre sur la france
     const [mapRegion, setMapRegion] = React.useState({
         latitude: 46.227638,

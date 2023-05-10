@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import timerEscapeService from '../services/timerEscapeService';
 
 export default class EscapeRunCountDownQuestion2 extends Component {
     constructor(props) {
         super(props);
-        console.log('PROPS COUNT DOWN 2', this.props)
+        // console.log('PROPS COUNT DOWN 2', this.props)
         this.state = {
             modalVisible: false,
             timeRemaining: this.props.time,
@@ -35,13 +36,10 @@ export default class EscapeRunCountDownQuestion2 extends Component {
             //   this.props.nextQuestion();
             this.setModalVisible();
             this.setReponse();
+            timerEscapeService.removeFromTimer(- this.props.time);
         }
     };
-
-
-
-
-
+   
 
     setModalVisible = () => {
         this.setState({ modalVisible: true });
@@ -106,7 +104,7 @@ export default class EscapeRunCountDownQuestion2 extends Component {
                                 </Text>
 
                                 <Text style={{marginTop: 20}}>
-                                    Vous avez perdu/gagné......
+                                    Vous avez perdu {this.props.time} secondes !!
                                 </Text>
 
                                 <View style={{ flexDirection: "row" }}>

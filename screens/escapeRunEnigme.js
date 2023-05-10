@@ -6,13 +6,20 @@ import EscapeRunCountDownGeneral from '../components/escapeRunCountDownGeneral';
 import EscapeRunCountDownQuestion2 from '../components/escapeRunCountDownQuestion2';
 import taskManagerService from '../services/taskManagerService';
 import timerEscapeService from '../services/timerEscapeService';
+import * as Location from 'expo-location';
+import mapService from '../services/mapService';
+import regionService from '../services/regionService';
 
-const GEOFENCING_TASK_NAME = 'myGeofencingTask'; 
+const LOCATION_TASK_NAME = 'background_location_task';
+const GEOFENCING_TASK_NAME = 'myGeofencingTask';
 
 export default class EscapeRunEnigme extends Component {
+
+    regionService = null
+
     constructor(props) {
         super(props);
-        // console.log('PROPS', this.props)
+        // console.log('PROPS ENIGME', this.props)
         this.state = {
             modalVisible: false,
 
@@ -35,13 +42,38 @@ export default class EscapeRunEnigme extends Component {
             destination_latitude: 0,
             destination_longitude: 0,
             rayon_detection: 0,
+            showButton: false,
         };
+
+
+        // this.regionService = regionService
+        // regionService.regionChange.subscribe(region => {
+        //     const latitude = parseFloat(this.state.destination_latitude);
+        //     const longitude = parseFloat(this.state.destination_longitude);
+        //     const rayon = parseFloat(this.state.rayon_detection);
+        //     console.log('Region changed:', region);
+        //     regionService.regionStructure.latitude = latitude;
+        //     regionService.regionStructure.longitude = longitude;
+        //     regionService.regionStructure.rayon = rayon;
+
+        // });
+
+
+
+
+
+        taskManagerService.regionChange.subscribe(isInZone => {
+            this.setState({
+                showButton: isInZone
+            })
+        });
     }
 
-    componentDidMount() {
-        this.getEscapeScenario();
-    } 
-    
+    async componentDidMount() {
+        await this.getEscapeScenario();
+        this.geofencing();
+    }
+
 
     //GESTION MODAL..................................................................
     setModalVisible = () => {
@@ -77,7 +109,7 @@ export default class EscapeRunEnigme extends Component {
                     text: "NON",
                     style: "cancel"
                 },
-    
+
                 {
                     text: "OUI",
                     onPress: () => {
@@ -88,7 +120,7 @@ export default class EscapeRunEnigme extends Component {
             ]
         )
     };
-    
+
 
     nextPoint = () => {
         Alert.alert(
@@ -102,7 +134,11 @@ export default class EscapeRunEnigme extends Component {
 
                 {
                     text: "OUI",
-                    onPress: () => this.nextQuestion()
+                    onPress: () => {
+                        taskManagerService.unregisterTaskRegion(GEOFENCING_TASK_NAME);
+                        this.nextQuestion();
+                    }
+
                 }
             ]
         )
@@ -110,8 +146,9 @@ export default class EscapeRunEnigme extends Component {
 
     getCurrentScenario = async () => {
         const reponseFr = this.state.data[this.state.currentIndex].REPONSE_FR;
-         console.log('DATA', this.state.data[this.state.currentIndex].TEMPS_REPONSE)
-         console.log('INDEX', this.state.currentIndex)
+
+        //  console.log('DATA', this.state.data[this.state.currentIndex].RAYON_DETECTION)
+        //  console.log('INDEX', this.state.currentIndex)
         const reponses = reponseFr.split(";;");
         this.setState({
             condition: this.state.data[this.state.currentIndex].CONDITION,
@@ -127,9 +164,14 @@ export default class EscapeRunEnigme extends Component {
             destination_longitude: this.state.data[this.state.currentIndex].DESTINATION_LONGITUDE,
             reponseFr: reponseFr,
             reponses: reponses,
+            rayon_detection: this.state.data[this.state.currentIndex].RAYON_DETECTION,
+
+        }, () => {
+            this.geofencing();
         })
-        // console.log('REPONSE FR',this.state.reponseFr)
+        // console.log('RAYON DETECTION',this.state.rayon_detection)
         // console.log('EFFET TYPE', this.state.effet_type)
+        // console.log('DESTINATION', this.state.destination_latitude)
         // console.log('TEMPS REPONSE', this.state.temps_reponse)
     }
 
@@ -137,13 +179,14 @@ export default class EscapeRunEnigme extends Component {
         try {
             const response = await fetch(this.props.route.params.scenario);
             const json = await response.json();
-            // console.log('JSON ENIGME', json)
+
             this.setState({
                 data: json.SCENARIO,
                 timeRemaining: json.TEMPS_MAX,
             }, () => {
                 this.getCurrentScenario();
             })
+            // console.log('JSON ENIGME', this.state.data)
         } catch (error) {
             console.log('ERROR', error);
         }
@@ -167,7 +210,7 @@ export default class EscapeRunEnigme extends Component {
         // console.log(this.state.reponseFr)
 
         const timeRemaining = this.state.timeRemaining
-        console.log('STATE REMAINING',this.state.timeRemaining)
+        // console.log('STATE REMAINING', this.state.timeRemaining)
 
         if (reponseFr) {
             const reponses = reponseFr.split(";;");
@@ -176,36 +219,56 @@ export default class EscapeRunEnigme extends Component {
             this.setState({ bonneReponseTexte: bonneReponseTexte })
             if (reponseUtilisateur === bonneReponseTexte) {
                 this.setModalVisibleReponseCorrect();
-
-               timerEscapeService.removeFromTimer(60);
+                const effet_valeur = parseFloat(this.state.effet_valeur);
+                timerEscapeService.removeFromTimer(+ effet_valeur);
 
             } else {
                 this.setModalVisibleReponseFalse();
+                const effet_valeur = parseFloat(this.state.effet_valeur);
+                timerEscapeService.removeFromTimer(- effet_valeur);
 
-                timerEscapeService.removeFromTimer(-60);
-                
             }
         }
     }
     //.....................................................MODAL QUI S'OUVRE AU CLIQUE DE LA REPONSE SELON BONNE OU MAUVAISE REPONSE
 
-    //MIS A JOUR DU COUNT DOWN SELON BONNE OU MAUVAISE REPONSE................
-    // handleUserAnswer = (reponseUtilisateur) => {
-    //     const isAnswerCorrect = this.verifierReponse(reponseUtilisateur); 
-    //     if (isAnswerCorrect) {
-    //         this.escapeRunCountDownGeneral.updateTimeRemaining(true);
-    //     } else {
-    //         this.escapeRunCountDownGeneral.updateTimeRemaining(false);
-    //     }
-    // }
+    //GEOFENCING..........................................................
+    geofencing = async () => {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        mapService.status = status;
+
+        if (mapService.status !== 'granted') {
+            mapService.status = 'Permission to access location was denied';
+            return;
+        } else {
+            const requestPermissions = async () => {
+                const { status } = await Location.requestBackgroundPermissionsAsync();
+                mapService.status = status;
+                console.log('STATUS BACK', mapService.status);
+                if (mapService.status === 'granted') {
+                    // LE TIME INTERVAL DEFINI QUE LA MIS A JOUR DE LA POSITION SE FERA TOUS LES X SECONDES (1000 = 1 SECONDE)
+                    await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+                        accuracy: Location.Accuracy.BestForNavigation,
+                        timeInterval: 1000,
+                    });
+
+                    regionService.startGeofencing({
+                        latitude: this.state.destination_latitude,
+                        longitude: this.state.destination_longitude,
+                        rayon: this.state.rayon_detection,
+                    });
+                }
+            };
+            requestPermissions();
+            // console.log('Access granted!!');
+            console.log('STATUS', mapService.status);
+        }
+        mapService.userLocationEscape();
+        // taskManagerService.defineTaskRegion();
+    };
 
 
-    // updateTimeRemaining = (isAnswerCorrect) => {
-    //     const timeDiff = isAnswerCorrect ? 60 : -60;
-    //     const newTimeRemaining = this.state.timeRemaining + timeDiff;
-    //     this.setState({ timeRemaining: newTimeRemaining });
-    //   }
-    //................MIS A JOUR DU COUNT DOWN SELON BONNE OU MAUVAISE REPONSE
+    //..........................................................GEOFENCING
 
     render() {
         const { modalVisible, data, modalVisibleReponseCorrect, modalVisibleReponseFalse } = this.state;
@@ -426,30 +489,68 @@ export default class EscapeRunEnigme extends Component {
                                             </View>
                                             :
                                             <View>
-                                                <TouchableOpacity style={{
-                                                    backgroundColor: "#FF6F00",
-                                                    height: 35,
-                                                    width: '80%',
-                                                    borderRadius: 7,
-                                                    marginTop: 30,
-                                                    justifyContent: 'center',
-                                                }}
-                                                    onPress={() => this.nextPoint()} >
-                                                    <Text style={{ textAlign: 'center' }}>
-                                                        je suis arrivé au point(ce bouton apparait quand il s'agit d'une question 'geoloc')
-                                                    </Text>
-                                                </TouchableOpacity>
+                                                {this.state.showButton ?
+                                                    <View>
+                                                        <TouchableOpacity style={{
+                                                            backgroundColor: "#FF6F00",
+                                                            height: 35,
+                                                            width: '80%',
+                                                            borderRadius: 7,
+                                                            marginTop: 30,
+                                                            justifyContent: 'center',
+                                                        }}
+                                                            onPress={() => this.nextPoint()} >
+                                                            <Text style={{ textAlign: 'center' }}>
+                                                               je suis arrivé au point(ce bouton apparait quand il s'agit d'une question 'geoloc')
+                                                            </Text>
+                                                        </TouchableOpacity>
 
-                                                <TouchableOpacity style={{ alignItems: 'center' }}
+
+
+                                                        <TouchableOpacity style={{ alignItems: 'center'}}
+                                                            onPress={() => this.setModalVisible()}
+                                                        >
+                                                            <Image source={require("../assets/map.png")}
+                                                                resizeMode="contain"
+                                                                style={styles.image} />
+                                                            <Text>où suis-je</Text>
+                                                        </TouchableOpacity>
+
+                                                    </View>
+
+
+
+                                                    : <Text style={{ marginTop: 20 }}>Rejoignez la zone!!</Text>
+                                                }
+                                                {/* <TouchableOpacity style={{ alignItems: 'center' }}
                                                     onPress={() => this.setModalVisible()}
                                                 >
                                                     <Image source={require("../assets/map.png")}
                                                         resizeMode="contain"
                                                         style={styles.image} />
                                                     <Text>où suis-je</Text>
-                                                </TouchableOpacity>
+                                                </TouchableOpacity> */}
                                             </View>
                                         }
+
+
+
+                                        <TouchableOpacity style={{
+                                            backgroundColor: "#FF6F00",
+                                            height: 35,
+                                            width: '80%',
+                                            borderRadius: 7,
+                                            marginTop: 30,
+                                            justifyContent: 'center',
+                                        }}
+                                            onPress={() => this.nextPoint()} >
+                                            <Text style={{ textAlign: 'center' }}>
+                                                NEXT pour les tests
+                                            </Text>
+                                        </TouchableOpacity>
+
+
+
                                     </View>
 
 

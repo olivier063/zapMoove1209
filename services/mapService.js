@@ -130,9 +130,6 @@ class MapService {
                 latitudeDelta: 0.002922,
                 longitudeDelta: 0.002421,
             }
-
-            
-
         }
     }
     //.........................................................PAS UTILISE
@@ -157,7 +154,6 @@ class MapService {
         this.mapChange.next(this.mapStructure);
         // console.log("DISTANCE", distance);
         // console.log("DURATION", duration);
-
     }
 
 
@@ -210,7 +206,6 @@ class MapService {
         });
         if (points.length > 1) {
             let totalDistance = 0;
-
             let totalElevationGain = 0;
 
             for (let i = 0; i < points.length - 1; i++) {
