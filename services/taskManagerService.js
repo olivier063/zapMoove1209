@@ -76,20 +76,17 @@ class TaskManagerService {
         return;
       }
       if (eventType === Location.GeofencingEventType.Enter) {
-        // console.log(`Entered geofence ${region.identifier}`);
         console.log('vous êtes dans la zone')
         // Alert.alert("vous êtes dans la zone")
         
         this.regionChange.next(true);
 
       } else if (eventType === Location.GeofencingEventType.Exit) {
-        // console.log(`Exited geofence ${region.identifier}`);
         console.log("vous êtes à l'exterieur la zone, rapprochez vous")
-        Alert.alert("Vous êtes à l'exterieur la zone, rapprochez vous!!")
+        // Alert.alert("Vous êtes à l'exterieur la zone, rapprochez vous!!")
         this.regionChange.next(false);
       }
       this.getRegisteredTasksRegion();
-      // mapService.onPositionChange(locations[0])
     });
   }
 

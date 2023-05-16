@@ -3,6 +3,7 @@ import { Observable, ReplaySubject } from "rxjs";
 
 
 class TimerEscapeService {
+
     timeRemaining = 0;
     timerDown = null;
     seconds = 0;
@@ -10,9 +11,6 @@ class TimerEscapeService {
     hours = 0;
     timerChange = new ReplaySubject();
 
-    // constructor(timeRemaining) {
-    //     this.timeRemaining = timeRemaining;
-    // }
 
     setTimeRemaining(timeRemaining){
         this.timeRemaining = timeRemaining

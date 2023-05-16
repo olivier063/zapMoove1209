@@ -39,6 +39,7 @@ import EscapeRunLienWeb from './screens/escapeRunLienWeb';
 import EscapeRunMapViewPosition from './screens/escapeRunMapViewPosition';
 import EscapeRunEnigme from './screens/escapeRunEnigme';
 import EscapeRunReglement from './screens/escapeRunReglement';
+import EscapeRunEndGame from './screens/escapeRunEndGame';
 
 
 
@@ -137,11 +138,12 @@ export default function App() {
           <Stack.Screen name="DETAIL ENVOI GPX" component={CourseConnecteeDetailEnvoiGpx} />
           <Stack.Screen name="EXPLICATION ESCAPE" component={EscapeRunExplication} />
           <Stack.Screen name="ESCAPE RUN MAP" component={EscapeRunMapView} />
-          <Stack.Screen name="ESCAPE RUN DEPART" component={EscapeRunDepart} />
+          <Stack.Screen name="ESCAPE RUN DEPART" component={EscapeRunDepart} options={{headerShown: false}} />
           <Stack.Screen name="LIEN WEB" component={EscapeRunLienWeb} />
           <Stack.Screen name="ESCAPE RUN MAP POSITION" component={EscapeRunMapViewPosition} />
-          <Stack.Screen name="ESCAPE RUN ENIGME" component={EscapeRunEnigme} />
+          <Stack.Screen name="ESCAPE RUN ENIGME" component={EscapeRunEnigme} options={{headerShown: false}} />
           <Stack.Screen name="REGLEMENT" component={EscapeRunReglement} />
+          <Stack.Screen name="FIN DU JEU" component={EscapeRunEndGame} options={{headerShown: false}} />
 
 
 

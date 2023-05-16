@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
 import timerTrainingService from '../services/timerTrainingService';
+import timerEscapeService from '../services/timerEscapeService';
 
 const BACKGROUND_CHRONO_TASK = 'chrono-background-fetch';
 
@@ -15,10 +16,12 @@ TaskManager.defineTask(BACKGROUND_CHRONO_TASK, async () => {
   const dateParis = now.toLocaleString('fr-FR', options);
   console.log(`Got background fetch call at date: ${dateParis}`);
 
-  timerTrainingService.startTimer()
-  console.log(timerTrainingService.hours)
-  console.log(timerTrainingService.minutes)
-  console.log(timerTrainingService.seconds)
+  // timerTrainingService.startTimer();
+  timerEscapeService.startTimer();
+
+  console.log('HOURS',timerEscapeService.hours)
+  console.log('MINUTES',timerEscapeService.minutes)
+  console.log('SECONDS',timerEscapeService.seconds)
 
   // Be sure to return the successful result type!
   return BackgroundFetch.BackgroundFetchResult.NewData;
@@ -30,7 +33,7 @@ TaskManager.defineTask(BACKGROUND_CHRONO_TASK, async () => {
 async function registerBackgroundFetchAsync() {
   return BackgroundFetch.registerTaskAsync(BACKGROUND_CHRONO_TASK, {
 
-    // le minimum interval est de 1 minute au minimum !!!!!!!!!!!!! Suis-je KENI pour le chrono ??????
+    // le minimum interval est de 1 minute au minimum 
     minimumInterval: 1, // 15 minutes
     stopOnTerminate: true, // android only,
     startOnBoot: true, // android only

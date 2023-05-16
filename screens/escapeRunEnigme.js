@@ -19,7 +19,11 @@ export default class EscapeRunEnigme extends Component {
 
     constructor(props) {
         super(props);
-        // console.log('PROPS ENIGME', this.props)
+
+        // le createRef me permet d'arreter le timer du composant enfant via le parent
+        this.escapeRunCountDownQuestion2Ref = React.createRef();
+
+       
         this.state = {
             modalVisible: false,
 
@@ -43,25 +47,9 @@ export default class EscapeRunEnigme extends Component {
             destination_longitude: 0,
             rayon_detection: 0,
             showButton: false,
+
+            
         };
-
-
-        // this.regionService = regionService
-        // regionService.regionChange.subscribe(region => {
-        //     const latitude = parseFloat(this.state.destination_latitude);
-        //     const longitude = parseFloat(this.state.destination_longitude);
-        //     const rayon = parseFloat(this.state.rayon_detection);
-        //     console.log('Region changed:', region);
-        //     regionService.regionStructure.latitude = latitude;
-        //     regionService.regionStructure.longitude = longitude;
-        //     regionService.regionStructure.rayon = rayon;
-
-        // });
-
-
-
-
-
         taskManagerService.regionChange.subscribe(isInZone => {
             this.setState({
                 showButton: isInZone
@@ -70,9 +58,20 @@ export default class EscapeRunEnigme extends Component {
     }
 
     async componentDidMount() {
+        // console.log('TOTO')
         await this.getEscapeScenario();
         this.geofencing();
     }
+
+    //  componentDidMount = async () => {
+    //     console.log('TOTO')
+    //     await this.getEscapeScenario();
+    //     try{
+    //         this.geofencing();
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
 
     //GESTION MODAL..................................................................
@@ -147,6 +146,7 @@ export default class EscapeRunEnigme extends Component {
     getCurrentScenario = async () => {
         const reponseFr = this.state.data[this.state.currentIndex].REPONSE_FR;
 
+  
         //  console.log('DATA', this.state.data[this.state.currentIndex].RAYON_DETECTION)
         //  console.log('INDEX', this.state.currentIndex)
         const reponses = reponseFr.split(";;");
@@ -165,14 +165,10 @@ export default class EscapeRunEnigme extends Component {
             reponseFr: reponseFr,
             reponses: reponses,
             rayon_detection: this.state.data[this.state.currentIndex].RAYON_DETECTION,
-
         }, () => {
             this.geofencing();
         })
-        // console.log('RAYON DETECTION',this.state.rayon_detection)
-        // console.log('EFFET TYPE', this.state.effet_type)
-        // console.log('DESTINATION', this.state.destination_latitude)
-        // console.log('TEMPS REPONSE', this.state.temps_reponse)
+          
     }
 
     getEscapeScenario = async () => {
@@ -184,6 +180,7 @@ export default class EscapeRunEnigme extends Component {
                 data: json.SCENARIO,
                 timeRemaining: json.TEMPS_MAX,
             }, () => {
+                console.log('DATA ENIGME', this.state.data)
                 this.getCurrentScenario();
             })
             // console.log('JSON ENIGME', this.state.data)
@@ -196,10 +193,17 @@ export default class EscapeRunEnigme extends Component {
     //pour que le changement d'index charge les nouvelles reponses de la question, je relance la fonction getEscapeScenario
     nextQuestion = () => {
         const nextIndex = this.state.currentIndex + 1;
-        this.setState({ currentIndex: nextIndex }, () => {
-            this.getCurrentScenario();
-        });
+        if (nextIndex === this.state.data.length) {
+            // Dernière question atteinte, effectuer la navigation vers la page d'accueil
+            this.props.navigation.navigate('FIN DU JEU');
+        } else {
+            this.setState({ currentIndex: nextIndex }, () => {
+                this.getCurrentScenario();
+            });
+        }
     }
+     
+
 
     //MODAL QUI S'OUVRE AU CLIQUE DE LA REPONSE SELON BONNE OU MAUVAISE REPONSE.....................................................
     verifierReponse = (reponseUtilisateur) => {
@@ -211,6 +215,8 @@ export default class EscapeRunEnigme extends Component {
 
         const timeRemaining = this.state.timeRemaining
         // console.log('STATE REMAINING', this.state.timeRemaining)
+
+        this.stopChildTimer()
 
         if (reponseFr) {
             const reponses = reponseFr.split(";;");
@@ -226,17 +232,18 @@ export default class EscapeRunEnigme extends Component {
                 this.setModalVisibleReponseFalse();
                 const effet_valeur = parseFloat(this.state.effet_valeur);
                 timerEscapeService.removeFromTimer(- effet_valeur);
-
             }
+          
         }
     }
     //.....................................................MODAL QUI S'OUVRE AU CLIQUE DE LA REPONSE SELON BONNE OU MAUVAISE REPONSE
 
     //GEOFENCING..........................................................
     geofencing = async () => {
+        if (this.state.temps_reponse != undefined && this.state.temps_reponse != 0) {
+
         const { status } = await Location.requestForegroundPermissionsAsync();
         mapService.status = status;
-
         if (mapService.status !== 'granted') {
             mapService.status = 'Permission to access location was denied';
             return;
@@ -263,13 +270,20 @@ export default class EscapeRunEnigme extends Component {
             // console.log('Access granted!!');
             console.log('STATUS', mapService.status);
         }
+
+    }
         mapService.userLocationEscape();
         // taskManagerService.defineTaskRegion();
     };
-
-
     //..........................................................GEOFENCING
 
+    stopChildTimer = () => {
+        if (this.escapeRunCountDownQuestion2Ref.current) {
+          this.escapeRunCountDownQuestion2Ref.current.stopTimer();
+        }
+      };
+
+   
     render() {
         const { modalVisible, data, modalVisibleReponseCorrect, modalVisibleReponseFalse } = this.state;
 
@@ -348,7 +362,7 @@ export default class EscapeRunEnigme extends Component {
                         renderItem={({ item, index }) => (
                             <>
 
-                                {index === this.state.currentIndex ?
+                                {index === this.state.currentIndex  ?
                                     <View style={{ alignItems: 'center' }}>
                                         <View style={{
                                             marginTop: 10,
@@ -378,7 +392,7 @@ export default class EscapeRunEnigme extends Component {
                                                 <EscapeRunCountDownQuestion
                                                     time={this.state.temps_reponse}
                                                     reponseFr={this.state.reponseFr}
-                                                // nextQuestion={this.nextQuestion}
+
                                                 />
                                             </View>
                                             : (this.state.effet_valeur != undefined) ?
@@ -396,6 +410,8 @@ export default class EscapeRunEnigme extends Component {
                                                         reponseFr={this.state.reponseFr}
                                                         key_bonne_reponse={this.state.key_bonne_reponse}
                                                         nextQuestion={this.nextQuestion}
+                                                      
+                                                        ref={this.escapeRunCountDownQuestion2Ref}
                                                     />
                                                 </View>
                                                 : "toto"
@@ -472,7 +488,7 @@ export default class EscapeRunEnigme extends Component {
                                                     </Text>
                                                 </TouchableOpacity> */}
 
-                                                <TouchableOpacity style={{
+                                                {/* <TouchableOpacity style={{
                                                     backgroundColor: "#FF6F00",
                                                     height: 35,
                                                     width: '80%',
@@ -484,37 +500,36 @@ export default class EscapeRunEnigme extends Component {
                                                     <Text style={{ textAlign: 'center' }}>
                                                         NEXT pour les tests
                                                     </Text>
-                                                </TouchableOpacity>
+                                                </TouchableOpacity> */}
 
                                             </View>
                                             :
                                             <View>
                                                 {this.state.showButton ?
-                                                    <View>
+                                                    <View style={{alignItems: 'center'}}>
                                                         <TouchableOpacity style={{
                                                             backgroundColor: "#FF6F00",
-                                                            height: 35,
-                                                            width: '80%',
+                                                            height: 40,
+                                                            width: 250,
                                                             borderRadius: 7,
                                                             marginTop: 30,
                                                             justifyContent: 'center',
                                                         }}
                                                             onPress={() => this.nextPoint()} >
-                                                            <Text style={{ textAlign: 'center' }}>
-                                                               je suis arrivé au point(ce bouton apparait quand il s'agit d'une question 'geoloc')
+                                                            <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                                                              VOUS ÊTES ARRIVÉS!! {'\n'}PASSER À LA QUESTION SUIVANTE
                                                             </Text>
                                                         </TouchableOpacity>
 
 
-
-                                                        <TouchableOpacity style={{ alignItems: 'center'}}
+                                                        {/* <TouchableOpacity style={{ alignItems: 'center'}}
                                                             onPress={() => this.setModalVisible()}
                                                         >
                                                             <Image source={require("../assets/map.png")}
                                                                 resizeMode="contain"
                                                                 style={styles.image} />
                                                             <Text>où suis-je</Text>
-                                                        </TouchableOpacity>
+                                                        </TouchableOpacity> */}
 
                                                     </View>
 
@@ -522,20 +537,20 @@ export default class EscapeRunEnigme extends Component {
 
                                                     : <Text style={{ marginTop: 20 }}>Rejoignez la zone!!</Text>
                                                 }
-                                                {/* <TouchableOpacity style={{ alignItems: 'center' }}
+                                                <TouchableOpacity style={{ alignItems: 'center' }}
                                                     onPress={() => this.setModalVisible()}
                                                 >
                                                     <Image source={require("../assets/map.png")}
                                                         resizeMode="contain"
                                                         style={styles.image} />
                                                     <Text>où suis-je</Text>
-                                                </TouchableOpacity> */}
+                                                </TouchableOpacity>
                                             </View>
                                         }
 
 
 
-                                        <TouchableOpacity style={{
+                                        {/* <TouchableOpacity style={{
                                             backgroundColor: "#FF6F00",
                                             height: 35,
                                             width: '80%',
@@ -547,14 +562,14 @@ export default class EscapeRunEnigme extends Component {
                                             <Text style={{ textAlign: 'center' }}>
                                                 NEXT pour les tests
                                             </Text>
-                                        </TouchableOpacity>
+                                        </TouchableOpacity> */}
 
 
 
                                     </View>
 
 
-                                    : ""}
+                                    : null}
 
                                 {/* <Text style={{
                         textAlign: 'center',
@@ -610,6 +625,7 @@ export default class EscapeRunEnigme extends Component {
                             <Text>
                                 SCORE:
                             </Text>
+
                             <Text>
                                 0
                             </Text>

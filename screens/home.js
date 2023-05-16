@@ -112,12 +112,9 @@ export default class Home extends Component {
                             />
                         </TouchableOpacity>
                         <Text style={styles.text}>Compétitions</Text>
-                    </View>
-           
-                
+                    </View>     
                 </View>
                 {/* <BackgroundFetchScreen/> */}
-         
             </View>
         )
     }

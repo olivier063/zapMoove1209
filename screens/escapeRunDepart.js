@@ -28,8 +28,9 @@ export default class EscapeRunDepart extends Component {
         });
     }
 
-    componentDidMount() {
-        this.onButtonStartEscape2(false);
+    componentDidMount = async () => {
+        // console.log('TOTO')
+        await this.onButtonStartEscape2(false);
     }
 
 
@@ -70,6 +71,7 @@ export default class EscapeRunDepart extends Component {
                 scenario: this.state.scenario,
             })
     }
+
 
     onButtonStartEscape = async () => {
         const { status } = await Location.requestForegroundPermissionsAsync();

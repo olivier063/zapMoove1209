@@ -5,11 +5,11 @@ import timerEscapeService from '../services/timerEscapeService';
 export default class EscapeRunCountDownQuestion2 extends Component {
     constructor(props) {
         super(props);
-        // console.log('PROPS COUNT DOWN 2', this.props)
+        console.log('PROPS COUNT DOWN 2', this.props)
         this.state = {
             modalVisible: false,
             timeRemaining: this.props.time,
-            // timeRemaining: 5,
+            // timeRemaining: 10,
             bonneReponseTexte: '',
             
         };
@@ -34,6 +34,7 @@ export default class EscapeRunCountDownQuestion2 extends Component {
             clearInterval(this.interval);
 
             //   this.props.nextQuestion();
+         
             this.setModalVisible();
             this.setReponse();
             timerEscapeService.removeFromTimer(- this.props.time);
@@ -62,6 +63,10 @@ export default class EscapeRunCountDownQuestion2 extends Component {
             }
         }
     }
+
+    stopTimer = () => {
+        clearInterval(this.interval);
+      };
     
 
     render() {
@@ -144,6 +149,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         marginTop: 300,
+        
     },
     modalView: {
         margin: 10,

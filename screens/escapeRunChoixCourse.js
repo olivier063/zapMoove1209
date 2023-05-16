@@ -9,9 +9,9 @@ export default class EscapeRunChoixCourse extends Component {
     this.state = {
       data: [],
       isLoading: true,
-
     };
   }
+
 
   async getEscapeCourses() {
     try {
@@ -27,7 +27,6 @@ export default class EscapeRunChoixCourse extends Component {
       this.setState({ isLoading: false });
     }
   }
-
 
 
   componentDidMount() {

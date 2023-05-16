@@ -10,7 +10,7 @@ const LOCATION_TASK_NAME = 'background_location_task';
 
 // je passe props en parametre afin de recuperer le useNavigation dans l'enfant qui est une class component
 export default function EscapeRunMapViewPosition(props) {
-    console.log('PROPS POSITION', props)
+    // console.log('PROPS POSITION', props)
     // recentre sur la france
     const [mapRegion, setMapRegion] = React.useState({
         latitude: 46.227638,
