@@ -47,7 +47,7 @@ export default class StartExercices extends Component {
   getExerciceScenario = async () => {
     try {
       const response = await fetch(
-        "https://www.zapmoove.fr/ext/zapmoove/scenarioTraining.php?NUM_TRAINING=" +
+        "" +
         this.state.numTraining
       );
       const json = await response.json();
@@ -120,7 +120,7 @@ export default class StartExercices extends Component {
   async saveTraining() {
     try {
       const response = await fetch(
-        "https://www.zapmoove.fr/ext/zapmoove/listeTraining.php"
+        ""
       );
       const json = await response.json();
       this.setState({ dataGueule: json });

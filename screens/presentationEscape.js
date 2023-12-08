@@ -33,7 +33,7 @@ export default class PresentationEscape extends Component {
     async getTilesPresentationEscape() {
         try {
             const response = await fetch(
-                "https://www.sports-events.org/ext/zapmoove/accueil_evt.php?NUM_EVT=" +
+                "" +
                 this.state.numEvent
             )
             const json = await response.json()
@@ -59,7 +59,7 @@ export default class PresentationEscape extends Component {
     async getTilesColor() {
         try {
             const response = await fetch(
-                "https://www.sports-events.org/ext/zapmoove/menu_evt.php?NUM_EVT=" +
+                "" +
                 this.state.numEvent
             )
             const json = await response.json()

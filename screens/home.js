@@ -5,8 +5,6 @@ import StorageService from '../services/storageService';
 
 
 
-
-
 export default class Home extends Component {
     constructor(props) {
         super(props)

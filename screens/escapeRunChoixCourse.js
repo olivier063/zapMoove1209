@@ -65,7 +65,7 @@ export default class EscapeRunChoixCourse extends Component {
                         infoFr: item.INFO_FR,
                         rayon: item.RAYON,
                         type: item.TYPE,
-                        
+
                       })}
                   >
                     <Image

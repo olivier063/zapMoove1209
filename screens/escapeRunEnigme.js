@@ -180,7 +180,7 @@ export default class EscapeRunEnigme extends Component {
                 data: json.SCENARIO,
                 timeRemaining: json.TEMPS_MAX,
             }, () => {
-                console.log('DATA ENIGME', this.state.data)
+                // console.log('DATA ENIGME', this.state.data)
                 this.getCurrentScenario();
             })
             // console.log('JSON ENIGME', this.state.data)
