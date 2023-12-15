@@ -15,7 +15,7 @@ export default class EscapeRunChoixCourse extends Component {
 
   async getEscapeCourses() {
     try {
-      const response = await fetch('https://www.zapmoove.fr/ext/zapmoove/listeEscape.php');
+      const response = await fetch('');
       const json = await response.json();
       this.setState({ data: json });
 

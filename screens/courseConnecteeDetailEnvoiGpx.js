@@ -120,7 +120,7 @@ export default class CourseConnecteeDetailEnvoiGpx extends Component {
                 data.append("DOSSARD", this.state.dossard);
                 // console.log("DATA", data);
 
-                const response = await fetch("https://www.zapsports.com/ext/app/gpx.htm", {
+                const response = await fetch("", {
                     method: 'POST',
                     headers: {
                         'Content-Type': "multipart/form-data",

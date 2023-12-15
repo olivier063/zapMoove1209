@@ -45,7 +45,7 @@ export class Exercices extends Component {
     }
     try {
       const response = await fetch(
-        "https://www.zapmoove.fr/ext/zapmoove/listeTraining.php"
+        ""
       );
       const json = await response.json();
 

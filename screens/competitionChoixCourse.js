@@ -14,7 +14,7 @@ export default class CompetitionChoixCourse extends Component {
     
       async getCoursesCompetitions() {
         try {
-          const response = await fetch('https://www.zapmoove.fr/ext/zapmoove/listeChallenge.php');
+          const response = await fetch('');
           const json = await response.json();
           this.setState({ data: json });
         } catch (error) {

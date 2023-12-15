@@ -52,7 +52,7 @@ export default function LoginButton() {
         try {
             // ici la func login, fetch sur l'URL du Json et demande un password et un mail, ATTENTION: utiliser des cotes inversees
             const response = await fetch(
-                `https://www.zapsports.com/ext/app/compte.htm?APP_PSWD=${password}&APP_EMAIL=${mail}`
+                ``
             );
             // on attent une reponse en Json du fetch
             const json = await response.json();

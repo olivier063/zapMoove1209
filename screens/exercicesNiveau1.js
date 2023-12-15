@@ -31,7 +31,7 @@ import {
     async getExerciceScenario() {
       try {
         const response = await fetch(
-          "https://www.zapmoove.fr/ext/zapmoove/scenarioTraining.php?NUM_TRAINING=12"
+          ""
         );
         const json = await response.json();
         this.setState({ data: json.SCENARIO });

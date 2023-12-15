@@ -17,7 +17,7 @@ export default function ModalPasswordNew() {
         }
         try {
             const response = await fetch(
-                `https://www.zapsports.com/ext/app/recover.htm?APP_EMAIL=${mail}`
+                ``
             );
             const json = await response.json();
             if (!json || json == 'KO') {

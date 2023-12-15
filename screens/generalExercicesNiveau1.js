@@ -30,7 +30,7 @@ export default class GeneralExercicesNiveau1 extends Component {
   async getYoutubeVideo() {
     try {
       const response = await fetch(
-        "https://www.zapmoove.fr/ext/zapmoove/scenarioTraining.php?NUM_TRAINING=" +
+        "" +
         this.state.numTraining
       );
       const json = await response.json();
@@ -59,7 +59,7 @@ export default class GeneralExercicesNiveau1 extends Component {
   async getExerciceScenario() {
     try {
       const response = await fetch(
-        "https://www.zapmoove.fr/ext/zapmoove/scenarioTraining.php?NUM_TRAINING=" +
+        "" +
         this.state.numTraining
       );
       const json = await response.json();

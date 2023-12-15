@@ -34,7 +34,7 @@ export default class CourseConnecteeChoixEnvoiGpx extends Component {
     await this.getStorage()
     if (this.state.id_user != null)
       try {
-        const response = await fetch(`https://www.zapsports.com/ext/app/mes_courses.htm?ID_USER=${this.state.id_user}`);
+        const response = await fetch(``);
         const json = await response.json();
         // console.log(typeof json)
         this.setState({ data: json });
